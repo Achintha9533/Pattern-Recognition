@@ -1,7 +1,7 @@
 import torch
 
 @torch.no_grad()
-def generate(model, z0, device, steps=100):
+def generate(model, z0, steps=100):
     model.eval()
     z = z0.clone().to(device)
     for i in range(steps):
