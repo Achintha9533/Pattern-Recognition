@@ -30,15 +30,11 @@ class CNF_UNet(nn.Module):
     def forward(self, x, t):
         t = t.view(-1, 1, 1, 1).expand(x.size(0), 1, x.size(2), x.size(3))
         xt = torch.cat([x, t], dim=1)
-
         d1 = self.down1(xt)
         d2 = self.down2(F.avg_pool2d(d1, 2))
         m = self.mid(F.avg_pool2d(d2, 2))
-
         u1 = F.interpolate(m, scale_factor=2, mode='bilinear', align_corners=False)
         u1 = self.up1(torch.cat([u1, d2], dim=1))
-
         u2 = F.interpolate(u1, scale_factor=2, mode='bilinear', align_corners=False)
         u2 = self.up2(torch.cat([u2, d1], dim=1))
-
         return self.out(u2)
