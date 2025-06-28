@@ -1,97 +1,150 @@
 import torch
+import torch.nn as nn
 from pathlib import Path
-from torch.utils.data import DataLoader
-import torchvision.transforms as T
-import matplotlib.pyplot as plt
+import numpy as np
 
-# Import custom modules
-from dataset import LungCTWithGaussianDataset # Assuming image_size is set here or passed
-from models import CNF_UNet, Discriminator
-from train import train_hybrid
-from generate import generate
+# Import components from other files
+# Adjust these imports based on how you structure your project's folders
+# Assuming all .py files are in the same directory for simplicity here
 
-# === Settings ===
+# Parameters (can be moved to a config file)
 base_dir = Path("/Users/kasunachinthaperera/Documents/VS Code/Pattern Recognition/Data/QIN LUNG CT")
-image_size = (64, 64) # Keep consistent across modules
-hu_window = (-1000, 400)
+image_size = (64, 64)
+lambda_gan = 0.1
+G_LR = 1e-4
+D_LR = 1e-4
+epochs = 100
+batch_size = 64
+num_workers = 0 # Set to 0 for macOS compatibility
 
-# === Image preprocessing transform ===
-transform_post_hu = T.Compose([
-    T.ToPILImage(),
-    T.Resize(image_size),
-    T.ToTensor(),
-])
-
-# === Setup Device ===
+# Setup device
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-print(f"Using device: {device}")
 
 if __name__ == "__main__":
-    # === Instantiate dataset and dataloader ===
-    dataset = LungCTWithGaussianDataset(
-        base_dir,
-        transform=transform_post_hu,
-        hu_window=hu_window,
-        num_patients_limit=25 # For initial testing, keep lower; increase for real training
-    )
+    # --- 1. Imports and Global Settings (Implicitly handled by importing modules) ---
+    # Imports: os, pathlib, pydicom, numpy, torch, torchvision.transforms, warnings, matplotlib.pyplot, tqdm, torch.nn, torch.nn.functional, skimage.metrics
+    # These would typically be at the top of a monolithic script, but for separation,
+    # they are imported by the specific modules that need them.
+    # Global constants like base_dir, image_size, lambda_gan, G_LR, D_LR are set here in main.
 
-    dataloader = DataLoader(
+    # --- 2. Transform ---
+    # The 'transform' object and 'load_dicom_image' function are defined in transform.py
+    # import from transform.py if running as separate files
+    from transform import transform, load_dicom_image
+
+    # --- 3. Dataset ---
+    # The 'LungCTWithGaussianDataset' class is defined in dataset.py
+    # import from dataset.py if running as separate files
+    from dataset import LungCTWithGaussianDataset
+
+    print("Initializing dataset...")
+    dataset = LungCTWithGaussianDataset(base_dir, transform=transform)
+    dataloader = torch.utils.data.DataLoader(
         dataset,
-        batch_size=16, # Reduced batch size for GAN, requires more VRAM
+        batch_size=batch_size,
         shuffle=True,
-        num_workers=0, # Set to 0 for macOS compatibility and debugging
+        num_workers=num_workers,
         pin_memory=True
     )
-
     print(f"Total images loaded: {len(dataset)}")
 
-    # Quick test to load a batch and check shapes
+    # Ensure dataloader is not empty
+    if len(dataloader) == 0:
+        raise RuntimeError("Dataloader is empty. No data to process. Check dataset path and contents.")
+
+
+    # --- 4. Model ---
+    # The 'UNetBlock', 'CNF_UNet', and 'Discriminator' classes are defined in model.py
+    # import from model.py if running as separate files
+    from model import CNF_UNet, Discriminator
+
+    print("Initializing models...")
+    generator = CNF_UNet().to(device)
+    discriminator = Discriminator(img_channels=1, features_d=64).to(device)
+
+    # Optimizers and Loss Function (part of model/training setup)
+    optimizer_gen = torch.optim.Adam(generator.parameters(), lr=G_LR, betas=(0.5, 0.999))
+    optimizer_disc = torch.optim.Adam(discriminator.parameters(), lr=D_LR, betas=(0.5, 0.999))
+    criterion_gan = nn.BCEWithLogitsLoss()
+
+    # --- 5. Initial Data Visualization (using functions from visualize.py) ---
+    from visualize import plot_initial_distributions, plot_initial_samples
+
+    sample_noise_batch = None
+    sample_image_batch = None
     for noise, image in dataloader:
-        print(f"Noise batch shape (example): {noise.shape}")
-        print(f"Image batch shape (example): {image.shape}")
+        sample_noise_batch = noise.cpu()
+        sample_image_batch = image.cpu()
         break
+    
+    if sample_image_batch is not None and sample_noise_batch is not None:
+        plot_initial_distributions(sample_noise_batch, sample_image_batch)
+        plot_initial_samples(sample_noise_batch, sample_image_batch)
+    else:
+        print("Could not get sample batches for initial visualization.")
 
-    # === Initialize Models ===
-    model_g = CNF_UNet(time_emb_dim=64).to(device)
-    model_d = Discriminator(in_channels=1, img_size=image_size[0]).to(device) # Pass img_size to D
 
-    # === Setup Optimizers and Schedulers ===
-    optimizer_g = torch.optim.Adam(model_g.parameters(), lr=1e-4)
-    optimizer_d = torch.optim.Adam(model_d.parameters(), lr=1e-4)
+    # --- 6. Train ---
+    # The 'train' function is defined in train.py
+    # import from train.py if running as separate files
+    from train import train
 
-    scheduler_g = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer_g, T_max=300)
-    scheduler_d = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer_d, T_max=300)
+    print("Starting training with GAN discriminator...")
+    # Pass necessary components to the train function
+    training_losses = train(
+        generator_model=generator,
+        discriminator_model=discriminator,
+        dataloader=dataloader,
+        epochs=epochs,
+        lambda_gan=lambda_gan,
+        optimizer_gen=optimizer_gen, # Pass optimizer and criterion
+        optimizer_disc=optimizer_disc,
+        criterion_gan=criterion_gan
+    )
+    print("Training finished.")
 
-    # === Start Hybrid Training ===
-    train_hybrid(model_g, model_d, dataloader, optimizer_g, optimizer_d,
-                 scheduler_g, scheduler_d, device, epochs=50)
+    # --- 7. Visualization and Evaluation ---
+    # The 'generate' function is defined in generate.py
+    # The plotting and evaluation functions are in visualize.py
+    # import from generate.py and visualize.py
+    from generate import generate
+    from visualize import (
+        plot_training_losses, evaluate_and_print_metrics,
+        plot_pixel_distributions_comparison, plot_generated_samples,
+        plot_real_vs_generated_side_by_side
+    )
 
-    # === Sample generation and Visualization ===
-    print("\nGenerating sample images (after hybrid training)...")
-    noise_sample = torch.randn(8, 1, *image_size).to(device)
-    generated_images = generate(model_g, noise_sample, steps=200, device=device)
+    # Plot training losses
+    plot_training_losses(training_losses)
 
-    # Display generated images
-    plt.figure(figsize=(12, 6))
-    for i in range(min(8, generated_images.shape[0])):
-        plt.subplot(2, 4, i + 1)
-        display_img = (generated_images[i, 0].cpu().numpy() + 1) / 2
-        plt.imshow(display_img, cmap='gray', vmin=0, vmax=1)
-        plt.title(f"Generated {i+1}")
-        plt.axis('off')
-    plt.tight_layout()
-    plt.suptitle("Generated Lung CT Images (CNF-GAN Hybrid with Attention)")
-    plt.show()
+    # Sample generation
+    num_generated_samples = 64
+    initial_noise_for_generation = torch.randn(num_generated_samples, 1, *image_size).to(device)
+    generated_images = generate(generator, initial_noise_for_generation, steps=200)
+    generated_images = generated_images.cpu()
 
-    # Optional: Display some real images for comparison
-    real_images_batch = next(iter(dataloader))[1] # Get a fresh batch from the dataloader
-    plt.figure(figsize=(12, 6))
-    for i in range(min(8, real_images_batch.shape[0])):
-        plt.subplot(2, 4, i + 1)
-        display_real_img = (real_images_batch[i, 0].cpu().numpy() + 1) / 2
-        plt.imshow(display_real_img, cmap='gray', vmin=0, vmax=1)
-        plt.title(f"Real Image {i+1}")
-        plt.axis('off')
-    plt.tight_layout()
-    plt.suptitle("Real Lung CT Images (for comparison)")
-    plt.show()
+    # Get a batch of real images for comparison
+    real_images_batch = None
+    for _, real_img_batch_val in dataloader:
+        real_images_batch = real_img_batch_val
+        break # Get only one batch
+
+    # Evaluate metrics
+    evaluate_and_print_metrics(real_images_batch, generated_images, num_generated_samples, image_size)
+
+    # Pixel Distribution Comparison
+    all_real_pixels = []
+    num_batches_to_sample = 5
+    for i, (_, real_img_batch) in enumerate(dataloader):
+        all_real_pixels.append(real_img_batch.cpu().view(-1).numpy())
+        if i >= num_batches_to_sample - 1:
+            break
+    all_real_pixels_flat = np.concatenate(all_real_pixels)
+    flat_generated_images = generated_images.view(-1).numpy()
+    plot_pixel_distributions_comparison(all_real_pixels_flat, flat_generated_images)
+
+    # Visualize generated samples
+    plot_generated_samples(generated_images)
+
+    # Visualize Real vs. Generated Side-by-Side
+    plot_real_vs_generated_side_by_side(real_images_batch, generated_images)
