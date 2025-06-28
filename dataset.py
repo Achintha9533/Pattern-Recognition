@@ -2,6 +2,7 @@ import os
 from pathlib import Path
 import torch
 from torch.utils.data import Dataset, DataLoader
+import pydicom
 
 # Assuming image_size and transform are imported or defined globally if this were standalone
 # from transform import transform, image_size, load_dicom_image
