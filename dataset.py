@@ -4,6 +4,7 @@ import torch
 from torch.utils.data import Dataset, DataLoader
 import pydicom
 import warnings
+import torchvision.transforms as T  # Added import for transforms
 
 # Assuming image_size and transform are imported or defined globally if this were standalone
 # from transform import transform, image_size, load_dicom_image
