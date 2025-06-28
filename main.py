@@ -1,7 +1,14 @@
+# ====================================================
+# File: main.py
+# Description: Main script to orchestrate data loading, model training,
+#              image generation, and visualization/evaluation.
+# ====================================================
+
 import torch
 import torch.nn as nn
 from pathlib import Path
 import numpy as np
+import sys
 
 # Import components from other files
 # Adjust these imports based on how you structure your project's folders
@@ -29,7 +36,8 @@ if __name__ == "__main__":
 
     # --- 2. Transform ---
     # The 'transform' object and 'load_dicom_image' function are defined in transform.py
-    # import from transform.py if running as separate files
+    # Ensure the directory containing transform.py is in sys.path
+    sys.path.append(str(Path(__file__).parent))
     from transform import transform, load_dicom_image
 
     # --- 3. Dataset ---
