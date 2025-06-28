@@ -1,29 +1,25 @@
 import torch
-from tqdm import tqdm
+
+# Assuming model classes are imported from model.py
+# from model import CNF_UNet
 
 @torch.no_grad()
-def generate(model, z0, steps=100, device="cpu"):
+def generate(model, z0, steps=200):
     """
-    Generates images from a given noise input using the trained CNF_UNet model.
+    Generates images from initial noise (z0) using the trained generator model.
 
     Args:
-        model (torch.nn.Module): The trained CNF_UNet generator model.
-        z0 (torch.Tensor): Initial noise tensor (e.g., from torch.randn_like).
-                           Shape should be (batch_size, channels, height, width).
-        steps (int): Number of steps for the Euler integration. Higher steps
-                     generally lead to better quality but slower generation.
-        device (str or torch.device): The device to perform generation on.
+        model (CNF_UNet): The trained generator model.
+        z0 (torch.Tensor): Initial noise tensor.
+        steps (int): Number of steps to integrate the flow.
 
     Returns:
-        torch.Tensor: Generated images, clamped to the range [-1, 1].
-                      Shape is (batch_size, channels, height, width).
+        torch.Tensor: Generated images.
     """
-    model.eval()
-    z = z0.clone().to(device)
-    dt = 1.0 / steps
-    for i in tqdm(range(steps), desc="Generating Sample"):
-        t_val = i * dt # Calculate current time in [0, 1]
-        t = torch.full((z.shape[0],), t_val, device=device) # Consistent t tensor for batch
+    model.eval() # Set model to evaluation mode
+    z = z0.clone().to(z0.device) # Ensure z is on the correct device
+    for i in range(steps):
+        t = torch.tensor(i / (steps - 1), device=z.device).repeat(z.shape[0])
         v = model(z, t)
-        z = z + v * dt # Euler step
-    return z.clamp(-1, 1) # Clamp output to [-1, 1]
+        z = z + v / steps
+    return z
