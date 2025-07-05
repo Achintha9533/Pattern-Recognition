@@ -1,9 +1,12 @@
-.DS_Storemyenv/
-myenv/
+# macOS system files
+.DS_Store
+
+# Python environment and build artifacts
 myenv/
 __pycache__/
 *.pyc
 *.pyo
-.DS_Store
-.env
 *.dylib
+
+# Environment variables
+.env
