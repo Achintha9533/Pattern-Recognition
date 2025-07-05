@@ -191,6 +191,6 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 Contact
 For any questions or inquiries, please contact:
 
-Kasun Chinthaka Perera - your.email@example.com
-Project Link: https://github.com/your-username/your-project-name
+Kasun Achintha Perera - pereraachintha84@.com/kasunachintha.perera@studio.unibo.it
+Project Link: https://github.com/Achintha9533/Pattern-Recognition
 
