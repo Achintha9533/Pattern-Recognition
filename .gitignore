@@ -1,12 +1,26 @@
+# Virtual environment
+myenv/
+
+# Python cache and compiled files
+__pycache__/
+*.py[cod]
+*.so
+
 # macOS system files
 .DS_Store
 
-# Python environment and build artifacts
-myenv/
-__pycache__/
-*.pyc
-*.pyo
+# Environment variables and secrets
+.env
+
+# Large binaries (like PyTorch libs)
 *.dylib
 
-# Environment variables
-.env
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# VS Code settings (if you're using it)
+.vscode/
+
+# Logs and temporary files
+*.log
+*.tmp
