@@ -4,7 +4,7 @@ This project implements a Conditional Normalizing Flow (CNF) with a U-Net archit
 Table of Contents
 Features
 
-Installation
+Installation & Setup
 
 Usage
 
@@ -41,12 +41,16 @@ Comprehensive Evaluation: Assesses generated image quality using standard metric
 
 Visualization Tools: Provides integrated plotting functionalities for pixel distributions, training losses, and visual comparison of real vs. generated samples.
 
-Modular Codebase: Organized into distinct Python modules (dataset, model, train, generate, evaluate, visualize, config) for clarity and maintainability.
+Modular Codebase: Organized into distinct Python modules (config, dataset, model, train, generate, evaluate, visualize) for clarity and maintainability.
 
 Model Checkpointing: Automatically saves trained generator weights, allowing for model persistence and reusability.
 
-Installation
-To set up and run this project, follow these steps:
+Installation & Setup
+This project has been tested with Python 3.9+ on macOS and Windows, and should work with compatible PyTorch versions.
+
+See requirements.txt for the full list of dependencies.
+
+To install the application, you can just clone this repository and use pip.
 
 Clone the repository:
 
@@ -54,19 +58,22 @@ git clone https://github.com/Achintha9533/Pattern-Recognition.git
 cd Pattern-Recognition
 
 Create and activate a virtual environment (recommended):
+On macOS/Linux:
 
 python -m venv venv
-# On Windows:
-# .\venv\Scripts\activate
-# On macOS/Linux:
 source venv/bin/activate
+
+On Windows:
+
+python -m venv venv
+.\venv\Scripts\activate
 
 Install dependencies:
 All required Python packages are listed in requirements.txt. With your virtual environment activated, install them using pip:
 
 pip install -r requirements.txt
 
-(Note: The torch package installation might be specific to your CUDA version if you have a GPU. The requirements.txt will typically provide a CPU-only version by default or a specific CUDA version if frozen from a CUDA environment. Refer to PyTorch's official installation guide for GPU-specific instructions if needed.)
+Note on PyTorch: The requirements.txt will install the CPU version of PyTorch by default (or a specific CUDA version if frozen from a CUDA environment). If you have a CUDA-enabled GPU and wish to utilize it, please refer to the official PyTorch installation guide for the exact command that matches your CUDA version.
 
 Data Setup:
 This project requires a Lung CT DICOM dataset. The code is configured to expect patient subfolders named QIN LUNG CT 1 through QIN LUNG CT 47.
@@ -85,10 +92,12 @@ The primary entry point for the application is main.py within the Synthetic Imag
 
 To run the full workflow (data loading, model setup, training, generation, evaluation, and visualization), execute the following command from the root of your project:
 
-# On Windows:
+On Windows:
+
 python "Synthetic Image Generator"/main.py
 
-# On macOS/Linux:
+On macOS/Linux:
+
 python Synthetic\ Image\ Generator/main.py
 
 The script will:
@@ -176,42 +185,100 @@ Result (Example): 15.159373 dB
 
 Structural Similarity Index Measure (SSIM): Measures perceived structural similarity, considering luminance, contrast, and structure. Values closer to 1 indicate higher perceptual similarity.
 
-Result (Example): 0.228885
+**Result (Example):3 0.228885
 
 Fréchet Inception Distance (FID): A robust perceptual metric that measures the "distance" between the feature distributions of real and generated images using an Inception network. Lower values indicate higher quality and diversity of generated samples.
 
 Result (Example): 262.8561789017828
 
 Interpretation of Current Results:
-The provided example metrics (which you should replace with your actual results) suggest that while the model is learning some underlying patterns, there is significant room for improvement in generating high-fidelity and perceptually realistic Lung CT images. The relatively low PSNR and SSIM, coupled with a very high FID score, indicate a considerable discrepancy between the distributions of real and generated images. This implies that the generated samples may currently lack fine details, realistic textures, or the overall statistical properties necessary for high-quality medical image synthesis. Further training, hyperparameter tuning, architectural refinements, or an expanded dataset would be crucial next steps to enhance generative performance.
+The provided example metrics (which you should replace with your actual results) suggest that while the model is learning some underlying patterns, there is significant room for improvement in generating high-fidelity and perceptually realistic Lung CT images. The relatively low PSNR and SSIM, coupled with a very high FID score, indicate a considerable discrepancy between the distributions of real and generated images, implying that the generated samples may currently lack fine details, realistic textures, or the overall statistical properties necessary for high-quality medical image synthesis. Further training, hyperparameter tuning, architectural refinements, or an expanded dataset would be crucial next steps to enhance generative performance.
 
 Examples
 Below are visual examples demonstrating the model's capabilities and current performance.
 
 Initial Data and Noise Pixel Distributions
 
-(Replace with your actual plot file path)
+<p align="center">
+<img src="images/initial_pixel_distributions.png" alt="Initial Pixel Distribution Comparison" width="700"/>
+</p>
 
 Training Loss Curve
 
-(Replace with your actual plot file path)
+<p align="center">
+<img src="images/training_loss.png" alt="Generator Training Loss" width="500"/>
+</p>
 
 Sample Generated Images
 
-(Replace with your actual plot file path)
+<p align="center">
+<img src="images/generated_samples.png" alt="Sample Generated Images" width="700"/>
+</p>
 
 Real vs. Generated Images (Side-by-Side Comparison)
 
-(Replace with your actual plot file path)
+<p align="center">
+<img src="images/real_vs_generated.png" alt="Real vs. Generated Side-by-Side" width="700"/>
+</p>
 
 Testing
-The project includes a comprehensive suite of unit and high-level integration tests to ensure the correctness and reliability of individual modules and the overall application flow. Tests cover data loading, transformations, model components, training, generation, and evaluation logic.
+The project includes a comprehensive suite of unit and high-level integration tests written using pytest.
+
+Tests are designed to verify all core components of the image generation pipeline, including:
+
+DICOM data loading and preprocessing routines.
+
+Image transformations.
+
+Neural network module functionality and architecture.
+
+Training loop sanity checks.
+
+Image generation process.
+
+Evaluation metrics calculation.
 
 To run all tests, navigate to the root directory of the repository in your terminal and execute:
 
 pytest tests/
 
 This command will discover and execute all test files within the tests/ directory, providing a summary of passing and failing tests.
+
+Running Tests with Coverage
+
+You can run the tests and generate a coverage report by running this in the project root:
+
+On macOS/Linux:
+
+# Make the script executable (only needed once)
+chmod +x run_tests.sh
+# Run the tests with coverage
+./run_tests.sh
+
+Note: You may need to create a run_tests.sh script or directly use the coverage commands. A run_tests.sh might look like:
+
+#!/bin/bash
+source venv/bin/activate # Activate your virtual environment
+coverage run --rcfile=.coveragerc -m pytest tests/
+coverage html
+
+On Windows:
+
+.\venv\Scripts\activate # Activate your virtual environment
+coverage run --rcfile=.coveragerc -m pytest tests\
+coverage html
+
+After execution, a coverage report will be printed in the terminal (for both macOS and Windows) and a detailed HTML report will be saved in htmlcov/index.html.
+
+Coverage
+
+Test coverage is tracked using coverage.py.
+
+All non-visual functions and public interfaces are tested.
+
+Visualization functions and main CLI entrypoints are intentionally excluded, as per common testing practices for such components.
+
+Coverage status: Aim for high coverage (e.g., 90%+) for tested modules.
 
 Contributing
 Contributions are welcome! If you find a bug, have a feature request, or wish to contribute code, please feel free to:
@@ -225,12 +292,13 @@ Ensure your code adheres to the project's style and includes relevant tests.
 Submit a pull request.
 
 License
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is licensed under the MIT License.
 
 Contact
 For any questions, inquiries, or collaborations, please feel free to reach out:
 
 Kasun Achintha Perera
-Email: pereraachintha84@gmail.com/kasunachintha.perera@studio.unibo.it
-GitHub Profile: https://github.com/Pattern-Recognition
-Project Link: Achintha9533/Pattern-Recognition
+Email: pereraachintha84@gmail.com / kasunachintha.perera@studio.unibo.it
+GitHub Profile: https://github.com/Achintha9533
+Project Link: https://github.com/Achintha9533/Pattern-Recognition
+
