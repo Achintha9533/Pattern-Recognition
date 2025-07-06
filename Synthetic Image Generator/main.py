@@ -1,158 +1,161 @@
-# ====================================================
-# File: main.py
-# Description: Main script to orchestrate data loading, model training,
-#              image generation, and visualization/evaluation.
-# ====================================================
+# Synthetic Image Generator/main.py
 
 import torch
-import torch.nn as nn
-from pathlib import Path
-import numpy as np
-import sys
+import torch.optim as optim
+import logging
 
-# Import components from other files
-# Adjust these imports based on how you structure your project's folders
-# Assuming all .py files are in the same directory for simplicity here
+# Import configurations
+from . import config
 
-# Parameters (can be moved to a config file)
-base_dir = Path("/Users/kasunachinthaperera/Documents/VS Code/Pattern Recognition/Data/QIN LUNG CT")
-image_size = (64, 64)
-lambda_gan = 0.1
-G_LR = 1e-4
-D_LR = 1e-4
-epochs = 100
-batch_size = 64
-num_workers = 0 # Set to 0 for macOS compatibility
+# Import modules from your package
+from .dataset import LungCTWithGaussianDataset
+from .transforms import get_transforms, get_fid_transforms
+from .model import CNF_UNet
+from .train import train_model
+from .generate import generate_images
+from .evaluate import evaluate_model
+from .visualize import (
+    plot_pixel_distributions,
+    plot_sample_images_and_noise,
+    plot_training_losses,
+    plot_generated_pixel_distribution_comparison,
+    plot_sample_generated_images,
+    plot_real_vs_generated_side_by_side
+)
 
-# Setup device
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+# Configure basic logging for the entire application
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
 
-if __name__ == "__main__":
-    # --- 1. Imports and Global Settings (Implicitly handled by importing modules) ---
-    # Imports: os, pathlib, pydicom, numpy, torch, torchvision.transforms, warnings, matplotlib.pyplot, tqdm, torch.nn, torch.nn.functional, skimage.metrics
-    # These would typically be at the top of a monolithic script, but for separation,
-    # they are imported by the specific modules that need them.
-    # Global constants like base_dir, image_size, lambda_gan, G_LR, D_LR are set here in main.
+def main():
+    """
+    Main function to orchestrate the data loading, model setup, training,
+    generation, evaluation, and visualization process for the CNF-UNet.
+    """
+    logger.info("Starting Synthetic Image Generator application.")
 
-    # --- 2. Transform ---
-    # The 'transform' object and 'load_dicom_image' function are defined in transform.py
-    # Ensure the directory containing transform.py is in sys.path
-    sys.path.append(str(Path(__file__).parent))
-    from transform import transform, load_dicom_image
+    # === Device Setup ===
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    logger.info(f"Using device: {device}")
 
-    # --- 3. Dataset ---
-    # The 'LungCTWithGaussianDataset' class is defined in dataset.py
-    # import from dataset.py if running as separate files
-    from dataset import LungCTWithGaussianDataset
+    # === Image Preprocessing Transforms ===
+    transform = get_transforms(config.IMAGE_SIZE)
+    fid_transform = get_fid_transforms()
 
-    print("Initializing dataset...")
-    dataset = LungCTWithGaussianDataset(base_dir, transform=transform)
-    dataloader = torch.utils.data.DataLoader(
-        dataset,
-        batch_size=batch_size,
-        shuffle=True,
-        num_workers=num_workers,
-        pin_memory=True
-    )
-    print(f"Total images loaded: {len(dataset)}")
+    # === Dataset and DataLoader ===
+    try:
+        dataset = LungCTWithGaussianDataset(
+            base_dir=config.BASE_DIR,
+            transform=transform,
+            num_images_per_folder=config.NUM_IMAGES_PER_FOLDER,
+            image_size=config.IMAGE_SIZE
+        )
+        dataloader = torch.utils.data.DataLoader(
+            dataset,
+            batch_size=config.BATCH_SIZE,
+            shuffle=True,
+            num_workers=config.NUM_WORKERS,
+            pin_memory=True
+        )
+        logger.info(f"Dataset loaded successfully with {len(dataset)} images.")
+    except ValueError as e:
+        logger.critical(f"Failed to load dataset: {e}. Exiting.")
+        return
 
-    # Ensure dataloader is not empty
-    if len(dataloader) == 0:
-        raise RuntimeError("Dataloader is empty. No data to process. Check dataset path and contents.")
+    # === Model, Optimizer Setup ===
+    generator = CNF_UNet(time_embed_dim=256).to(device)
+    optimizer_gen = optim.Adam(generator.parameters(), lr=config.G_LR, betas=(0.5, 0.999))
+    logger.info("Generator model and optimizer initialized.")
 
-
-    # --- 4. Model ---
-    # The 'UNetBlock', 'CNF_UNet', and 'Discriminator' classes are defined in model.py
-    # import from model.py if running as separate files
-    from model import CNF_UNet, Discriminator
-
-    print("Initializing models...")
-    generator = CNF_UNet().to(device)
-    discriminator = Discriminator(img_channels=1, features_d=64).to(device)
-
-    # Optimizers and Loss Function (part of model/training setup)
-    optimizer_gen = torch.optim.Adam(generator.parameters(), lr=G_LR, betas=(0.5, 0.999))
-    optimizer_disc = torch.optim.Adam(discriminator.parameters(), lr=D_LR, betas=(0.5, 0.999))
-    criterion_gan = nn.BCEWithLogitsLoss()
-
-    # --- 5. Initial Data Visualization (using functions from visualize.py) ---
-    from visualize import plot_initial_distributions, plot_initial_samples
-
+    # === Initial Data Distribution Plots ===
     sample_noise_batch = None
     sample_image_batch = None
+    # Get one batch for initial visualization
     for noise, image in dataloader:
         sample_noise_batch = noise.cpu()
         sample_image_batch = image.cpu()
         break
-    
-    if sample_image_batch is not None and sample_noise_batch is not None:
-        plot_initial_distributions(sample_noise_batch, sample_image_batch)
-        plot_initial_samples(sample_noise_batch, sample_image_batch)
+    if sample_noise_batch is not None and sample_image_batch is not None:
+        plot_pixel_distributions(sample_image_batch, sample_noise_batch)
+        plot_sample_images_and_noise(sample_image_batch, sample_noise_batch)
     else:
-        print("Could not get sample batches for initial visualization.")
+        logger.warning("Could not retrieve sample batch for initial visualization.")
 
 
-    # --- 6. Train ---
-    # The 'train' function is defined in train.py
-    # import from train.py if running as separate files
-    from train import train
-
-    print("Starting training with GAN discriminator...")
-    # Pass necessary components to the train function
-    training_losses = train(
+    # === Training the CNF-UNet model ===
+    logger.info("Starting training of the CNF-UNet model.")
+    training_losses = train_model(
         generator_model=generator,
-        discriminator_model=discriminator,
         dataloader=dataloader,
-        epochs=epochs,
-        lambda_gan=lambda_gan,
-        optimizer_gen=optimizer_gen, # Pass optimizer and criterion
-        optimizer_disc=optimizer_disc,
-        criterion_gan=criterion_gan
-    )
-    print("Training finished.")
-
-    # --- 7. Visualization and Evaluation ---
-    # The 'generate' function is defined in generate.py
-    # The plotting and evaluation functions are in visualize.py
-    # import from generate.py and visualize.py
-    from generate import generate
-    from visualize import (
-        plot_training_losses, evaluate_and_print_metrics,
-        plot_pixel_distributions_comparison, plot_generated_samples,
-        plot_real_vs_generated_side_by_side
+        optimizer_gen=optimizer_gen,
+        epochs=config.EPOCHS,
+        device=device
     )
 
-    # Plot training losses
+    # === Save Model Weights ===
+    logger.info(f"Saving generator weights to {config.GENERATOR_CHECKPOINT_PATH}")
+    torch.save(generator.state_dict(), config.GENERATOR_CHECKPOINT_PATH)
+    logger.info("Model weights saved successfully.")
+
+    # === Plotting Training Losses ===
     plot_training_losses(training_losses)
 
-    # Sample generation
-    num_generated_samples = 64
-    initial_noise_for_generation = torch.randn(num_generated_samples, 1, *image_size).to(device)
-    generated_images = generate(generator, initial_noise_for_generation, steps=200)
-    generated_images = generated_images.cpu()
+    # === Sample Generation ===
+    logger.info(f"Generating {config.NUM_GENERATED_SAMPLES} sample images for evaluation.")
+    initial_noise_for_generation = torch.randn(config.NUM_GENERATED_SAMPLES, 1, *config.IMAGE_SIZE).to(device)
+    generated_images = generate_images(
+        model=generator,
+        initial_noise=initial_noise_for_generation,
+        steps=config.GENERATION_STEPS,
+        device=device
+    )
+    generated_images = generated_images.cpu() # Move to CPU for evaluation and plotting
 
-    # Get a batch of real images for comparison
-    real_images_batch = None
-    for _, real_img_batch_val in dataloader:
-        real_images_batch = real_img_batch_val
-        break # Get only one batch
+    # === Evaluation Metrics ===
+    # Get a batch of real images for comparison.
+    # Reset dataloader iterator to get fresh samples for evaluation
+    eval_dataloader = torch.utils.data.DataLoader(
+        dataset,
+        batch_size=config.BATCH_SIZE,
+        shuffle=True, # Shuffle to get different images
+        num_workers=config.NUM_WORKERS,
+        pin_memory=True
+    )
 
-    # Evaluate metrics
-    evaluate_and_print_metrics(real_images_batch, generated_images, num_generated_samples, image_size)
+    real_images_for_eval = []
+    for _, real_img_batch_val in eval_dataloader:
+        real_images_for_eval.append(real_img_batch_val)
+        if len(real_images_for_eval) * eval_dataloader.batch_size >= config.NUM_GENERATED_SAMPLES:
+            break
+    real_images_batch_tensor = torch.cat(real_images_for_eval, dim=0)[:config.NUM_GENERATED_SAMPLES]
 
-    # Pixel Distribution Comparison
+    evaluate_model(
+        real_images_batch_tensor=real_images_batch_tensor,
+        generated_images=generated_images,
+        fid_transform=fid_transform,
+        num_compare=config.NUM_GENERATED_SAMPLES
+    )
+
+    # === Distribution Plot for Generated Images vs. Real Images ===
     all_real_pixels = []
-    num_batches_to_sample = 5
-    for i, (_, real_img_batch) in enumerate(dataloader):
+    # Use the eval_dataloader to get a diverse sample for distribution plot
+    num_batches_to_sample = config.NUM_BATCHES_FOR_DIST_PLOT
+    for i, (_, real_img_batch) in enumerate(eval_dataloader):
         all_real_pixels.append(real_img_batch.cpu().view(-1).numpy())
         if i >= num_batches_to_sample - 1:
             break
     all_real_pixels_flat = np.concatenate(all_real_pixels)
     flat_generated_images = generated_images.view(-1).numpy()
-    plot_pixel_distributions_comparison(all_real_pixels_flat, flat_generated_images)
 
-    # Visualize generated samples
-    plot_generated_samples(generated_images)
+    plot_generated_pixel_distribution_comparison(all_real_pixels_flat, flat_generated_images)
 
-    # Visualize Real vs. Generated Side-by-Side
-    plot_real_vs_generated_side_by_side(real_images_batch, generated_images)
+    # === Visualize Sample Generated Images ===
+    plot_sample_generated_images(generated_images)
+
+    # === Visualize Real vs. Generated Side-by-Side ===
+    plot_real_vs_generated_side_by_side(real_images_batch_tensor, generated_images)
+
+    logger.info("Application finished.")
+
+if __name__ == "__main__":
+    main()
