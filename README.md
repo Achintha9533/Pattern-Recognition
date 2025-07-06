@@ -46,6 +46,7 @@ It includes:
 * **Visualization Tools:** Provides integrated plotting functionalities for pixel distributions, training losses, and visual comparison of real vs. generated samples.
 * **Modular Codebase:** Organized into distinct Python modules (`config`, `dataset`, `model`, `train`, `generate`, `evaluate`, `visualize`) for clarity and maintainability.
 * **Model Checkpointing:** Automatically saves trained generator weights, allowing for model persistence and reusability.
+* **Pre-trained Model Loading:** Includes utility to automatically download and load pre-trained model weights from Google Drive for quick setup and inference (`load_model.py`). The first run will automatically download the weights.
 
 ---
 
