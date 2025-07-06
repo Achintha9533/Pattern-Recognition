@@ -7,6 +7,7 @@ import numpy as np
 from typing import Dict, Any, Tuple, Union
 from tqdm import tqdm # Import tqdm for progress bars in training
 import torch.nn.functional as F # Import F for functional operations in training
+import os
 
 # Import configurations
 from . import config
@@ -26,6 +27,10 @@ from .visualize import (
     plot_real_vs_generated_side_by_side
 )
 
+# Configure logging for the main script
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
+
 """
 Main application entry point for the Synthetic Image Generator.
 
@@ -42,229 +47,210 @@ This script orchestrates the entire workflow of the project:
 10. Evaluation of generated images using various metrics (MSE, PSNR, SSIM, FID).
 11. Further visualization of generated image quality and distributions.
 
-The application leverages a modular structure, with distinct functionalities
-separated into `config`, `dataset`, `transforms`, `model`, `generate`,
-`evaluate`, and `visualize` modules. The training logic is now integrated
-directly into this `main.py` file.
+The application uses a Conditional Normalizing Flow (CNF) model, specifically a U-Net
+architecture, to generate synthetic medical images (e.g., Lung CT scans) from Gaussian noise.
+It leverages Flow Matching for training stability and efficiency.
 """
-
-# Configure basic logging for the entire application.
-# Messages with INFO level and above will be displayed.
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
-logger = logging.getLogger(__name__)
-
-def train_model(
-    generator_model: torch.nn.Module,
-    dataloader: torch.utils.data.DataLoader,
-    optimizer_gen: torch.optim.Optimizer,
-    epochs: int = 100,
-    device: Union[str, torch.device] = 'cpu'
-) -> Dict[str, Any]:
-    """
-    Trains the generator model (CNF_UNet) using the Flow Matching objective.
-
-    The Flow Matching objective trains the model to predict the velocity field
-    that transports samples from a simple base distribution (Gaussian noise)
-    to the target data distribution. This is achieved by interpolating between
-    noise and real data at random time steps and training the model to predict
-    the difference vector.
-
-    Args:
-        generator_model (torch.nn.Module): The generator model (an instance of CNF_UNet)
-                                           to be trained.
-        dataloader (torch.utils.data.DataLoader): DataLoader providing batches of
-                                                  (noise, real_image) pairs.
-        optimizer_gen (torch.optim.Optimizer): The optimizer configured for the
-                                               generator_model's parameters.
-        epochs (int): The total number of training epochs to run.
-        device (Union[str, torch.device]): The device ('cuda' or 'cpu') on which
-                                           to perform training.
-
-    Returns:
-        Dict[str, Any]: A dictionary containing training statistics, specifically:
-                        - 'gen_flow_losses' (List[float]): A list of average Flow Matching
-                                                         losses for the generator, per epoch.
-    """
-    generator_model.train() # Set the model to training mode
-    logger.info(f"Starting training for {epochs} epochs on device: {device}")
-
-    gen_flow_losses: list[float] = [] # List to store average generator flow losses per epoch
-
-    for epoch in range(epochs):
-        epoch_gen_flow_loss: float = 0.0
-        # Use tqdm for a progress bar during the epoch to visualize training progress.
-        for i, (z0, x1_real) in enumerate(tqdm(dataloader, desc=f"Epoch {epoch+1}/{epochs}")):
-            # Move data to the specified device
-            z0, x1_real = z0.to(device), x1_real.to(device)
-            batch_size: int = x1_real.size(0)
-
-            # --- Train Generator (CNF_UNet) ---
-            optimizer_gen.zero_grad() # Clear gradients from the previous iteration
-
-            # CNF Flow Matching Loss Calculation:
-            # 1. Sample time 't' uniformly from [0, 1] for each sample in the batch.
-            #    This ensures the model learns across the entire continuous flow path.
-            t: torch.Tensor = torch.rand(batch_size, device=device)
-
-            # 2. Interpolate between initial noise (z0) and real data (x1_real) at time 't'.
-            #    xt represents an intermediate state along the flow from noise to data.
-            #    .view(-1, 1, 1, 1) broadcasts 't' across image dimensions for element-wise multiplication.
-            xt: torch.Tensor = (1 - t.view(-1, 1, 1, 1)) * z0 + t.view(-1, 1, 1, 1) * x1_real
-
-            # 3. Define the target velocity vector (v_target).
-            #    For linear interpolation, the true velocity is simply the difference between
-            #    the end point (real data) and the start point (noise).
-            v_target: torch.Tensor = (x1_real - z0)
-
-            # 4. The generator predicts the velocity field (v_pred) at the interpolated state xt and time t.
-            v_pred: torch.Tensor = generator_model(xt, t)
-
-            # 5. Calculate the loss as the Mean Squared Error between the predicted and target velocities.
-            loss_flow_matching: torch.Tensor = F.mse_loss(v_pred, v_target)
-
-            # Combine losses (currently, only flow matching loss is used for the generator).
-            total_gen_loss: torch.Tensor = loss_flow_matching
-            total_gen_loss.backward() # Perform backpropagation to compute gradients
-            optimizer_gen.step() # Update model parameters based on computed gradients
-
-            # Accumulate loss for reporting the average loss of the current epoch.
-            epoch_gen_flow_loss += loss_flow_matching.item()
-
-        # Calculate the average loss for the current epoch.
-        avg_gen_flow_loss: float = epoch_gen_flow_loss / len(dataloader)
-        gen_flow_losses.append(avg_gen_flow_loss)
-
-        # Log the average loss for the epoch.
-        logger.info(f"Epoch {epoch+1}: G_Flow_Loss={avg_gen_flow_loss:.6f}")
-
-    logger.info("Training complete.")
-    return {
-        'gen_flow_losses': gen_flow_losses,
-    }
-
 
 def main() -> None:
     """
-    Main function to orchestrate the data loading, model setup, training,
-    generation, evaluation, and visualization process for the CNF-UNet.
+    Executes the full pipeline for training, generating, and evaluating the
+    Synthetic Image Generator model.
 
-    This function serves as the primary execution flow of the synthetic
-    image generation application. It handles initialization, calls
-    sub-modules for specific tasks, and manages the overall lifecycle.
+    This function encapsulates the entire workflow:
+    - Initializes hardware device (GPU if available, else CPU).
+    - Configures data transformations.
+    - Sets up the dataset and data loaders.
+    - Instantiates the CNF_UNet model and its optimizer.
+    - Performs initial data visualization (pixel distributions, sample images).
+    - Runs the training loop, saving model checkpoints.
+    - Generates new synthetic images using the trained model.
+    - Evaluates the generated images against real data using various metrics.
+    - Visualizes training progress and generated image quality.
+
+    No direct inputs are taken as arguments; all configurations are loaded
+    from the `config` module.
+
+    Returns:
+        None: The function completes the entire training and evaluation process.
+
+    Potential Exceptions Raised:
+        - FileNotFoundError: If `config.BASE_DIR` is incorrect or data files are missing.
+        - RuntimeError: If PyTorch operations fail (e.g., out of GPU memory).
+        - Any exceptions propagated from `dataset.py`, `train.py`, `generate.py`,
+          `evaluate.py`, or `visualize.py` during their respective operations.
+
+    Example of Usage:
+    ```python
+    # To run the entire pipeline, simply execute this module:
+    # python -m your_package_name.main
+    # or if main.py is in the top level and runnable:
+    # python main.py
+    ```
+
+    Relationships with other functions/modules:
+    - Heavily relies on `config` for all hyperparameters and paths.
+    - Imports and calls functions from `dataset`, `transforms`, `model`,
+      `train`, `generate`, `evaluate`, and `visualize`. This is the orchestrator.
+
+    Explanation of the theory:
+    - **Orchestration:** This `main` function serves as the central control flow,
+      integrating all disparate components of the generative modeling pipeline.
+      It demonstrates a typical machine learning project structure.
+    - **Hyperparameter Management:** All critical parameters are externalized to
+      `config.py`, making the system flexible and easy to experiment with different
+      settings without modifying the core logic.
+
+    References for the theory:
+    - Standard practices in machine learning project structuring.
+    - Best practices for experiment management.
     """
-    logger.info("Starting Synthetic Image Generator application.")
+    logger.info("Starting Synthetic Image Generator pipeline.")
 
     # === Device Setup ===
-    # Determine whether to use CUDA (GPU) if available, otherwise fall back to CPU.
     device: torch.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     logger.info(f"Using device: {device}")
 
-    # === Image Preprocessing Transforms ===
-    # Get the transformation pipeline for model input (resizing, normalization).
-    transform: T.Compose = get_transforms(config.IMAGE_SIZE)
-    # Get the transformation pipeline specifically for FID calculation (denormalization, PIL conversion).
-    fid_transform: T.Compose = get_fid_transforms()
-    logger.info("Image transformations initialized.")
+    # === Data Transformations ===
+    # Transforms for preparing input images for the model (resize, normalize to [-1, 1])
+    data_transform = get_transforms(image_size=config.IMAGE_SIZE)
+    # Transforms specifically for FID calculation (de-normalize to [0,1], convert to PIL)
+    fid_transform = get_fid_transforms()
 
     # === Dataset and DataLoader ===
-    # Initialize the custom dataset and DataLoader for efficient batch processing.
-    try:
-        dataset: LungCTWithGaussianDataset = LungCTWithGaussianDataset(
-            base_dir=config.BASE_DIR,
-            transform=transform,
-            num_images_per_folder=config.NUM_IMAGES_PER_FOLDER,
-            image_size=config.IMAGE_SIZE # Passed for black image fallback consistency
-        )
-        dataloader: torch.utils.data.DataLoader = torch.utils.data.DataLoader(
-            dataset,
-            batch_size=config.BATCH_SIZE,
-            shuffle=True,
-            num_workers=config.NUM_WORKERS,
-            pin_memory=True # Speeds up data transfer to GPU if available
-        )
-        logger.info(f"Dataset loaded successfully with {len(dataset)} images.")
-    except ValueError as e:
-        # Log a critical error and exit if the dataset cannot be loaded,
-        # as the application cannot proceed without data.
-        logger.critical(f"Failed to load dataset: {e}. Exiting application.")
-        return
+    # Initialize the custom dataset
+    dataset = LungCTWithGaussianDataset(
+        base_dir=config.BASE_DIR,
+        num_images_per_folder=config.NUM_IMAGES_PER_FOLDER,
+        image_size=config.IMAGE_SIZE,
+        transform=data_transform
+    )
+    # Create DataLoader for batching and shuffling data
+    dataloader = torch.utils.data.DataLoader(
+        dataset,
+        batch_size=config.BATCH_SIZE,
+        shuffle=True,
+        num_workers=config.NUM_WORKERS,
+        pin_memory=True if device.type == 'cuda' else False
+    )
+    logger.info(f"Dataset initialized with {len(dataset)} images. DataLoader batch size: {config.BATCH_SIZE}")
 
-    # === Model, Optimizer Setup ===
-    # Initialize the CNF_UNet generator model and move it to the selected device.
-    generator: CNF_UNet = CNF_UNet(time_embed_dim=256).to(device)
-    # Initialize the Adam optimizer for the generator.
-    optimizer_gen: optim.Adam = optim.Adam(generator.parameters(), lr=config.G_LR, betas=(0.5, 0.999))
-    logger.info("Generator model and optimizer initialized.")
+    # Create a separate DataLoader for evaluation images for FID
+    # This is to ensure that a diverse set of real images is used for FID calculation
+    # without being limited by the training batch size or order.
+    # It takes all found images, ensuring a larger sample for FID.
+    eval_dataset = LungCTWithGaussianDataset(
+        base_dir=config.BASE_DIR,
+        # Fetch all available images for a robust FID calculation
+        num_images_per_folder=dataset.num_images_per_folder * 50, # Use a large number to get all images
+        image_size=config.IMAGE_SIZE,
+        transform=data_transform
+    )
+    eval_dataloader = torch.utils.data.DataLoader(
+        eval_dataset,
+        batch_size=config.BATCH_SIZE,
+        shuffle=False, # No need to shuffle for evaluation
+        num_workers=config.NUM_WORKERS,
+        pin_memory=True if device.type == 'cuda' else False
+    )
+    logger.info(f"Evaluation dataset initialized with {len(eval_dataset)} images.")
 
-    # === Initial Data Distribution Plots ===
-    # Retrieve one batch from the DataLoader for initial visualization of data and noise distributions.
-    sample_noise_batch: Optional[torch.Tensor] = None
-    sample_image_batch: Optional[torch.Tensor] = None
-    for noise, image in dataloader:
-        sample_noise_batch = noise.cpu() # Move to CPU for plotting
-        sample_image_batch = image.cpu() # Move to CPU for plotting
-        break # Only need one batch for initial samples
 
-    if sample_noise_batch is not None and sample_image_batch is not None:
+    # === Model Setup ===
+    # Initialize the CNF_UNet generator model
+    # Assuming single-channel (grayscale) images
+    generator_model = CNF_UNet(img_channels=1, time_embed_dim=256, base_channels=64).to(device)
+    logger.info(f"Generator model initialized and moved to {device}.")
+
+    # Load pre-trained model if it exists
+    if config.GENERATOR_CHECKPOINT_PATH.exists():
+        logger.info(f"Loading generator checkpoint from {config.GENERATOR_CHECKPOINT_PATH}")
+        try:
+            generator_model.load_state_dict(torch.load(config.GENERATOR_CHECKPOINT_PATH, map_location=device))
+            logger.info("Generator model checkpoint loaded successfully.")
+        except Exception as e:
+            logger.error(f"Error loading generator checkpoint: {e}. Starting training from scratch.")
+    else:
+        logger.info("No generator checkpoint found. Starting training from scratch.")
+
+    # Initialize the optimizer for the generator
+    optimizer_gen = optim.Adam(generator_model.parameters(), lr=config.G_LR)
+    logger.info(f"Optimizer initialized with learning rate: {config.G_LR}")
+
+    # === Initial Data Visualization ===
+    # Get a sample batch for initial visualization of distributions
+    if len(dataset) > 0:
+        sample_noise_batch, sample_image_batch = next(iter(dataloader))
         plot_pixel_distributions(sample_image_batch, sample_noise_batch)
         plot_sample_images_and_noise(sample_image_batch, sample_noise_batch)
     else:
-        logger.warning("Could not retrieve sample batch for initial visualization. Dataloader might be empty.")
+        logger.warning("Dataset is empty. Skipping initial data visualizations.")
 
 
-    # === Training the CNF-UNet model ===
-    logger.info(f"Starting training of the CNF-UNet model for {config.EPOCHS} epochs.")
-    training_losses: Dict[str, Any] = train_model( # Call the now-local train_model
-        generator_model=generator,
-        dataloader=dataloader,
-        optimizer_gen=optimizer_gen,
-        epochs=config.EPOCHS,
-        device=device
-    )
-    logger.info("Training complete.")
+    # === Training the Model ===
+    logger.info("Starting model training...")
+    training_results = {}
+    try:
+        from .train import train_model # Import here to avoid circular dependencies during initial imports
 
-    # === Save Model Weights ===
-    logger.info(f"Saving generator weights to {config.GENERATOR_CHECKPOINT_PATH}")
-    # Save only the model's state dictionary (learnable parameters) for efficient storage.
-    torch.save(generator.state_dict(), config.GENERATOR_CHECKPOINT_PATH)
-    logger.info("Model weights saved successfully.")
+        training_results = train_model(
+            generator_model=generator_model,
+            dataloader=dataloader,
+            optimizer_gen=optimizer_gen,
+            epochs=config.EPOCHS,
+            device=device
+        )
+        logger.info("Model training completed.")
+    except Exception as e:
+        logger.error(f"An error occurred during training: {e}")
+        # Optionally exit or handle the error gracefully
+        return
 
-    # === Plotting Training Losses ===
-    plot_training_losses(training_losses)
+    # Save the trained generator model
+    try:
+        torch.save(generator_model.state_dict(), config.GENERATOR_CHECKPOINT_PATH)
+        logger.info(f"Trained generator model saved to {config.GENERATOR_CHECKPOINT_PATH}")
+    except Exception as e:
+        logger.error(f"Failed to save generator model checkpoint: {e}")
 
-    # === Sample Generation ===
-    logger.info(f"Generating {config.NUM_GENERATED_SAMPLES} sample images for evaluation.")
-    # Generate initial random noise for the generation process.
-    initial_noise_for_generation: torch.Tensor = torch.randn(
-        config.NUM_GENERATED_SAMPLES, 1, *config.IMAGE_SIZE
+    # Plot training losses
+    if 'gen_flow_losses' in training_results and training_results['gen_flow_losses']:
+        plot_training_losses(training_results['gen_flow_losses'])
+    else:
+        logger.warning("No training loss data to plot.")
+
+    # === Image Generation ===
+    logger.info("Generating synthetic images for evaluation.")
+    # Create initial noise for generation (same shape as expected image output)
+    # The number of samples for generation is defined in config.
+    generation_noise = torch.randn(
+        config.NUM_GENERATED_SAMPLES,
+        1, # Single channel for grayscale images
+        config.IMAGE_SIZE[0],
+        config.IMAGE_SIZE[1]
     ).to(device)
-    # Generate images using the trained generator model.
-    generated_images: torch.Tensor = generate_images(
-        model=generator,
-        initial_noise=initial_noise_for_generation,
+
+    generated_images = generate_images(
+        model=generator_model,
+        initial_noise=generation_noise,
         steps=config.GENERATION_STEPS,
         device=device
     )
-    generated_images = generated_images.cpu() # Move generated images to CPU for evaluation and plotting
+    # Move generated images back to CPU for evaluation/visualization
+    generated_images = generated_images.cpu()
+    logger.info(f"Generated {generated_images.shape[0]} synthetic images.")
 
-    # === Evaluation Metrics ===
-    # Prepare real images for comparison with generated images.
-    # A new DataLoader is created to ensure fresh, shuffled samples for evaluation.
-    eval_dataloader: torch.utils.data.DataLoader = torch.utils.data.DataLoader(
-        dataset,
-        batch_size=config.BATCH_SIZE,
-        shuffle=True, # Shuffle to get different images for evaluation
-        num_workers=config.NUM_WORKERS,
-        pin_memory=True
-    )
-
-    real_images_for_eval: list[torch.Tensor] = []
-    # Collect enough real images to match the number of generated samples.
-    for _, real_img_batch_val in eval_dataloader:
-        real_images_for_eval.append(real_img_batch_val)
-        if len(real_images_for_eval) * eval_dataloader.batch_size >= config.NUM_GENERATED_SAMPLES:
+    # === Model Evaluation ===
+    logger.info("Evaluating generated images against real data.")
+    real_images_for_eval: List[torch.Tensor] = []
+    # Collect real images from the eval_dataloader up to NUM_GENERATED_SAMPLES
+    # to ensure consistency for metrics that compare real vs generated sets.
+    # It's important to collect enough real images to match the count of generated ones.
+    for _, real_img_batch in tqdm(eval_dataloader, desc="Collecting Real Images for Evaluation"):
+        real_images_for_eval.append(real_img_batch)
+        if sum(t.shape[0] for t in real_images_for_eval) >= config.NUM_GENERATED_SAMPLES:
             break
-    # Concatenate collected batches and slice to match the exact number of generated samples.
+    # Concatenate and potentially truncate to match the exact number of generated samples.
     real_images_batch_tensor: torch.Tensor = torch.cat(real_images_for_eval, dim=0)[:config.NUM_GENERATED_SAMPLES]
 
     # Call the evaluation module to calculate and log metrics.
@@ -277,7 +263,7 @@ def main() -> None:
 
     # === Distribution Plot for Generated Images vs. Real Images ===
     logger.info("Preparing pixel distribution comparison plot.")
-    all_real_pixels: list[np.ndarray] = []
+    all_real_pixels: List[np.ndarray] = []
     # Collect pixel data from a few batches of real images for a representative distribution.
     num_batches_to_sample: int = config.NUM_BATCHES_FOR_DIST_PLOT
     for i, (_, real_img_batch) in enumerate(eval_dataloader):
@@ -293,9 +279,10 @@ def main() -> None:
     plot_sample_generated_images(generated_images)
 
     # === Visualize Real vs. Generated Side-by-Side ===
-    plot_real_vs_generated_side_by_side(real_images_batch_tensor, generated_images)
+    plot_real_vs_generated_side_by_side(real_images_batch_tensor, generated_images, config.NUM_SAMPLES_SIDE_BY_SIDE)
 
-    logger.info("Application finished.")
+    logger.info("Synthetic Image Generator pipeline finished.")
+
 
 if __name__ == "__main__":
     main()
