@@ -1,38 +1,42 @@
-import numpy as np
-import torch
+# Synthetic Image Generator/transforms.py
+
 import torchvision.transforms as T
-import pydicom
-import warnings
+import logging
 
-# Desired output image size (height, width) - Defined here for transform
-image_size = (64, 64)
+# Configure logging for this module
+logger = logging.getLogger(__name__)
 
-# === Image preprocessing transform ===
-# Resize images, convert to tensor, normalize pixel values to [-1, 1]
-transform = T.Compose([
-    T.ToPILImage(),               # Convert numpy array to PIL Image for transformations
-    T.Resize(image_size),         # Resize to 64x64
-    T.ToTensor(),                 # Convert PIL Image to torch tensor (C x H x W), scales [0,255] to [0,1] for uint8, or [0,1] for float
-    T.Normalize(mean=[0.5], std=[0.5])  # Normalize to [-1, 1]
-])
+def get_transforms(image_size=(64, 64)):
+    """
+    Returns the image preprocessing transformations for model input.
 
-# === Load and normalize a single DICOM image ===
-def load_dicom_image(file_path):
-    try:
-        # Read DICOM file using pydicom
-        ds = pydicom.dcmread(file_path)
-        img = ds.pixel_array.astype(np.float32)  # Convert pixel data to float32 numpy array
+    Args:
+        image_size (tuple): Desired output image size (height, width).
 
-        img_min = img.min()
-        img_max = img.max()
-        if img_max == img_min: # Handle cases of uniform images to prevent division by zero
-            img = np.zeros_like(img)
-        else:
-            # Normalize to [0, 1] directly as float32
-            img = (img - img_min) / (img_max - img_min)
+    Returns:
+        torchvision.transforms.Compose: The transformation pipeline.
+    """
+    logger.info(f"Setting up image transformation to resize to {image_size} and normalize to [-1, 1].")
+    transform = T.Compose([
+        T.ToPILImage(),               # Convert numpy array to PIL Image for transformations
+        T.Resize(image_size),         # Resize to specified size
+        T.ToTensor(),                 # Convert PIL Image to torch tensor (C x H x W), scales [0,255] to [0,1] for uint8, or [0,1] for float
+        T.Normalize(mean=[0.5], std=[0.5])  # Normalize to [-1, 1]
+    ])
+    return transform
 
-        return img
+def get_fid_transforms():
+    """
+    Returns the image transformations specifically for FID calculation.
+    De-normalizes from [-1, 1] to [0, 1] and converts to PIL Image
+    (which will be in [0, 255] for saving as PNG).
 
-    except Exception as e:
-        warnings.warn(f"Failed to load {file_path}: {e}")
-        return None
+    Returns:
+        torchvision.transforms.Compose: The FID transformation pipeline.
+    """
+    logger.info("Setting up FID transformation to de-normalize to [0, 1] and convert to PIL Image.")
+    fid_transform = T.Compose([
+        T.Normalize(mean=[-1.0], std=[2.0]), # De-normalize from [-1, 1] to [0, 1]
+        T.ToPILImage(), # Converts to PIL Image, which will be in [0, 255] for saving as PNG
+    ])
+    return fid_transform
