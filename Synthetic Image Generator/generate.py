@@ -1,25 +1,44 @@
+# Synthetic Image Generator/generate.py
+
 import torch
+import logging
 
-# Assuming model classes are imported from model.py
-# from model import CNF_UNet
+# Configure logging for this module
+logger = logging.getLogger(__name__)
 
-@torch.no_grad()
-def generate(model, z0, steps=200):
+@torch.no_grad() # Decorator to disable gradient calculations for inference
+def generate_images(model, initial_noise, steps=200, device='cpu'):
     """
-    Generates images from initial noise (z0) using the trained generator model.
+    Generates images by simulating the CNF's forward pass from noise to data.
 
     Args:
-        model (CNF_UNet): The trained generator model.
-        z0 (torch.Tensor): Initial noise tensor.
-        steps (int): Number of steps to integrate the flow.
+        model (torch.nn.Module): The trained generator (CNF_UNet) model.
+        initial_noise (torch.Tensor): The starting noise tensor (e.g., random Gaussian noise).
+                                      Shape: (batch_size, 1, H, W)
+        steps (int): Number of discrete steps to simulate the continuous flow.
+        device (str or torch.device): The device to run generation on ('cuda' or 'cpu').
 
     Returns:
-        torch.Tensor: Generated images.
+        torch.Tensor: The generated image tensor.
     """
     model.eval() # Set model to evaluation mode
-    z = z0.clone().to(z0.device) # Ensure z is on the correct device
+    logger.info(f"Starting image generation with {steps} steps on device: {device}.")
+
+    # Clone noise and move to device
+    z = initial_noise.clone().to(device)
+
+    # Iterate through the steps to simulate the flow
     for i in range(steps):
-        t = torch.tensor(i / (steps - 1), device=z.device).repeat(z.shape[0])
+        # Calculate current time 't' for the current step
+        t_val = i / (steps - 1)
+        # Create a time tensor for the batch
+        t = torch.tensor(t_val, device=device).repeat(z.shape[0])
+
+        # Predict the velocity field at the current state 'z' and time 't'
         v = model(z, t)
+        # Update the state 'z' by moving along the predicted velocity field
+        # The division by 'steps' scales the velocity for a discrete step
         z = z + v / steps
+
+    logger.info("Image generation complete.")
     return z
