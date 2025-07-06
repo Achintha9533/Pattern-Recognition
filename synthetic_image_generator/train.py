@@ -13,6 +13,10 @@ logger = logging.getLogger(__name__)
 This module contains the training loop for the Conditional Normalizing Flow (CNF)
 model. It implements the Flow Matching objective to train the generator to predict
 the velocity field that transforms Gaussian noise into target images.
+
+The training process involves iteratively updating the generator's parameters
+by minimizing the L2 distance between its predicted velocity field and a
+target velocity field derived from linearly interpolating between noise and real data.
 """
 
 def train_model(
@@ -29,53 +33,121 @@ def train_model(
     that transports samples from a simple base distribution (Gaussian noise)
     to the target data distribution. This is achieved by interpolating between
     noise and real data at random time steps and training the model to predict
-    the difference vector.
+    the difference vector (the "true" velocity for linear interpolation).
+    The training loop iterates over a specified number of epochs, processes
+    data in batches, and updates model weights using an optimizer.
 
     Args:
         generator_model (torch.nn.Module): The generator model (an instance of CNF_UNet)
-                                           to be trained.
+                                           to be trained. This model is expected to
+                                           predict a velocity field.
         dataloader (torch.utils.data.DataLoader): DataLoader providing batches of
                                                   (noise, real_image) pairs.
-        optimizer_gen (torch.optim.Optimizer): The optimizer configured for the
-                                               generator_model's parameters.
-        epochs (int): The total number of training epochs to run.
-        device (Union[str, torch.device]): The device ('cuda' or 'cpu') on which
-                                           to perform training.
+        optimizer_gen (torch.optim.Optimizer): The optimizer responsible for updating
+                                               the `generator_model`'s parameters.
+                                               (e.g., `torch.optim.Adam`).
+        epochs (int): The total number of training epochs. Defaults to 100.
+        device (Union[str, torch.device]): The device ('cpu' or 'cuda') on which
+                                           to perform training. Defaults to 'cpu'.
 
     Returns:
-        Dict[str, Any]: A dictionary containing training statistics, specifically:
+        Dict[str, Any]: A dictionary containing training statistics,
+                        specifically:
                         - 'gen_flow_losses' (List[float]): A list of average Flow Matching
-                                                         losses for the generator, per epoch.
-    """
-    generator_model.train() # Set the model to training mode
-    logger.info(f"Starting training for {epochs} epochs on device: {device}")
+                                                         losses for each epoch.
 
-    gen_flow_losses: list[float] = [] # List to store average generator flow losses per epoch
+    Potential Exceptions Raised:
+        - RuntimeError: If PyTorch operations fail (e.g., out of GPU memory).
+        - ValueError: If `epochs` is non-positive or `dataloader` is empty.
+        - Any exceptions during data loading from `dataloader`.
+
+    Example of Usage:
+    ```python
+    import torch
+    import torch.optim as optim
+    from .model import CNF_UNet # Assuming CNF_UNet is defined
+    from .dataset import LungCTWithGaussianDataset # Assuming dataset is defined
+    from .transforms import get_transforms
+    # from . import config # If using config for epochs, lr, etc.
+
+    # Dummy setup (replace with actual data and model initialization)
+    # img_size = (64, 64)
+    # data_transform = get_transforms(img_size)
+    # dataset = LungCTWithGaussianDataset(
+    #     base_dir=Path("path/to/dummy_data"), # Replace
+    #     num_images_per_folder=1,
+    #     image_size=img_size,
+    #     transform=data_transform
+    # )
+    # dataloader = torch.utils.data.DataLoader(dataset, batch_size=4)
+    # generator = CNF_UNet(img_channels=1, time_embed_dim=256, base_channels=64)
+    # optimizer = optim.Adam(generator.parameters(), lr=1e-4)
+
+    # training_stats = train_model(
+    #     generator_model=generator,
+    #     dataloader=dataloader,
+    #     optimizer_gen=optimizer,
+    #     epochs=10,
+    #     device='cpu'
+    # )
+    # print("Training completed. Losses:", training_stats['gen_flow_losses'])
+    ```
+
+    Relationships with other functions/modules:
+    - Calls `generator_model.forward` (an instance of `CNF_UNet`).
+    - Uses `torch.nn.functional.mse_loss` for the loss calculation.
+    - Interacts with `torch.optim.Optimizer` for parameter updates.
+    - Consumes data from `torch.utils.data.DataLoader`.
+    - Called by `main.py` to perform the training phase.
+
+    Explanation of the theory:
+    - **Flow Matching:** A recent and powerful technique for training continuous
+      normalizing flows and diffusion models. Instead of directly learning the
+      data likelihood (which can be complex), it learns a conditional vector field
+      (velocity field) that transports samples from a simple distribution (noise)
+      to the data distribution. The key idea is to define a "target" velocity
+      field for simple paths (like straight lines between noise and data) and
+      then train the model to predict this target velocity. This simplifies
+      the optimization problem and improves training stability.
+    - **Linear Interpolation:** In this implementation, the path between noise `z0`
+      and real data `x1_real` is assumed to be a straight line. For a point `xt`
+      on this line at time `t`, the "true" velocity `v_target` is simply `x1_real - z0`.
+    - **Mean Squared Error (MSE) Loss:** Used as the objective function to minimize
+      the difference between the model's predicted velocity `v_pred` and the
+      target velocity `v_target`.
+
+    References for the theory:
+    - Lipman, Y., Chen, R. T. Q., & Duvenaud, D. K. (2022). Flow Matching for Generative Modeling.
+      In International Conference on Learning Representations. https://arxiv.org/abs/2210.02747
+    """
+    logger.info(f"Starting training for {epochs} epochs on device: {device}")
+    generator_model.to(device)
+    generator_model.train() # Set model to training mode
+
+    gen_flow_losses: List[float] = []
 
     for epoch in range(epochs):
-        epoch_gen_flow_loss: float = 0.0
-        # Use tqdm for a progress bar during the epoch to visualize training progress.
-        for i, (z0, x1_real) in enumerate(tqdm(dataloader, desc=f"Epoch {epoch+1}/{epochs}")):
-            # Move data to the specified device
-            z0, x1_real = z0.to(device), x1_real.to(device)
-            batch_size: int = x1_real.size(0)
+        epoch_gen_flow_loss = 0.0
+        # Wrap dataloader with tqdm for a progress bar during each epoch
+        for batch_idx, (noise_batch, real_images_batch) in enumerate(tqdm(dataloader, desc=f"Epoch {epoch+1}/{epochs}")):
+            # Move data to the appropriate device
+            z0: torch.Tensor = noise_batch.to(device) # Initial noise (z0)
+            x1_real: torch.Tensor = real_images_batch.to(device) # Real data (x1)
 
-            # --- Train Generator (CNF_UNet) ---
-            optimizer_gen.zero_grad() # Clear gradients from the previous iteration
+            # Reset gradients for the generator's optimizer
+            optimizer_gen.zero_grad()
 
-            # CNF Flow Matching Loss Calculation:
             # 1. Sample time 't' uniformly from [0, 1] for each sample in the batch.
-            #    This ensures the model learns across the entire continuous flow path.
-            t: torch.Tensor = torch.rand(batch_size, device=device)
+            # `t` needs to be a tensor with batch_size elements for conditioning.
+            t: torch.Tensor = torch.rand(z0.shape[0], device=device) # t ~ U(0, 1)
 
-            # 2. Interpolate between initial noise (z0) and real data (x1_real) at time 't'.
-            #    xt represents an intermediate state along the flow from noise to data.
-            #    .view(-1, 1, 1, 1) broadcasts 't' across image dimensions for element-wise multiplication.
-            xt: torch.Tensor = (1 - t.view(-1, 1, 1, 1)) * z0 + t.view(-1, 1, 1, 1) * x1_real
+            # 2. Linearly interpolate between z0 (noise) and x1_real (real data) at time t.
+            # This creates 'xt', a point along the linear path.
+            xt: torch.Tensor = t.view(-1, 1, 1, 1) * x1_real + (1 - t).view(-1, 1, 1, 1) * z0
 
             # 3. Define the target velocity vector (v_target).
             #    For linear interpolation, the true velocity is simply the difference between
-            #    the end point (real data) and the start point (noise).
+            #    the end point (real data) and the start point (noise), as time goes from 0 to 1.
             v_target: torch.Tensor = (x1_real - z0)
 
             # 4. The generator predicts the velocity field (v_pred) at the interpolated state xt and time t.
