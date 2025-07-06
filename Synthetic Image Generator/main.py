@@ -3,6 +3,8 @@
 import torch
 import torch.optim as optim
 import logging
+import numpy as np
+from typing import Dict, Any, Tuple
 
 # Import configurations
 from . import config
@@ -23,77 +25,115 @@ from .visualize import (
     plot_real_vs_generated_side_by_side
 )
 
-# Configure basic logging for the entire application
+"""
+Main application entry point for the Synthetic Image Generator.
+
+This script orchestrates the entire workflow of the project:
+1.  Device setup (CUDA or CPU).
+2.  Image preprocessing transformations.
+3.  Dataset and DataLoader initialization.
+4.  Model (CNF-UNet) and optimizer setup.
+5.  Initial data visualization.
+6.  Training of the generative model using the Flow Matching objective.
+7.  Saving of trained model weights.
+8.  Plotting of training losses.
+9.  Generation of synthetic images.
+10. Evaluation of generated images using various metrics (MSE, PSNR, SSIM, FID).
+11. Further visualization of generated image quality and distributions.
+
+The application leverages a modular structure, with distinct functionalities
+separated into `config`, `dataset`, `transforms`, `model`, `train`, `generate`,
+`evaluate`, and `visualize` modules.
+"""
+
+# Configure basic logging for the entire application.
+# Messages with INFO level and above will be displayed.
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
-def main():
+def main() -> None:
     """
     Main function to orchestrate the data loading, model setup, training,
     generation, evaluation, and visualization process for the CNF-UNet.
+
+    This function serves as the primary execution flow of the synthetic
+    image generation application. It handles initialization, calls
+    sub-modules for specific tasks, and manages the overall lifecycle.
     """
     logger.info("Starting Synthetic Image Generator application.")
 
     # === Device Setup ===
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    # Determine whether to use CUDA (GPU) if available, otherwise fall back to CPU.
+    device: torch.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     logger.info(f"Using device: {device}")
 
     # === Image Preprocessing Transforms ===
-    transform = get_transforms(config.IMAGE_SIZE)
-    fid_transform = get_fid_transforms()
+    # Get the transformation pipeline for model input (resizing, normalization).
+    transform: T.Compose = get_transforms(config.IMAGE_SIZE)
+    # Get the transformation pipeline specifically for FID calculation (denormalization, PIL conversion).
+    fid_transform: T.Compose = get_fid_transforms()
+    logger.info("Image transformations initialized.")
 
     # === Dataset and DataLoader ===
+    # Initialize the custom dataset and DataLoader for efficient batch processing.
     try:
-        dataset = LungCTWithGaussianDataset(
+        dataset: LungCTWithGaussianDataset = LungCTWithGaussianDataset(
             base_dir=config.BASE_DIR,
             transform=transform,
             num_images_per_folder=config.NUM_IMAGES_PER_FOLDER,
-            image_size=config.IMAGE_SIZE
+            image_size=config.IMAGE_SIZE # Passed for black image fallback consistency
         )
-        dataloader = torch.utils.data.DataLoader(
+        dataloader: torch.utils.data.DataLoader = torch.utils.data.DataLoader(
             dataset,
             batch_size=config.BATCH_SIZE,
             shuffle=True,
             num_workers=config.NUM_WORKERS,
-            pin_memory=True
+            pin_memory=True # Speeds up data transfer to GPU if available
         )
         logger.info(f"Dataset loaded successfully with {len(dataset)} images.")
     except ValueError as e:
-        logger.critical(f"Failed to load dataset: {e}. Exiting.")
+        # Log a critical error and exit if the dataset cannot be loaded,
+        # as the application cannot proceed without data.
+        logger.critical(f"Failed to load dataset: {e}. Exiting application.")
         return
 
     # === Model, Optimizer Setup ===
-    generator = CNF_UNet(time_embed_dim=256).to(device)
-    optimizer_gen = optim.Adam(generator.parameters(), lr=config.G_LR, betas=(0.5, 0.999))
+    # Initialize the CNF_UNet generator model and move it to the selected device.
+    generator: CNF_UNet = CNF_UNet(time_embed_dim=256).to(device)
+    # Initialize the Adam optimizer for the generator.
+    optimizer_gen: optim.Adam = optim.Adam(generator.parameters(), lr=config.G_LR, betas=(0.5, 0.999))
     logger.info("Generator model and optimizer initialized.")
 
     # === Initial Data Distribution Plots ===
-    sample_noise_batch = None
-    sample_image_batch = None
-    # Get one batch for initial visualization
+    # Retrieve one batch from the DataLoader for initial visualization of data and noise distributions.
+    sample_noise_batch: Optional[torch.Tensor] = None
+    sample_image_batch: Optional[torch.Tensor] = None
     for noise, image in dataloader:
-        sample_noise_batch = noise.cpu()
-        sample_image_batch = image.cpu()
-        break
+        sample_noise_batch = noise.cpu() # Move to CPU for plotting
+        sample_image_batch = image.cpu() # Move to CPU for plotting
+        break # Only need one batch for initial samples
+
     if sample_noise_batch is not None and sample_image_batch is not None:
         plot_pixel_distributions(sample_image_batch, sample_noise_batch)
         plot_sample_images_and_noise(sample_image_batch, sample_noise_batch)
     else:
-        logger.warning("Could not retrieve sample batch for initial visualization.")
+        logger.warning("Could not retrieve sample batch for initial visualization. Dataloader might be empty.")
 
 
     # === Training the CNF-UNet model ===
-    logger.info("Starting training of the CNF-UNet model.")
-    training_losses = train_model(
+    logger.info(f"Starting training of the CNF-UNet model for {config.EPOCHS} epochs.")
+    training_losses: Dict[str, Any] = train_model(
         generator_model=generator,
         dataloader=dataloader,
         optimizer_gen=optimizer_gen,
         epochs=config.EPOCHS,
         device=device
     )
+    logger.info("Training complete.")
 
     # === Save Model Weights ===
     logger.info(f"Saving generator weights to {config.GENERATOR_CHECKPOINT_PATH}")
+    # Save only the model's state dictionary (learnable parameters) for efficient storage.
     torch.save(generator.state_dict(), config.GENERATOR_CHECKPOINT_PATH)
     logger.info("Model weights saved successfully.")
 
@@ -102,33 +142,40 @@ def main():
 
     # === Sample Generation ===
     logger.info(f"Generating {config.NUM_GENERATED_SAMPLES} sample images for evaluation.")
-    initial_noise_for_generation = torch.randn(config.NUM_GENERATED_SAMPLES, 1, *config.IMAGE_SIZE).to(device)
-    generated_images = generate_images(
+    # Generate initial random noise for the generation process.
+    initial_noise_for_generation: torch.Tensor = torch.randn(
+        config.NUM_GENERATED_SAMPLES, 1, *config.IMAGE_SIZE
+    ).to(device)
+    # Generate images using the trained generator model.
+    generated_images: torch.Tensor = generate_images(
         model=generator,
         initial_noise=initial_noise_for_generation,
         steps=config.GENERATION_STEPS,
         device=device
     )
-    generated_images = generated_images.cpu() # Move to CPU for evaluation and plotting
+    generated_images = generated_images.cpu() # Move generated images to CPU for evaluation and plotting
 
     # === Evaluation Metrics ===
-    # Get a batch of real images for comparison.
-    # Reset dataloader iterator to get fresh samples for evaluation
-    eval_dataloader = torch.utils.data.DataLoader(
+    # Prepare real images for comparison with generated images.
+    # A new DataLoader is created to ensure fresh, shuffled samples for evaluation.
+    eval_dataloader: torch.utils.data.DataLoader = torch.utils.data.DataLoader(
         dataset,
         batch_size=config.BATCH_SIZE,
-        shuffle=True, # Shuffle to get different images
+        shuffle=True, # Shuffle to get different images for evaluation
         num_workers=config.NUM_WORKERS,
         pin_memory=True
     )
 
-    real_images_for_eval = []
+    real_images_for_eval: list[torch.Tensor] = []
+    # Collect enough real images to match the number of generated samples.
     for _, real_img_batch_val in eval_dataloader:
         real_images_for_eval.append(real_img_batch_val)
         if len(real_images_for_eval) * eval_dataloader.batch_size >= config.NUM_GENERATED_SAMPLES:
             break
-    real_images_batch_tensor = torch.cat(real_images_for_eval, dim=0)[:config.NUM_GENERATED_SAMPLES]
+    # Concatenate collected batches and slice to match the exact number of generated samples.
+    real_images_batch_tensor: torch.Tensor = torch.cat(real_images_for_eval, dim=0)[:config.NUM_GENERATED_SAMPLES]
 
+    # Call the evaluation module to calculate and log metrics.
     evaluate_model(
         real_images_batch_tensor=real_images_batch_tensor,
         generated_images=generated_images,
@@ -137,15 +184,16 @@ def main():
     )
 
     # === Distribution Plot for Generated Images vs. Real Images ===
-    all_real_pixels = []
-    # Use the eval_dataloader to get a diverse sample for distribution plot
-    num_batches_to_sample = config.NUM_BATCHES_FOR_DIST_PLOT
+    logger.info("Preparing pixel distribution comparison plot.")
+    all_real_pixels: list[np.ndarray] = []
+    # Collect pixel data from a few batches of real images for a representative distribution.
+    num_batches_to_sample: int = config.NUM_BATCHES_FOR_DIST_PLOT
     for i, (_, real_img_batch) in enumerate(eval_dataloader):
         all_real_pixels.append(real_img_batch.cpu().view(-1).numpy())
         if i >= num_batches_to_sample - 1:
             break
-    all_real_pixels_flat = np.concatenate(all_real_pixels)
-    flat_generated_images = generated_images.view(-1).numpy()
+    all_real_pixels_flat: np.ndarray = np.concatenate(all_real_pixels)
+    flat_generated_images: np.ndarray = generated_images.view(-1).numpy()
 
     plot_generated_pixel_distribution_comparison(all_real_pixels_flat, flat_generated_images)
 
