@@ -8,19 +8,33 @@ from pathlib import Path
 import shutil
 from tqdm import tqdm
 import logging
+import torchvision.transforms as T # Imported for type hinting clarity
 
 # Configure logging for this module
 logger = logging.getLogger(__name__)
 
-def evaluate_model(real_images_batch_tensor, generated_images, fid_transform, num_compare):
+def evaluate_model(
+    real_images_batch_tensor: torch.Tensor,
+    generated_images: torch.Tensor,
+    fid_transform: T.Compose,
+    num_compare: int
+) -> None:
     """
-    Calculates and prints image quality metrics (MSE, PSNR, SSIM, FID).
+    Calculates and logs various image quality metrics (MSE, PSNR, SSIM, and FID)
+    to assess the fidelity and diversity of generated images compared to real ones.
 
     Args:
-        real_images_batch_tensor (torch.Tensor): Batch of real images (CPU tensor).
-        generated_images (torch.Tensor): Batch of generated images (CPU tensor).
-        fid_transform (torchvision.transforms.Compose): Transform for FID calculation.
-        num_compare (int): Number of images to compare for metrics.
+        real_images_batch_tensor (torch.Tensor): A batch of real images (CPU tensor)
+                                                 to be used as ground truth.
+                                                 Expected pixel range: [-1, 1].
+        generated_images (torch.Tensor): A batch of generated images (CPU tensor)
+                                         from the model. Expected pixel range: [-1, 1].
+        fid_transform (T.Compose): A torchvision.transforms.Compose object used to
+                                   prepare images for FID calculation (e.g., denormalize
+                                   to [0, 255] and convert to PIL Image).
+        num_compare (int): The number of image pairs (real vs. generated) to use
+                           for calculating pixel-wise metrics (MSE, PSNR, SSIM)
+                           and for saving images for FID calculation.
     """
     logger.info("\n--- Evaluating Generated Image Fidelity ---")
 
@@ -28,73 +42,86 @@ def evaluate_model(real_images_batch_tensor, generated_images, fid_transform, nu
         logger.error("Could not retrieve enough real images for evaluation. Skipping pixel-wise metrics.")
         return
 
-    # Ensure we compare the same number of images
-    num_compare = min(num_compare, real_images_batch_tensor.shape[0])
+    # Ensure we compare the minimum of available real/generated images and the requested num_compare
+    num_effective_compare: int = min(num_compare, real_images_batch_tensor.shape[0], generated_images.shape[0])
+    if num_effective_compare == 0:
+        logger.error("No images available for comparison after checking effective count. Skipping all metrics.")
+        return
 
-    # Convert tensors to numpy arrays and de-normalize to [0, 1] for metric calculations
-    # Assuming images are normalized to [-1, 1], so (x + 1) / 2 brings them to [0, 1]
-    real_images_np_01 = ((real_images_batch_tensor[:num_compare].squeeze().numpy() + 1) / 2)
-    generated_images_np_01 = ((generated_images[:num_compare].squeeze().numpy() + 1) / 2)
+    # Convert tensors to numpy arrays and de-normalize to [0, 1] for pixel-wise metric calculations.
+    # The metrics (MSE, PSNR, SSIM) typically expect input images in the [0, 1] or [0, 255] range.
+    # Assuming images are normalized to [-1, 1], so (x + 1) / 2 brings them to [0, 1].
+    real_images_np_01: np.ndarray = ((real_images_batch_tensor[:num_effective_compare].squeeze().numpy() + 1) / 2)
+    generated_images_np_01: np.ndarray = ((generated_images[:num_effective_compare].squeeze().numpy() + 1) / 2)
 
-    # Initialize lists to store metric values
-    mses, psnrs, ssims = [], [], []
+    # Initialize lists to store metric values for averaging
+    mses: list[float] = []
+    psnrs: list[float] = []
+    ssims: list[float] = []
 
-    for i in range(num_compare):
-        real_img = real_images_np_01[i]
-        gen_img = generated_images_np_01[i]
+    # Calculate pixel-wise metrics for each image pair
+    for i in range(num_effective_compare):
+        real_img: np.ndarray = real_images_np_01[i]
+        gen_img: np.ndarray = generated_images_np_01[i]
 
-        # Calculate MSE
-        mse = mean_squared_error(real_img, gen_img)
+        # Calculate Mean Squared Error (MSE)
+        mse: float = mean_squared_error(real_img, gen_img)
         mses.append(mse)
 
-        # Calculate PSNR
-        # data_range=1 because images are normalized to [0, 1]
-        psnr = peak_signal_noise_ratio(real_img, gen_img, data_range=1)
+        # Calculate Peak Signal-to-Noise Ratio (PSNR)
+        # data_range=1 because images are normalized to [0, 1] for PSNR calculation.
+        psnr: float = peak_signal_noise_ratio(real_img, gen_img, data_range=1)
         psnrs.append(psnr)
 
-        # Calculate SSIM
-        ssim = structural_similarity(real_img, gen_img, data_range=1)
+        # Calculate Structural Similarity Index Measure (SSIM)
+        # data_range=1 because images are normalized to [0, 1] for SSIM calculation.
+        ssim: float = structural_similarity(real_img, gen_img, data_range=1)
         ssims.append(ssim)
 
     logger.info(f"Average MSE: {np.mean(mses):.6f}")
     logger.info(f"Average PSNR: {np.mean(psnrs):.6f} dB")
     logger.info(f"Average SSIM: {np.mean(ssims):.6f}")
 
-    # === FID Calculation ===
+    # === Fréchet Inception Distance (FID) Calculation ===
     logger.info("\n--- Calculating Fréchet Inception Distance (FID) ---")
 
-    # Create temporary directories for real and generated images
-    real_images_dir = Path("./fid_real_images")
-    generated_images_dir = Path("./fid_generated_images")
+    # Create temporary directories for real and generated images required by torch_fidelity.
+    real_images_dir: Path = Path("./fid_real_images")
+    generated_images_dir: Path = Path("./fid_generated_images")
 
-    # Ensure directories are clean before saving
-    if real_images_dir.exists():
-        shutil.rmtree(real_images_dir)
-    if generated_images_dir.exists():
-        shutil.rmtree(generated_images_dir)
+    # Ensure directories are clean before saving new images for FID.
+    try:
+        if real_images_dir.exists():
+            shutil.rmtree(real_images_dir)
+        if generated_images_dir.exists():
+            shutil.rmtree(generated_images_dir)
+    except OSError as e:
+        logger.error(f"Error cleaning up temporary FID directories: {e}. Please manually delete '{real_images_dir}' and '{generated_images_dir}'.")
+        return # Exit if cleanup fails, as subsequent operations might be affected.
 
-    real_images_dir.mkdir(exist_ok=True)
-    generated_images_dir.mkdir(exist_ok=True)
+    real_images_dir.mkdir(exist_ok=False) # Should be new, so exist_ok=False
+    generated_images_dir.mkdir(exist_ok=False)
 
     try:
-        # Save real images
-        logger.info(f"Saving {num_compare} real images to {real_images_dir} for FID calculation...")
-        for i in tqdm(range(num_compare), desc="Saving real images"):
+        # Save real images to the temporary directory.
+        logger.info(f"Saving {num_effective_compare} real images to {real_images_dir} for FID calculation...")
+        for i in tqdm(range(num_effective_compare), desc="Saving real images"):
+            # Apply FID transform (denormalizes to [0, 255] and converts to PIL Image).
             img_to_save = fid_transform(real_images_batch_tensor[i])
-            # Ensure it's a 3-channel image if Inception v3 expects it, even for grayscale.
-            if img_to_save.mode == 'L': # If grayscale (luminance)
+            # Convert grayscale (L mode) to RGB if Inception v3 model expects 3 channels.
+            if img_to_save.mode == 'L':
                 img_to_save = img_to_save.convert('RGB')
             img_to_save.save(real_images_dir / f"real_{i:04d}.png")
 
-        # Save generated images
-        logger.info(f"Saving {num_compare} generated images to {generated_images_dir} for FID calculation...")
-        for i in tqdm(range(num_compare), desc="Saving generated images"):
+        # Save generated images to the temporary directory.
+        logger.info(f"Saving {num_effective_compare} generated images to {generated_images_dir} for FID calculation...")
+        for i in tqdm(range(num_effective_compare), desc="Saving generated images"):
             img_to_save = fid_transform(generated_images[i])
-            if img_to_save.mode == 'L': # If grayscale
+            if img_to_save.mode == 'L':
                 img_to_save = img_to_save.convert('RGB')
             img_to_save.save(generated_images_dir / f"gen_{i:04d}.png")
 
-        # Perform FID calculation
+        # Perform FID calculation using torch_fidelity.
         logger.info("Initiating FID calculation (this may download InceptionV3 weights if not cached)...")
         metrics = calculate_metrics(
             input1=str(real_images_dir),
@@ -113,14 +140,18 @@ def evaluate_model(real_images_batch_tensor, generated_images, fid_transform, nu
             logger.debug(f"Full metrics dictionary: {metrics}")
 
     except Exception as e:
+        # Log detailed error information if FID calculation fails.
         logger.error(f"An error occurred during FID calculation: {e}")
-        logger.error("Please ensure 'torch_fidelity' is installed (`pip install torch_fidelity`) "
-                     "and that you have the necessary torchvision/Pillow dependencies for image saving."
-                     "Also, check if Inception V3 model weights are downloaded (torch_fidelity handles this usually).")
+        logger.error("Please ensure 'torch_fidelity' is installed (`pip install torch_fidelity`), "
+                     "that you have the necessary torchvision/Pillow dependencies for image saving, "
+                     "and that Inception V3 model weights can be downloaded (torch_fidelity handles this usually).")
     finally:
-        # Clean up temporary directories
-        if real_images_dir.exists():
-            shutil.rmtree(real_images_dir)
-        if generated_images_dir.exists():
-            shutil.rmtree(generated_images_dir)
-        logger.info("Temporary FID image directories cleaned up.")
+        # Always attempt to clean up temporary directories, regardless of success or failure.
+        try:
+            if real_images_dir.exists():
+                shutil.rmtree(real_images_dir)
+            if generated_images_dir.exists():
+                shutil.rmtree(generated_images_dir)
+            logger.info("Temporary FID image directories cleaned up.")
+        except OSError as e:
+            logger.error(f"Error during final cleanup of temporary FID directories: {e}. Manual deletion may be required.")
