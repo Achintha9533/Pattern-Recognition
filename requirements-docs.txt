@@ -1,0 +1,8 @@
+# Core Sphinx package
+sphinx
+
+# For the Read the Docs theme
+sphinx-rtd-theme
+
+# For parsing Markdown files (.md) with Sphinx
+myst-parser
