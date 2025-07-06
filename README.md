@@ -90,7 +90,7 @@ To install the application, you can just clone this repository and use pip.
         ```python
         # Synthetic Image Generator/config.py
         from pathlib import Path
-        BASE_DIR = Path("/path/to/your/QIN LUNG CT") # <-- Update this line
+        BASE_DIR = Path("/Users/kasunachinthaperera/Documents/VS Code/Pattern Recognition/Data/QIN LUNG CT") # <-- Location
         ```
 
 ---
