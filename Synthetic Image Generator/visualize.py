@@ -1,12 +1,22 @@
+# Synthetic Image Generator/visualize.py
+
 import matplotlib.pyplot as plt
 import numpy as np
-from skimage.metrics import mean_squared_error, peak_signal_noise_ratio, structural_similarity
+import torch
+import logging
 
+# Configure logging for this module
+logger = logging.getLogger(__name__)
 
-def plot_initial_distributions(sample_noise_batch, sample_image_batch):
+def plot_pixel_distributions(sample_image_batch, sample_noise_batch):
     """
-    Plots the pixel distributions of real CT images and initial Gaussian noise.
+    Plots the pixel distribution histograms for real CT images and initial Gaussian noise.
+
+    Args:
+        sample_image_batch (torch.Tensor): A batch of real CT image tensors (CPU).
+        sample_noise_batch (torch.Tensor): A batch of initial Gaussian noise tensors (CPU).
     """
+    logger.info("Plotting initial data and noise pixel distributions.")
     flat_noise = sample_noise_batch.view(-1).numpy()
     flat_image = sample_image_batch.view(-1).numpy()
 
@@ -14,102 +24,69 @@ def plot_initial_distributions(sample_noise_batch, sample_image_batch):
     plt.subplot(1, 2, 1)
     plt.hist(flat_image, bins=50, color='blue', alpha=0.7)
     plt.title('Real CT Image Pixel Distribution (Sample)')
-    plt.xlabel('Pixel Value')
+    plt.xlabel('Pixel Value (Normalized [-1, 1])')
     plt.ylabel('Count')
     plt.subplot(1, 2, 2)
     plt.hist(flat_noise, bins=50, color='red', alpha=0.7)
     plt.title('Initial Gaussian Noise Distribution (Sample)')
-    plt.xlabel('Pixel Value')
+    plt.xlabel('Pixel Value (Normalized [-1, 1])')
     plt.ylabel('Count')
     plt.tight_layout()
     plt.show()
+    logger.debug("Initial pixel distribution plots displayed.")
 
-def plot_initial_samples(sample_noise_batch, sample_image_batch):
+def plot_sample_images_and_noise(sample_image_batch, sample_noise_batch, num_display=4):
     """
-    Displays sample real CT images and corresponding initial noise.
+    Displays sample real CT images and their corresponding initial noise.
+
+    Args:
+        sample_image_batch (torch.Tensor): A batch of real CT image tensors (CPU).
+        sample_noise_batch (torch.Tensor): A batch of initial Gaussian noise tensors (CPU).
+        num_display (int): Number of image pairs to display.
     """
+    logger.info(f"Displaying {num_display} sample real images and initial noise.")
     plt.figure(figsize=(10, 4))
-    for i in range(min(4, sample_image_batch.shape[0])):
-        plt.subplot(2, 4, i + 1)
+    for i in range(min(num_display, sample_image_batch.shape[0])):
+        plt.subplot(2, num_display, i + 1)
         plt.imshow(sample_image_batch[i, 0], cmap='gray')
         plt.title("Real CT Image")
         plt.axis('off')
-        plt.subplot(2, 4, i + 5)
+        plt.subplot(2, num_display, i + num_display + 1)
         plt.imshow(sample_noise_batch[i, 0], cmap='gray')
         plt.title("Initial Noise")
         plt.axis('off')
     plt.tight_layout()
     plt.show()
+    logger.debug("Sample real images and noise plots displayed.")
 
 def plot_training_losses(training_losses):
     """
-    Plots the generator and discriminator losses over training epochs.
+    Plots the generator's training loss over epochs.
+
+    Args:
+        training_losses (dict): Dictionary containing training loss lists (e.g., 'gen_flow_losses').
     """
-    plt.figure(figsize=(14, 6))
-
-    # Generator Losses
-    plt.subplot(1, 2, 1)
+    logger.info("Plotting training losses.")
+    plt.figure(figsize=(8, 6))
     plt.plot(training_losses['gen_flow_losses'], label='Generator Flow Matching Loss', color='blue')
-    plt.plot(training_losses['gen_gan_losses'], label='Generator GAN Loss', color='cyan', linestyle='--')
-    plt.title('Generator Training Losses')
+    plt.title('Generator Training Loss')
     plt.xlabel('Epoch')
     plt.ylabel('Loss')
     plt.legend()
     plt.grid(True)
-
-    # Discriminator Losses
-    plt.subplot(1, 2, 2)
-    plt.plot(training_losses['disc_real_losses'], label='Discriminator Real Loss', color='green')
-    plt.plot(training_losses['disc_fake_losses'], label='Discriminator Fake Loss', color='orange')
-    plt.plot(training_losses['disc_total_losses'], label='Discriminator Total Loss', color='red', linestyle='-.')
-    plt.title('Discriminator Training Losses')
-    plt.xlabel('Epoch')
-    plt.ylabel('Loss')
-    plt.legend()
-    plt.grid(True)
-
     plt.tight_layout()
     plt.show()
+    logger.debug("Training loss plot displayed.")
 
-def evaluate_and_print_metrics(real_images_batch, generated_images, num_samples_to_compare, image_size):
+def plot_generated_pixel_distribution_comparison(all_real_pixels_flat, flat_generated_images):
     """
-    Calculates and prints MSE, PSNR, and SSIM between real and generated images.
+    Compares the pixel distributions of real and generated images.
+
+    Args:
+        all_real_pixels_flat (np.ndarray): Flattened array of pixel values from real images.
+        flat_generated_images (np.ndarray): Flattened array of pixel values from generated images.
     """
-    print("\n--- Evaluating Generated Image Fidelity ---")
-
-    if real_images_batch is None:
-        print("Could not retrieve real images batch for evaluation.")
-        return
-
-    num_compare = min(num_samples_to_compare, real_images_batch.shape[0])
-    
-    # Convert tensors to numpy arrays and de-normalize to [0, 1] for metric calculations
-    real_images_np = ((real_images_batch[:num_compare].squeeze().numpy() + 1) / 2)
-    generated_images_np = ((generated_images[:num_compare].squeeze().numpy() + 1) / 2)
-
-    mses, psnrs, ssims = [], [], []
-
-    for i in range(num_compare):
-        real_img = real_images_np[i]
-        gen_img = generated_images_np[i]
-
-        mse = mean_squared_error(real_img, gen_img)
-        mses.append(mse)
-
-        psnr = peak_signal_noise_ratio(real_img, gen_img, data_range=1)
-        psnrs.append(psnr)
-
-        ssim = structural_similarity(real_img, gen_img, data_range=1)
-        ssims.append(ssim)
-
-    print(f"Average MSE: {np.mean(mses):.6f}")
-    print(f"Average PSNR: {np.mean(psnrs):.6f} dB")
-    print(f"Average SSIM: {np.mean(ssims):.6f}")
-
-def plot_pixel_distributions_comparison(all_real_pixels_flat, flat_generated_images):
-    """
-    Plots a histogram comparing pixel distributions of real vs. generated images.
-    """
+    logger.info("Plotting comparison of pixel distributions: Real vs. Generated.")
     plt.figure(figsize=(10, 6))
     plt.hist(all_real_pixels_flat, bins=50, color='blue', alpha=0.6, label='Real CT Image Pixel Distribution (Sampled)')
     plt.hist(flat_generated_images, bins=50, color='green', alpha=0.6, label='Generated Image Pixel Distribution')
@@ -119,40 +96,55 @@ def plot_pixel_distributions_comparison(all_real_pixels_flat, flat_generated_ima
     plt.legend()
     plt.grid(axis='y', alpha=0.75)
     plt.show()
+    logger.debug("Pixel distribution comparison plot displayed.")
 
-def plot_generated_samples(generated_images, num_display=16):
+def plot_sample_generated_images(generated_images, num_display=16):
     """
     Displays a grid of sample generated images.
+
+    Args:
+        generated_images (torch.Tensor): A batch of generated image tensors (CPU).
+        num_display (int): Number of generated images to display.
     """
+    logger.info(f"Displaying {num_display} sample generated images.")
     plt.figure(figsize=(10, 8))
-    num_display = min(num_display, generated_images.shape[0])
-    for i in range(num_display):
+    for i in range(min(num_display, generated_images.shape[0])):
         plt.subplot(4, 4, i + 1)
         plt.imshow(generated_images[i, 0], cmap='gray')
         plt.title(f"Generated {i+1}")
         plt.axis('off')
     plt.tight_layout()
     plt.show()
+    logger.debug("Sample generated images plot displayed.")
 
-def plot_real_vs_generated_side_by_side(real_images_batch, generated_images, num_side_by_side=4):
+def plot_real_vs_generated_side_by_side(real_images_batch_tensor, generated_images, num_side_by_side=4):
     """
     Displays real and generated images side-by-side for direct comparison.
-    """
-    if real_images_batch is not None:
-        plt.figure(figsize=(12, 6))
-        num_to_display = min(num_side_by_side, real_images_batch.shape[0], generated_images.shape[0])
-        for i in range(num_to_display):
-            # Real Image
-            plt.subplot(2, num_to_display, i + 1)
-            plt.imshow(real_images_batch[i, 0].cpu().numpy(), cmap='gray')
-            plt.title(f"Real {i+1}")
-            plt.axis('off')
 
-            # Generated Image
-            plt.subplot(2, num_to_display, i + num_to_display + 1)
-            plt.imshow(generated_images[i, 0].cpu().numpy(), cmap='gray')
-            plt.title(f"Generated {i+1}")
-            plt.axis('off')
-        plt.tight_layout()
-        plt.suptitle("Real vs. Generated Images (Side-by-Side)", y=1.02)
-        plt.show()
+    Args:
+        real_images_batch_tensor (torch.Tensor): A batch of real image tensors (CPU).
+        generated_images (torch.Tensor): A batch of generated image tensors (CPU).
+        num_side_by_side (int): Number of real/generated pairs to display.
+    """
+    logger.info(f"Displaying {num_side_by_side} pairs of real vs. generated images side-by-side.")
+    if real_images_batch_tensor.numel() == 0:
+        logger.warning("No real images provided for side-by-side comparison.")
+        return
+
+    plt.figure(figsize=(12, 6))
+    for i in range(min(num_side_by_side, real_images_batch_tensor.shape[0])):
+        # Real Image
+        plt.subplot(2, num_side_by_side, i + 1)
+        plt.imshow(real_images_batch_tensor[i, 0].cpu().numpy(), cmap='gray')
+        plt.title(f"Real {i+1}")
+        plt.axis('off')
+
+        # Generated Image
+        plt.subplot(2, num_side_by_side, i + num_side_by_side + 1)
+        plt.imshow(generated_images[i, 0].cpu().numpy(), cmap='gray')
+        plt.title(f"Generated {i+1}")
+        plt.axis('off')
+    plt.tight_layout()
+    plt.suptitle("Real vs. Generated Images (Side-by-Side)", y=1.02)
+    plt.show()
+    logger.debug("Real vs. Generated side-by-side plots displayed.")
