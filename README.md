@@ -28,7 +28,6 @@ It includes:
 * [Example Output](#example-output)
 * [Model Architecture and Training](#model-architecture-and-training)
 * [Evaluation Metrics](#evaluation-metrics)
-* [Testing](#testing)
 * [Limitations and Notes](#limitations-and-notes)
 * [License](#license)
 * [Contact](#contact)
@@ -42,7 +41,35 @@ For a complete guide, please see the [full documentation here](docs/build/html/i
 
 If you prefer to build the docs locally:
 
+---
 
+## Testing
+
+This project uses `pytest` for unit and integration testing, and `coverage.py` to measure test coverage. The tests are located in the `tests/` directory.
+
+To run all tests and generate a code coverage report locally, execute the following script from the root of your project:
+
+```bash
+#!/bin/bash
+
+# Exit immediately if a command fails
+set -e
+echo "Running tests with coverage..."
+
+# Clean previous coverage data
+coverage erase
+
+# Run all tests in the 'tests/' folder with coverage, using custom configurations from .coveragerc
+coverage run --rcfile=.coveragerc -m pytest tests/
+
+# Print a report (with missing lines)
+coverage report -m
+
+# Generate an HTML coverage report
+coverage html
+
+echo "All tests completed."
+echo "Open 'htmlcov/index.html' to view the coverage report."
 
 ## Features
 
