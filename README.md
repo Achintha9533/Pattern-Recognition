@@ -110,15 +110,3 @@ On macOS/Linux:
 ```bash
 python Synthetic\ Image\ Generator/main.py
 
----
-
-## Documentation
-
-This project includes complete documentation to help users understand, use, and extend the codebase. It covers usage instructions, command-line options, example outputs, testing setup, and detailed API reference generated from inline docstrings. The structure and design choices are also explained for easier onboarding and maintainability.
-
-For a complete guide, please see the [full documentation here](docs/build/html/index.html).
-
-If you prefer to build the docs locally:
-
-```bash
-cd docs
