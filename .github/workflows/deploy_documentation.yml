@@ -1,0 +1,46 @@
+name: Deploy Documentation
+
+# Run this workflow every time a change is pushed to the main branch
+on:
+  push:
+    branches:
+      - main  # IMPORTANT: Change this to 'master' if your default branch is 'master'
+
+# Allow this job to clone the repo and create a page deployment
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout your repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.9' # IMPORTANT: Set this to the specific Python version (e.g., '3.10', '3.11')
+                                # that you use for building your Sphinx documentation.
+
+      - name: Install dependencies
+        # This installs the packages listed in requirements-docs.txt
+        run: pip install -r requirements-docs.txt
+
+      - name: Build the Sphinx documentation
+        # This command assumes your Sphinx source is in 'docs/source'
+        # and will output HTML to 'docs/build/html'
+        run: sphinx-build -b html docs/source docs/build/html
+
+      - name: Upload the built documentation as an artifact
+        # This action stages the built HTML files for GitHub Pages deployment
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs/build/html
+
+      - name: Deploy to GitHub Pages
+        # This action publishes the staged artifact to your GitHub Pages site
+        id: deployment
+        uses: actions/deploy-pages@v4
