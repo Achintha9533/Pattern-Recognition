@@ -12,6 +12,7 @@ The tool offers:
 * **Comprehensive Evaluation:** Includes standard and perceptual metrics for assessing generated image quality.
 
 It includes:
+* **Comprehensive API Documentation:** Automated generation of detailed API documentation using Sphinx from reStructuredText-formatted docstrings.
 * Fully documented source code (via docstrings and comments).
 * Image preprocessing, model training, inference, and visualization steps.
 * Automated testing with high coverage using `pytest`.
@@ -28,6 +29,7 @@ It includes:
 * [Model Architecture and Training](#model-architecture-and-training)
 * [Evaluation Metrics](#evaluation-metrics)
 * [Testing](#testing)
+* [Documentation](#documentation)
 * [Limitations and Notes](#limitations-and-notes)
 * [License](#license)
 * [Contact](#contact)
@@ -47,6 +49,8 @@ It includes:
 * **Modular Codebase:** Organized into distinct Python modules (`config`, `dataset`, `model`, `train`, `generate`, `evaluate`, `visualize`) for clarity and maintainability.
 * **Model Checkpointing:** Automatically saves trained generator weights, allowing for model persistence and reusability.
 * **Pre-trained Model Loading:** Includes utility to automatically download and load pre-trained model weights from Google Drive for quick setup and inference (`load_model.py`). The first run will automatically download the weights.
+* **Comprehensive API Documentation:** Automated generation of detailed API documentation using Sphinx from reStructuredText-formatted docstrings, providing insights into every module, class, and function.
+
 
 ---
 
