@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>synthetic_image_generator &#8212; Synthetic Image Generator 2025 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=12dfc556" />
+    <script src="_static/documentation_options.js?v=cb975c41"></script>
+    <script src="_static/doctools.js?v=9a2dae69"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="synthetic-image-generator">
+<h1>synthetic_image_generator<a class="headerlink" href="#synthetic-image-generator" title="Link to this heading">¶</a></h1>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="synthetic_image_generator.html">synthetic_image_generator package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="synthetic_image_generator.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="synthetic_image_generator.html#module-synthetic_image_generator.config">synthetic_image_generator.config module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="synthetic_image_generator.html#module-synthetic_image_generator.dataset">synthetic_image_generator.dataset module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="synthetic_image_generator.html#synthetic_image_generator.dataset.LungCTWithGaussianDataset"><code class="docutils literal notranslate"><span class="pre">LungCTWithGaussianDataset</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="synthetic_image_generator.html#synthetic_image_generator.dataset.load_dicom_image"><code class="docutils literal notranslate"><span class="pre">load_dicom_image()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="synthetic_image_generator.html#synthetic_image_generator.dataset.logger"><code class="docutils literal notranslate"><span class="pre">logger</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="synthetic_image_generator.html#module-synthetic_image_generator.evaluate">synthetic_image_generator.evaluate module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="synthetic_image_generator.html#synthetic_image_generator.evaluate.calculate_image_metrics"><code class="docutils literal notranslate"><span class="pre">calculate_image_metrics()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="synthetic_image_generator.html#synthetic_image_generator.evaluate.evaluate_model"><code class="docutils literal notranslate"><span class="pre">evaluate_model()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="synthetic_image_generator.html#synthetic_image_generator.evaluate.logger"><code class="docutils literal notranslate"><span class="pre">logger</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="synthetic_image_generator.html#module-synthetic_image_generator.generate">synthetic_image_generator.generate module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="synthetic_image_generator.html#synthetic_image_generator.generate.generate_images"><code class="docutils literal notranslate"><span class="pre">generate_images()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="synthetic_image_generator.html#synthetic_image_generator.generate.logger"><code class="docutils literal notranslate"><span class="pre">logger</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="synthetic_image_generator.html#module-synthetic_image_generator.load_model">synthetic_image_generator.load_model module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="synthetic_image_generator.html#synthetic_image_generator.load_model.load_model_from_drive"><code class="docutils literal notranslate"><span class="pre">load_model_from_drive()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="synthetic_image_generator.html#module-synthetic_image_generator.main">synthetic_image_generator.main module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="synthetic_image_generator.html#synthetic_image_generator.main.logger"><code class="docutils literal notranslate"><span class="pre">logger</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="synthetic_image_generator.html#synthetic_image_generator.main.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="synthetic_image_generator.html#module-synthetic_image_generator.model">synthetic_image_generator.model module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="synthetic_image_generator.html#synthetic_image_generator.model.Block"><code class="docutils literal notranslate"><span class="pre">Block</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="synthetic_image_generator.html#synthetic_image_generator.model.Block.forward"><code class="docutils literal notranslate"><span class="pre">Block.forward()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="synthetic_image_generator.html#synthetic_image_generator.model.CNF_UNet"><code class="docutils literal notranslate"><span class="pre">CNF_UNet</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="synthetic_image_generator.html#synthetic_image_generator.model.CNF_UNet.forward"><code class="docutils literal notranslate"><span class="pre">CNF_UNet.forward()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="synthetic_image_generator.html#synthetic_image_generator.model.ResBlock"><code class="docutils literal notranslate"><span class="pre">ResBlock</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="synthetic_image_generator.html#synthetic_image_generator.model.ResBlock.forward"><code class="docutils literal notranslate"><span class="pre">ResBlock.forward()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="synthetic_image_generator.html#synthetic_image_generator.model.SelfAttention"><code class="docutils literal notranslate"><span class="pre">SelfAttention</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="synthetic_image_generator.html#synthetic_image_generator.model.SelfAttention.forward"><code class="docutils literal notranslate"><span class="pre">SelfAttention.forward()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="synthetic_image_generator.html#synthetic_image_generator.model.TimestepEmbedder"><code class="docutils literal notranslate"><span class="pre">TimestepEmbedder</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="synthetic_image_generator.html#synthetic_image_generator.model.TimestepEmbedder.forward"><code class="docutils literal notranslate"><span class="pre">TimestepEmbedder.forward()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="synthetic_image_generator.html#synthetic_image_generator.model.UNetBlock"><code class="docutils literal notranslate"><span class="pre">UNetBlock</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="synthetic_image_generator.html#synthetic_image_generator.model.UNetBlock.forward"><code class="docutils literal notranslate"><span class="pre">UNetBlock.forward()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="synthetic_image_generator.html#synthetic_image_generator.model.get_sinusoidal_embedding"><code class="docutils literal notranslate"><span class="pre">get_sinusoidal_embedding()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="synthetic_image_generator.html#synthetic_image_generator.model.logger"><code class="docutils literal notranslate"><span class="pre">logger</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="synthetic_image_generator.html#module-synthetic_image_generator.train">synthetic_image_generator.train module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="synthetic_image_generator.html#synthetic_image_generator.train.logger"><code class="docutils literal notranslate"><span class="pre">logger</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="synthetic_image_generator.html#synthetic_image_generator.train.train_model"><code class="docutils literal notranslate"><span class="pre">train_model()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="synthetic_image_generator.html#module-synthetic_image_generator.transforms">synthetic_image_generator.transforms module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="synthetic_image_generator.html#synthetic_image_generator.transforms.get_fid_transforms"><code class="docutils literal notranslate"><span class="pre">get_fid_transforms()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="synthetic_image_generator.html#synthetic_image_generator.transforms.get_transforms"><code class="docutils literal notranslate"><span class="pre">get_transforms()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="synthetic_image_generator.html#synthetic_image_generator.transforms.logger"><code class="docutils literal notranslate"><span class="pre">logger</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="synthetic_image_generator.html#module-synthetic_image_generator.visualize">synthetic_image_generator.visualize module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="synthetic_image_generator.html#synthetic_image_generator.visualize.logger"><code class="docutils literal notranslate"><span class="pre">logger</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="synthetic_image_generator.html#synthetic_image_generator.visualize.plot_generated_pixel_distribution_comparison"><code class="docutils literal notranslate"><span class="pre">plot_generated_pixel_distribution_comparison()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="synthetic_image_generator.html#synthetic_image_generator.visualize.plot_pixel_distributions"><code class="docutils literal notranslate"><span class="pre">plot_pixel_distributions()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="synthetic_image_generator.html#synthetic_image_generator.visualize.plot_real_vs_generated_side_by_side"><code class="docutils literal notranslate"><span class="pre">plot_real_vs_generated_side_by_side()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="synthetic_image_generator.html#synthetic_image_generator.visualize.plot_sample_generated_images"><code class="docutils literal notranslate"><span class="pre">plot_sample_generated_images()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="synthetic_image_generator.html#synthetic_image_generator.visualize.plot_sample_images_and_noise"><code class="docutils literal notranslate"><span class="pre">plot_sample_images_and_noise()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="synthetic_image_generator.html#synthetic_image_generator.visualize.plot_training_losses"><code class="docutils literal notranslate"><span class="pre">plot_training_losses()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">Synthetic Image Generator</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2025, Kasun Achintha Perera.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.4.7</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
+      
+      |
+      <a href="_sources/modules.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

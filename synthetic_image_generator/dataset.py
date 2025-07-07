@@ -1,5 +1,3 @@
-# Synthetic Image Generator/dataset.py
-
 import os
 from pathlib import Path
 from typing import Optional, Tuple, Union, List
@@ -10,6 +8,7 @@ import torch
 from torch.utils.data import Dataset
 import torchvision.transforms as T # Imported here for type hinting clarity
 import logging
+from tqdm import tqdm # Added tqdm import for progress bar in _load_image_paths
 
 # Configure logging for this module
 logger = logging.getLogger(__name__)
@@ -45,25 +44,27 @@ def load_dicom_image(file_path: Path) -> Optional[np.ndarray]:
     Potential Exceptions Raised:
         - pydicom.errors.InvalidDicomError: If the file is not a valid DICOM file.
         - KeyError: If expected DICOM tags like 'PixelData' are missing.
-        - AttributeError: If `ds.pixel_array` is not available.
-        - ValueError: If `img_max` and `img_min` are identical, preventing division by zero.
+        - AttributeError: If ``ds.pixel_array`` is not available.
+        - ValueError: If ``img_max`` and ``img_min`` are identical, preventing division by zero.
                       (Handled internally to return a black image).
         - OSError: If the file_path is inaccessible.
 
     Example of Usage:
-    ```python
-    from pathlib import Path
-    # Assuming 'sample.dcm' is a valid DICOM file in the current directory
-    dicom_file = Path("path/to/your/sample.dcm")
-    image_data = load_dicom_image(dicom_file)
-    if image_data is not None:
-        print(f"Loaded DICOM image with shape: {image_data.shape} and pixel range: [{image_data.min()}, {image_data.max()}]")
-    else:
-        print(f"Failed to load DICOM image from {dicom_file}")
-    ```
+    ::
+
+        ```python
+        from pathlib import Path
+        # Assuming 'sample.dcm' is a valid DICOM file in the current directory
+        dicom_file = Path("path/to/your/sample.dcm")
+        image_data = load_dicom_image(dicom_file)
+        if image_data is not None:
+            print(f"Loaded DICOM image with shape: {image_data.shape} and pixel range: [{image_data.min()}, {image_data.max()}]")
+        else:
+            print(f"Failed to load DICOM image from {dicom_file}")
+        ```
 
     Relationships with other functions:
-    - Called by `LungCTWithGaussianDataset.__getitem__` to load individual images.
+    - Called by ``LungCTWithGaussianDataset.__getitem__`` to load individual images.
 
     Explanation of the theory:
     - **DICOM (Digital Imaging and Communications in Medicine):** A standard for
@@ -145,47 +146,49 @@ class LungCTWithGaussianDataset(Dataset):
             None: The constructor initializes the dataset object.
 
         Potential Exceptions Raised:
-            - FileNotFoundError: If `base_dir` does not exist or contains no patient folders.
-            - ValueError: If `num_images_per_folder` is non-positive.
+            - FileNotFoundError: If ``base_dir`` does not exist or contains no patient folders.
+            - ValueError: If ``num_images_per_folder`` is non-positive.
             - Exception during file listing (e.g., permission errors).
 
         Example of Usage:
-        ```python
-        from pathlib import Path
-        import torchvision.transforms as T
-        from .transforms import get_transforms # Assuming this is available
-        # from . import config # If using config for BASE_DIR, IMAGE_SIZE
+        ::
 
-        # Set up transformations
-        image_transform = get_transforms(image_size=(128, 128))
+            ```python
+            from pathlib import Path
+            import torchvision.transforms as T
+            from .transforms import get_transforms # Assuming this is available
+            # from . import config # If using config for BASE_DIR, IMAGE_SIZE
 
-        # Initialize dataset
-        # base_data_dir = Path("/path/to/your/DICOM_data")
-        # dataset = LungCTWithGaussianDataset(
-        #     base_dir=base_data_dir,
-        #     num_images_per_folder=10,
-        #     image_size=(128, 128),
-        #     transform=image_transform
-        # )
-        # print(f"Dataset has {len(dataset)} images.")
-        # sample_noise, sample_image = dataset[0]
-        # print(f"Sample image shape: {sample_image.shape}, noise shape: {sample_noise.shape}")
-        ```
+            # Set up transformations
+            image_transform = get_transforms(image_size=(128, 128))
+
+            # Initialize dataset
+            # base_data_dir = Path("/path/to/your/DICOM_data")
+            # dataset = LungCTWithGaussianDataset(
+            #     base_dir=base_data_dir,
+            #     num_images_per_folder=10,
+            #     image_size=(128, 128),
+            #     transform=image_transform
+            # )
+            # print(f"Dataset has {len(dataset)} images.")
+            # sample_noise, sample_image = dataset[0]
+            # print(f"Sample image shape: {sample_image.shape}, noise shape: {sample_noise.shape}")
+            ```
 
         Relationships with other functions/modules:
-        - Uses `load_dicom_image` for loading individual DICOM files.
-        - Utilizes `torch.utils.data.Dataset` as its base class.
-        - Relies on `torchvision.transforms` for image preprocessing.
-        - `config.py` typically provides `base_dir`, `num_images_per_folder`, and `image_size`.
-        - Consumed by `torch.utils.data.DataLoader` in `main.py` or `train.py`.
+        - Uses ``load_dicom_image`` for loading individual DICOM files.
+        - Utilizes ``torch.utils.data.Dataset`` as its base class.
+        - Relies on ``torchvision.transforms`` for image preprocessing.
+        - ``config.py`` typically provides ``base_dir``, ``num_images_per_folder``, and ``image_size``.
+        - Consumed by ``torch.utils.data.DataLoader`` in ``main.py`` or ``train.py``.
 
         Explanation of the theory:
         - **PyTorch Dataset:** An abstract class representing a dataset. Custom datasets
-          inherit from `torch.utils.data.Dataset` and must override `__len__` and
-          `__getitem__`. This abstraction allows PyTorch's `DataLoader` to efficiently
+          inherit from ``torch.utils.data.Dataset`` and must override ``__len__`` and
+          ``__getitem__``. This abstraction allows PyTorch's ``DataLoader`` to efficiently
           batch and shuffle data for training.
         - **Data Sampling (Middle Images):** For 3D medical scans (like CT), selecting
-          a subset of images from the middle of the scan (e.g., `num_images_per_folder`)
+          a subset of images from the middle of the scan (e.g., ``num_images_per_folder``)
           is a common practice. This is because slices at the beginning and end of a
           scan often contain less relevant anatomical information or more artifacts.
         """
@@ -205,11 +208,11 @@ class LungCTWithGaussianDataset(Dataset):
 
     def _load_image_paths(self) -> None:
         """
-        (Private Method) Populates `self.image_paths` by scanning the base directory
+        (Private Method) Populates ``self.image_paths`` by scanning the base directory
         for patient subfolders and selecting a specified number of DICOM images
         from the middle of each folder.
 
-        This method iterates through subdirectories of `base_dir`, assumes each
+        This method iterates through subdirectories of ``base_dir``, assumes each
         subdirectory represents a patient, and then sorts the DICOM files within
         to consistently pick 'middle' slices. This ensures that the dataset
         primarily consists of relevant anatomical views.
@@ -266,28 +269,30 @@ class LungCTWithGaussianDataset(Dataset):
                                                Pixel values are typically normalized to [-1, 1].
 
         Potential Exceptions Raised:
-            - IndexError: If `idx` is out of bounds for `self.image_paths`.
-            - Exception from `load_dicom_image`: If the DICOM file fails to load.
-            - Exception from `self.transform`: If the transformation pipeline fails.
+            - IndexError: If ``idx`` is out of bounds for ``self.image_paths``.
+            - Exception from ``load_dicom_image``: If the DICOM file fails to load.
+            - Exception from ``self.transform``: If the transformation pipeline fails.
 
         Example of Usage:
-        ```python
-        # Assuming `dataset` is an initialized LungCTWithGaussianDataset object
-        # noise_sample, image_sample = dataset[0]
-        # print(f"Noise tensor shape: {noise_sample.shape}")
-        # print(f"Image tensor shape: {image_sample.shape}")
-        ```
+        ::
+
+            ```python
+            # Assuming `dataset` is an initialized LungCTWithGaussianDataset object
+            # noise_sample, image_sample = dataset[0]
+            # print(f"Noise tensor shape: {noise_sample.shape}")
+            # print(f"Image tensor shape: {image_sample.shape}")
+            ```
 
         Relationships with other functions/modules:
-        - Calls `load_dicom_image`.
-        - Uses `self.transform` (from `torchvision.transforms`).
-        - Called by `torch.utils.data.DataLoader` during training/evaluation loops.
+        - Calls ``load_dicom_image``.
+        - Uses ``self.transform`` (from ``torchvision.transforms``).
+        - Called by ``torch.utils.data.DataLoader`` during training/evaluation loops.
 
         Explanation of the theory:
         - **Gaussian Noise:** A random variable that follows a normal (Gaussian) distribution.
           It serves as the starting point for generative models like CNFs, which learn
           to deterministically transform this noise into target data.
-        - **Data Loading Pipeline:** `__getitem__` defines the critical steps for
+        - **Data Loading Pipeline:** ``__getitem__`` defines the critical steps for
           preparing a single data point: loading, transforming (resizing, normalization),
           and pairing with noise. This prepares the input for the generative model.
         """

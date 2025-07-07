@@ -1,5 +1,4 @@
-# Synthetic Image Generator/evaluate.py
-
+from typing import Dict
 import torch
 import numpy as np
 from skimage.metrics import mean_squared_error, peak_signal_noise_ratio, structural_similarity
@@ -8,8 +7,9 @@ from pathlib import Path
 import shutil
 from tqdm import tqdm
 import logging
-import torchvision.transforms as T # Imported for type hinting clarity
+import torchvision.transforms as T
 import os
+
 
 # Configure logging for this module
 logger = logging.getLogger(__name__)
@@ -57,15 +57,15 @@ def calculate_image_metrics(
         - ValueError: If image dimensions or data types are incompatible for metric calculation.
                       `skimage.metrics` functions may raise this internally.
 
-    Example of Usage:
-    ```python
-    import numpy as np
-    # Assume real_img_np and gen_img_np are preprocessed NumPy arrays in [0, 1] range
-    real_img_np = np.random.rand(64, 64)
-    gen_img_np = np.random.rand(64, 64)
-    metrics = calculate_image_metrics(real_img_np, gen_img_np)
-    print(f"MSE: {metrics['mse']:.4f}, PSNR: {metrics['psnr']:.4f}, SSIM: {metrics['ssim']:.4f}")
-    ```
+    Example of Usage::
+        ```python
+        import numpy as np
+        # Assume real_img_np and gen_img_np are preprocessed NumPy arrays in [0, 1] range
+        real_img_np = np.random.rand(64, 64)
+        gen_img_np = np.random.rand(64, 64)
+        metrics = calculate_image_metrics(real_img_np, gen_img_np)
+        print(f"MSE: {metrics['mse']:.4f}, PSNR: {metrics['psnr']:.4f}, SSIM: {metrics['ssim']:.4f}")
+        ```
 
     Relationships with other functions:
     - This function is called by `evaluate_model` to compute per-image quality metrics.
@@ -74,10 +74,12 @@ def calculate_image_metrics(
     - **Mean Squared Error (MSE):** Measures the average of the squares of the errors
       (the difference between estimated and true values). Lower MSE indicates better similarity.
       Formula: $MSE = (1/N) * \Sigma(real_i - gen_i)^2$
+
     - **Peak Signal-to-Noise Ratio (PSNR):** Expresses the ratio between the maximum
       possible power of a signal and the power of corrupting noise that affects the
       fidelity of its representation. Higher PSNR indicates better quality.
       Formula: $PSNR = 10 * log10(MAX_I^2 / MSE)$, where $MAX_I$ is the maximum pixel value.
+
     - **Structural Similarity Index (SSIM):** A perceptual metric that considers
       image degradation as a perceived change in structural information, also incorporating
       luminance and contrast changes. Values range from -1 to 1, where 1 means perfect similarity.
@@ -146,17 +148,17 @@ def evaluate_model(
         - Exception from `torch_fidelity.calculate_metrics`: If FID calculation fails due
           to issues with the library, image formats, or Inception model download.
 
-    Example of Usage:
-    ```python
-    import torch
-    import torchvision.transforms as T
-    from .transforms import get_fid_transforms # Assuming this is available
-    # Assuming real_images and generated_images are torch.Tensors in [-1, 1] range
-    # real_images = torch.randn(10, 1, 64, 64) * 0.5 + 0.5 # Example real images
-    # generated_images = torch.randn(10, 1, 64, 64) * 0.5 + 0.5 # Example generated images
-    # fid_trans = get_fid_transforms()
-    # evaluate_model(real_images, generated_images, fid_trans, num_compare=5)
-    ```
+    Example of Usage::
+        ```python
+        import torch
+        import torchvision.transforms as T
+        from .transforms import get_fid_transforms # Assuming this is available
+        # Assuming real_images and generated_images are torch.Tensors in [-1, 1] range
+        # real_images = torch.randn(10, 1, 64, 64) * 0.5 + 0.5 # Example real images
+        # generated_images = torch.randn(10, 1, 64, 64) * 0.5 + 0.5 # Example generated images
+        # fid_trans = get_fid_transforms()
+        # evaluate_model(real_images, generated_images, fid_trans, num_compare=5)
+        ```
 
     Relationships with other functions:
     - Calls `calculate_image_metrics` for MSE, PSNR, SSIM.

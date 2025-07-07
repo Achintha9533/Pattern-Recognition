@@ -1,5 +1,4 @@
-# load_model.py
-
+from typing import Dict
 import torch
 import gdown
 import os
@@ -30,12 +29,12 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 logger = logging.getLogger(__name__)
 
 # Attempt to import CNF_UNet model and config from your project structure.
-# This assumes 'Synthetic_Image_Generator' is a package in your Python path.
+# This assumes 'synthetic_image_generator' is a package in your Python path.
 try:
-    from Synthetic_Image_Generator.model import CNF_UNet
-    from Synthetic_Image_Generator import config
+    from synthetic_image_generator.model import CNF_UNet
+    from synthetic_image_generator import config
 except ImportError:
-    logger.warning("Could not import CNF_UNet or config from Synthetic_Image_Generator. "
+    logger.warning("Could not import CNF_UNet or config from synthetic_image_generator. "
                    "Please ensure your project structure is correct or adjust the import paths. "
                    "Using dummy classes for demonstration.")
     # Define dummy classes/configs if imports fail, to allow the script to run for demonstration.
