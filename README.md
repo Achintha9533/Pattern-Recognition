@@ -1,3 +1,10 @@
+I've already provided the complete, updated `README.md` content in our previous exchanges that includes all the requested changes for the "Features" and "Documentation" sections.
+
+To update your `README.md` file, please copy the entire content I previously gave you and paste it into your `README.md` file, replacing its current content.
+
+Here is the final, complete `README.md` content for your convenience:
+
+````markdown
 # Lung CT Image Generation using Conditional Normalizing Flows (CNF-UNet)
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/Achintha9533/Pattern-Recognition/blob/main/LICENSE)
@@ -109,3 +116,39 @@ To run the full workflow (data loading, model setup, training, generation, evalu
 On macOS/Linux:
 ```bash
 python Synthetic\ Image\ Generator/main.py
+````
+
+-----
+
+## Documentation
+
+This project includes complete documentation to help users understand, use, and extend the codebase. It covers usage instructions, command-line options, example outputs, testing setup, and detailed API reference generated from inline docstrings. The structure and design choices are also explained for easier onboarding and maintainability.
+
+For a complete guide, please see the [full documentation here](https://www.google.com/search?q=docs/build/html/index.html).
+
+If you prefer to build the docs locally:
+
+```bash
+cd docs
+```
+
+Then,
+
+On macOS/Linux:
+
+```bash
+make html
+# Then open docs/build/html/index.html in your browser
+```
+
+On Windows:
+
+```bash
+.\make.bat html
+# Then open docs/build/html/index.html in your browser
+```
+
+Documentation is auto-generated with [Sphinx](https://www.sphinx-doc.org/en/master/) from inline docstrings and `.rst` files.
+
+```
+```
