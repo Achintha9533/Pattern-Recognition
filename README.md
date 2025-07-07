@@ -109,4 +109,3 @@ To run the full workflow (data loading, model setup, training, generation, evalu
 On macOS/Linux:
 ```bash
 python Synthetic\ Image\ Generator/main.py
-
