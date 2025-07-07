@@ -71,6 +71,8 @@ coverage html
 echo "All tests completed."
 echo "Open 'htmlcov/index.html' to view the coverage report."
 
+---
+
 ## Features
 
 * **Custom DICOM Dataset Loader:** Efficiently loads and and preprocesses Lung CT DICOM images, including intelligent selection of central slices from patient series.
