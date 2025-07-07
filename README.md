@@ -30,15 +30,6 @@ It includes:
 * [Evaluation Metrics](#evaluation-metrics)
 * [Testing](#testing)
 * [Documentation](#documentation)
-
-This project includes complete documentation to help users understand, use, and extend the codebase. It covers usage instructions, command-line options, example outputs, testing setup, and detailed API reference generated from inline docstrings. The structure and design choices are also explained for easier onboarding and maintainability.
-
-For a complete guide, please see the [full documentation here](docs/build/html/index.html).
-
-If you prefer to build the docs locally,
-
-```bash
-cd docs)
 * [Limitations and Notes](#limitations-and-notes)
 * [License](#license)
 * [Contact](#contact)
@@ -47,7 +38,7 @@ cd docs)
 
 ## Features
 
-* **Custom DICOM Dataset Loader:** Efficiently loads and preprocesses Lung CT DICOM images, including intelligent selection of central slices from patient series.
+* **Custom DICOM Dataset Loader:** Efficiently loads and and preprocesses Lung CT DICOM images, including intelligent selection of central slices from patient series.
 * **Flexible Image Preprocessing:** Configurable transformations for resizing, tensor conversion, and normalization to `[-1, 1]` pixel values.
 * **CNF-UNet Generative Architecture:** A robust U-Net backbone integrated with time-dependent conditioning for continuous flow learning.
 * **Sinusoidal Positional Embedding:** Incorporates continuous time information into the network using sinusoidal embeddings processed by a dedicated MLP.
