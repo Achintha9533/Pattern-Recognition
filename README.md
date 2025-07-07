@@ -42,8 +42,10 @@ For a complete guide, please see the [full documentation here](docs/build/html/i
 
 If you prefer to build the docs locally:
 
-bash
-cd docs
+cd /path/to/your/Pattern-Recognition
+# Example: cd /Users/kasunachinthaperera/Documents/VS\ Code/Software\ and\ Computing/Pattern\ Recognition
+
+
 
 ## Features
 
