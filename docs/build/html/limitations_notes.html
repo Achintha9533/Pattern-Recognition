@@ -1,0 +1,121 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Limitations &mdash; Synthetic Image Generator 2025 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=cb975c41"></script>
+      <script src="_static/doctools.js?v=9a2dae69"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Synthetic Image Generator
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="project_overview.html">Project Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="evaluation.html">Evaluation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="development.html">Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">synthetic_image_generator</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Synthetic Image Generator</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Limitations</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/limitations_notes.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="limitations">
+<h1>Limitations<a class="headerlink" href="#limitations" title="Link to this heading"></a></h1>
+<p>While the Conditional Normalizing Flow (CNF) based Synthetic Image Generator demonstrates promising capabilities in producing realistic Lung CT images, it is important to acknowledge certain limitations inherent to the model architecture, the nature of the data, and the scope of this project. Understanding these limitations is crucial for interpreting the model’s performance and guiding future research.</p>
+<ol class="arabic simple">
+<li><p><strong>Computational Intensity and Scalability</strong>
+* <strong>Explanation:</strong> Normalizing Flows, by design, involve computing the determinant of the Jacobian matrix, which can be computationally intensive, especially for high-resolution images or deep flow architectures. Training these models requires significant computational resources (GPUs with large memory) and can be time-consuming. Generating a large number of high-resolution images can also be slow. This limits immediate scalability to extremely high-resolution (e.g., 512x512 or 1024x1024 and beyond) 3D medical volumes without substantial architectural or hardware advancements.</p></li>
+<li><p><strong>Fidelity vs. Diversity Trade-off and Subtle Artifacts</strong>
+* <strong>Explanation:</strong> Achieving a perfect balance between generating highly realistic (high fidelity) images and ensuring a wide range of diverse samples (avoiding mode collapse) remains a challenge for all generative models, including CNFs. While quantitative metrics like FID aim to capture both, minor or subtle artifacts, imperceptible to current metrics, might still be present in generated images. These artifacts could be crucial in sensitive applications like medical diagnosis, requiring expert human review. The model might struggle with rare anatomical variations or pathological findings if they are not sufficiently represented in the training data.</p></li>
+<li><p><strong>Data Dependency and Generalization</strong>
+* <strong>Explanation:</strong> Like all data-driven deep learning models, the performance and generalizability of the CNF model are highly dependent on the quality, size, and diversity of the training dataset. If the training data is biased, contains artifacts, or lacks representation of certain conditions or patient demographics, the generated images will reflect these limitations. Generating images for novel pathologies or unseen anatomical configurations, which were not present in the training set, remains a significant challenge.</p></li>
+<li><p><strong>Lack of Fine-Grained Controllability</strong>
+* <strong>Explanation:</strong> While the conditional aspect of the CNF-UNet allows for generating images based on a latent variable (e.g., different types of noise leading to different images), achieving precise, fine-grained control over specific anatomical features or the explicit introduction/removal of particular pathologies is complex. Current conditioning mechanisms might offer coarse control, but manipulating very specific, localized characteristics (e.g., the exact size and location of a small nodule) is not straightforward.</p></li>
+<li><p><strong>Clinical Validation and Interpretability</strong>
+* <strong>Explanation:</strong> The synthetic images produced by this research project are intended for research and development purposes (e.g., data augmentation, privacy-preserving sharing). They have not undergone rigorous clinical validation by medical professionals for diagnostic accuracy or suitability in real-world clinical workflows. Furthermore, the “black-box” nature of deep learning models means that understanding precisely <em>why</em> a certain image was generated or <em>how</em> a specific input led to a particular output remains challenging, which can be a barrier to trust and adoption in clinical settings.</p></li>
+</ol>
+<p>These limitations highlight areas for future work and underscore that while synthetic data can be incredibly useful, its application, especially in critical domains like healthcare, requires careful consideration and further validation.</p>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Kasun Achintha Perera.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

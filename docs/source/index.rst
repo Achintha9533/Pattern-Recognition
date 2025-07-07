@@ -1,25 +1,16 @@
 .. Synthetic Image Generator documentation master file, created by
-   sphinx-quickstart on Sun Jul  6 20:47:29 2025.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
+   sphinx-quickstart on ...
 
-Synthetic Image Generator documentation
-=======================================
+Welcome to Synthetic Image Generator's Documentation!
+======================================================
 
-Add your content using ``reStructuredText`` syntax. See the
-`reStructuredText <https://www.sphinx-doc.org/en/master/usage/restructuredtext/index.html>`_
-documentation for details.
-
+This documentation provides a comprehensive guide to the Synthetic Image Generator project, covering its architecture, usage, evaluation, and development aspects.
 
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
 
-# You can add narrative documentation files here later, e.g., usage.rst
-# usage
-
-# API Reference
-   synthetic_image_generator
+   project_overview
+   evaluation
+   development
    modules
-
-

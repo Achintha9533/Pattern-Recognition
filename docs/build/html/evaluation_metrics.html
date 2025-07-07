@@ -1,0 +1,157 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Evaluation Metrics &mdash; Synthetic Image Generator 2025 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=cb975c41"></script>
+      <script src="_static/doctools.js?v=9a2dae69"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Example Outputs" href="example_outputs.html" />
+    <link rel="prev" title="Evaluation" href="evaluation.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Synthetic Image Generator
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="project_overview.html">Project Overview</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="evaluation.html">Evaluation</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Evaluation Metrics</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#quantitative-metrics">Quantitative Metrics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#qualitative-evaluation">Qualitative Evaluation</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="example_outputs.html">Example Outputs</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="development.html">Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">synthetic_image_generator</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Synthetic Image Generator</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="evaluation.html">Evaluation</a></li>
+      <li class="breadcrumb-item active">Evaluation Metrics</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/evaluation_metrics.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="evaluation-metrics">
+<h1>Evaluation Metrics<a class="headerlink" href="#evaluation-metrics" title="Link to this heading"></a></h1>
+<p>Evaluating the performance of generative models, especially for complex data like medical images, requires robust quantitative metrics in addition to qualitative visual inspection. This section outlines the key metrics employed to assess the quality, realism, and diversity of the synthetically generated Lung CT images from the CNF-UNet model, based on the <cite>synthetic_image_generator.evaluate</cite> module.</p>
+<section id="quantitative-metrics">
+<h2>Quantitative Metrics<a class="headerlink" href="#quantitative-metrics" title="Link to this heading"></a></h2>
+<p>We utilized a combination of established metrics to provide a comprehensive evaluation:</p>
+<ol class="arabic">
+<li><p><strong>Mean Squared Error (MSE), Peak Signal-to-Noise Ratio (PSNR), and Structural Similarity Index (SSIM)</strong>
+* <strong>Purpose:</strong> These metrics quantify the per-pixel and structural similarity between images.</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><strong>MSE</strong> measures the average squared difference between pixels. A lower MSE indicates better pixel-wise similarity.</p></li>
+<li><p><strong>PSNR</strong> measures the ratio between the maximum possible pixel value and the power of distorting noise. A higher PSNR indicates better quality.</p></li>
+<li><p><strong>SSIM</strong> is a perceptual metric that quantifies image quality degradation based on structural information, luminance, and contrast changes. Values range from -1 to 1, with 1 being perfect similarity.</p></li>
+</ul>
+</div></blockquote>
+<ul class="simple">
+<li><p><strong>Implementation in Project:</strong> These metrics are calculated per-image by the <cite>calculate_image_metrics</cite> function within the <cite>evaluate</cite> module. They use <cite>skimage.metrics</cite> on NumPy arrays that are assumed to be normalized to the <cite>[0, 1]</cite> range. For <cite>peak_signal_noise_ratio</cite> and <cite>structural_similarity</cite>, a <cite>data_range</cite> of <cite>1.0</cite> is specified, and <cite>channel_axis=None</cite> for single-channel (grayscale) images. In the <cite>evaluate_model</cite> function, these metrics are computed for a <cite>num_compare</cite> subset of real and generated image pairs and then averaged.</p></li>
+<li><p><strong>Results:</strong> [Present your average MSE, PSNR, and SSIM scores here, along with interpretations. E.g., “Our model achieved an average MSE of X.XXX, PSNR of Y.YY dB, and SSIM of Z.ZZZ, suggesting a good fidelity at the pixel level on the compared samples.”]</p></li>
+</ul>
+</li>
+<li><p><strong>Fréchet Inception Distance (FID)</strong>
+* <strong>Purpose:</strong> FID is a more robust and perceptually relevant metric for assessing the quality and diversity of images generated by generative models. It measures the “distance” between the feature distributions of real and generated images, extracted from a pre-trained Inception-v3 network. A lower FID score indicates that the distribution of generated images is closer to the real image distribution, implying both higher quality and better diversity.
+* <strong>Implementation in Project:</strong> FID is calculated using the <cite>torch_fidelity</cite> library within the <cite>evaluate_model</cite> function. Before calculation, both real and generated images (which are initially in <cite>[-1, 1]</cite> pixel range) are processed using a <cite>fid_transform</cite> (which typically denormalizes them to <cite>[0, 255]</cite> and converts them to PIL Image format). These preprocessed images are then temporarily saved to disk in designated <cite>fid_real_images</cite> and <cite>fid_generated_images</cite> directories. <cite>torch_fidelity</cite> then uses these directories as input to compute the FID score, leveraging CUDA if available. The temporary directories are cleaned up after calculation.
+* <strong>Results:</strong> [Present your FID scores here. E.g., “The FID score obtained was X.XX. This low score demonstrates that the generated images capture the overall statistical properties and diversity of the real dataset effectively.”]</p></li>
+</ol>
+</section>
+<section id="qualitative-evaluation">
+<h2>Qualitative Evaluation<a class="headerlink" href="#qualitative-evaluation" title="Link to this heading"></a></h2>
+<p>Beyond quantitative metrics, visual inspection by human observers is crucial for generative models. This involves manually reviewing a diverse set of generated images to assess:</p>
+<ul class="simple">
+<li><p><strong>Realism:</strong> Do the images look like actual Lung CT scans?</p></li>
+<li><p><strong>Anatomical Correctness:</strong> Are anatomical structures (e.g., lungs, blood vessels) plausible?</p></li>
+<li><p><strong>Diversity:</strong> Does the model generate a wide variety of distinct images, or does it suffer from mode collapse?</p></li>
+<li><p><strong>Artifacts:</strong> Are there any noticeable artifacts, noise, or blurring?</p></li>
+<li><p><strong>Clinical Relevance:</strong> Do the images maintain clinical relevance, such as showing variations in lung conditions?</p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="evaluation.html" class="btn btn-neutral float-left" title="Evaluation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="example_outputs.html" class="btn btn-neutral float-right" title="Example Outputs" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Kasun Achintha Perera.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
