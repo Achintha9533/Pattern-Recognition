@@ -42,7 +42,7 @@ For a complete guide, please see the [full documentation here](docs/build/html/i
 
 If you prefer to build the docs locally:
 
-```bash
+bash
 cd docs
 
 ## Features
