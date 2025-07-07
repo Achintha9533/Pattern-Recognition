@@ -29,7 +29,7 @@ It includes:
 * [Model Architecture and Training](#model-architecture-and-training)
 * [Evaluation Metrics](#evaluation-metrics)
 * [Testing](#testing)
-*  [Documentation](#documentation)
+* [Documentation](#documentation)
 
 This project includes complete documentation to help users understand, use, and extend the codebase. It covers usage instructions, command-line options, example outputs, testing setup, and detailed API reference generated from inline docstrings. The structure and design choices are also explained for easier onboarding and maintainability.
 
