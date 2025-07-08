@@ -39,7 +39,7 @@ It includes:
 
 This project includes complete documentation to help users understand, use, and extend the codebase. It covers usage instructions, command-line options, example outputs, testing setup, and detailed API reference generated from inline docstrings. The structure and design choices are also explained for easier onboarding and maintainability.
 
-For a complete guide, please see the [full documentation here](https://github.com/Achintha9533/Pattern-Recognition).
+For a complete guide, please see the [full documentation here]( https://achintha9533.github.io/Pattern-Recognition/).
 
 If you prefer to build the docs locally:
 
