@@ -1,0 +1,148 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Model Architecture &mdash; Synthetic Image Generator 2025 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=cb975c41"></script>
+      <script src="_static/doctools.js?v=9a2dae69"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Synthetic Image Generator
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="project_overview.html">Project Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="evaluation.html">Evaluation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="development.html">Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">synthetic_image_generator</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Synthetic Image Generator</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Model Architecture</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/model_architecture.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="model-architecture">
+<h1>Model Architecture<a class="headerlink" href="#model-architecture" title="Link to this heading"></a></h1>
+<p>This section provides a detailed overview of the Conditional Normalizing Flow with UNet (CNF-UNet) architecture employed in this project for Lung CT image generation. Understanding this architecture is key to grasping how the model learns to generate high-quality synthetic images.</p>
+<section id="overview-of-cnf-unet">
+<h2>Overview of CNF-UNet<a class="headerlink" href="#overview-of-cnf-unet" title="Link to this heading"></a></h2>
+<p>The core of this project’s image generation capability lies in the integration of Conditional Normalizing Flows (CNF) with a UNet-like structure. This combination allows for a powerful generative model that can learn complex data distributions while leveraging the hierarchical feature extraction benefits of the UNet.</p>
+<p>[Elaborate here on the high-level concept: How CNF works (invertible transformations, exact likelihood), how UNet contributes (multi-scale feature extraction, skip connections), and how conditioning is applied (e.g., through UNet features).]</p>
+</section>
+<section id="normalizing-flows-nf">
+<h2>Normalizing Flows (NF)<a class="headerlink" href="#normalizing-flows-nf" title="Link to this heading"></a></h2>
+<p>Normalizing Flows are a class of generative models that transform a simple base distribution (e.g., a Gaussian) into a complex data distribution through a sequence of invertible and differentiable transformations. This allows for exact likelihood computation and efficient sampling.</p>
+<p>[Detail the specific types of flow layers used (e.g., coupling layers, permutations, non-linearities) and why they were chosen.]</p>
+</section>
+<section id="unet-integration">
+<h2>UNet Integration<a class="headerlink" href="#unet-integration" title="Link to this heading"></a></h2>
+<p>The UNet architecture, originally developed for biomedical image segmentation, is well-suited for processing images due to its encoder-decoder structure with skip connections. In our CNF-UNet, the UNet part typically acts as a powerful feature extractor that provides rich, multi-scale conditional information to the normalizing flow.</p>
+<p>[Explain how the UNet is used: Does it provide features at different scales to different flow blocks? Is it an encoder for the conditioning? How are skip connections utilized in this context?]</p>
+</section>
+<section id="conditional-aspect">
+<h2>Conditional Aspect<a class="headerlink" href="#conditional-aspect" title="Link to this heading"></a></h2>
+<p>The “Conditional” aspect of CNF-UNet means the model’s generation process is guided by certain input conditions. This allows for controlled image synthesis.</p>
+<p>[Describe what the conditioning variables are (e.g., clinical parameters, partial images, noise levels) and how they are incorporated into the CNF and/or UNet parts of the architecture. How does this conditioning influence the generated output?]</p>
+</section>
+<section id="component-details">
+<h2>Component Details<a class="headerlink" href="#component-details" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p><strong>UNetBlock:</strong> [Describe the structure of your basic UNet building block (e.g., convolutional layers, activation functions, batch normalization). You can link to its API documentation here.]</p></li>
+<li><p><strong>Flow Layers:</strong> [Detail the specific flow layers like Affine Coupling Layers, Invertible 1x1 Convolutions, etc., if applicable.]</p></li>
+<li><p><strong>Loss Function:</strong> [Briefly mention the loss function, typically negative log-likelihood for NFs.]</p></li>
+</ul>
+</section>
+<section id="model-architecture-diagram">
+<h2>Model Architecture Diagram<a class="headerlink" href="#model-architecture-diagram" title="Link to this heading"></a></h2>
+<p>A visual representation of the CNF-UNet architecture helps in understanding the data flow and the interaction between the Normalizing Flow and UNet components.</p>
+<figure class="align-center" id="id1">
+<a class="reference internal image-reference" href="_images/model_architecture_diagram.png"><img alt="Diagram of the CNF-UNet model architecture." src="_images/model_architecture_diagram.png" style="width: 90%;" />
+</a>
+<figcaption>
+<p><span class="caption-text">Conceptual diagram illustrating the integrated CNF-UNet architecture.</span><a class="headerlink" href="#id1" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<p>[Remember to replace <cite>model_architecture_diagram.png</cite> with the actual path to your diagram image. You’ll need to create this diagram (e.g., using draw.io, Excalidraw, PowerPoint, or a scientific plotting library) and save it in <cite>docs/source/_static/</cite>.]</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Kasun Achintha Perera.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

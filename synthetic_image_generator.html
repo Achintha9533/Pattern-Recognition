@@ -1,0 +1,1529 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>synthetic_image_generator package &mdash; Synthetic Image Generator 2025 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=cb975c41"></script>
+      <script src="_static/doctools.js?v=9a2dae69"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Synthetic Image Generator
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#">synthetic_image_generator package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-synthetic_image_generator.config">synthetic_image_generator.config module</a></li>
+<li><a class="reference internal" href="#module-synthetic_image_generator.dataset">synthetic_image_generator.dataset module</a><ul>
+<li><a class="reference internal" href="#synthetic_image_generator.dataset.LungCTWithGaussianDataset"><code class="docutils literal notranslate"><span class="pre">LungCTWithGaussianDataset</span></code></a></li>
+<li><a class="reference internal" href="#synthetic_image_generator.dataset.load_dicom_image"><code class="docutils literal notranslate"><span class="pre">load_dicom_image()</span></code></a></li>
+<li><a class="reference internal" href="#synthetic_image_generator.dataset.logger"><code class="docutils literal notranslate"><span class="pre">logger</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-synthetic_image_generator.evaluate">synthetic_image_generator.evaluate module</a><ul>
+<li><a class="reference internal" href="#synthetic_image_generator.evaluate.calculate_image_metrics"><code class="docutils literal notranslate"><span class="pre">calculate_image_metrics()</span></code></a></li>
+<li><a class="reference internal" href="#synthetic_image_generator.evaluate.evaluate_model"><code class="docutils literal notranslate"><span class="pre">evaluate_model()</span></code></a></li>
+<li><a class="reference internal" href="#synthetic_image_generator.evaluate.logger"><code class="docutils literal notranslate"><span class="pre">logger</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-synthetic_image_generator.generate">synthetic_image_generator.generate module</a><ul>
+<li><a class="reference internal" href="#synthetic_image_generator.generate.generate_images"><code class="docutils literal notranslate"><span class="pre">generate_images()</span></code></a></li>
+<li><a class="reference internal" href="#synthetic_image_generator.generate.logger"><code class="docutils literal notranslate"><span class="pre">logger</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-synthetic_image_generator.load_model">synthetic_image_generator.load_model module</a><ul>
+<li><a class="reference internal" href="#synthetic_image_generator.load_model.load_model_from_drive"><code class="docutils literal notranslate"><span class="pre">load_model_from_drive()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-synthetic_image_generator.main">synthetic_image_generator.main module</a><ul>
+<li><a class="reference internal" href="#synthetic_image_generator.main.logger"><code class="docutils literal notranslate"><span class="pre">logger</span></code></a></li>
+<li><a class="reference internal" href="#synthetic_image_generator.main.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-synthetic_image_generator.model">synthetic_image_generator.model module</a><ul>
+<li><a class="reference internal" href="#synthetic_image_generator.model.Block"><code class="docutils literal notranslate"><span class="pre">Block</span></code></a><ul>
+<li><a class="reference internal" href="#synthetic_image_generator.model.Block.forward"><code class="docutils literal notranslate"><span class="pre">Block.forward()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#synthetic_image_generator.model.CNF_UNet"><code class="docutils literal notranslate"><span class="pre">CNF_UNet</span></code></a><ul>
+<li><a class="reference internal" href="#synthetic_image_generator.model.CNF_UNet.forward"><code class="docutils literal notranslate"><span class="pre">CNF_UNet.forward()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#synthetic_image_generator.model.ResBlock"><code class="docutils literal notranslate"><span class="pre">ResBlock</span></code></a><ul>
+<li><a class="reference internal" href="#synthetic_image_generator.model.ResBlock.forward"><code class="docutils literal notranslate"><span class="pre">ResBlock.forward()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#synthetic_image_generator.model.SelfAttention"><code class="docutils literal notranslate"><span class="pre">SelfAttention</span></code></a><ul>
+<li><a class="reference internal" href="#synthetic_image_generator.model.SelfAttention.forward"><code class="docutils literal notranslate"><span class="pre">SelfAttention.forward()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#synthetic_image_generator.model.TimestepEmbedder"><code class="docutils literal notranslate"><span class="pre">TimestepEmbedder</span></code></a><ul>
+<li><a class="reference internal" href="#synthetic_image_generator.model.TimestepEmbedder.forward"><code class="docutils literal notranslate"><span class="pre">TimestepEmbedder.forward()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#synthetic_image_generator.model.UNetBlock"><code class="docutils literal notranslate"><span class="pre">UNetBlock</span></code></a><ul>
+<li><a class="reference internal" href="#synthetic_image_generator.model.UNetBlock.forward"><code class="docutils literal notranslate"><span class="pre">UNetBlock.forward()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#synthetic_image_generator.model.get_sinusoidal_embedding"><code class="docutils literal notranslate"><span class="pre">get_sinusoidal_embedding()</span></code></a></li>
+<li><a class="reference internal" href="#synthetic_image_generator.model.logger"><code class="docutils literal notranslate"><span class="pre">logger</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-synthetic_image_generator.train">synthetic_image_generator.train module</a><ul>
+<li><a class="reference internal" href="#synthetic_image_generator.train.logger"><code class="docutils literal notranslate"><span class="pre">logger</span></code></a></li>
+<li><a class="reference internal" href="#synthetic_image_generator.train.train_model"><code class="docutils literal notranslate"><span class="pre">train_model()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-synthetic_image_generator.transforms">synthetic_image_generator.transforms module</a><ul>
+<li><a class="reference internal" href="#synthetic_image_generator.transforms.get_fid_transforms"><code class="docutils literal notranslate"><span class="pre">get_fid_transforms()</span></code></a></li>
+<li><a class="reference internal" href="#synthetic_image_generator.transforms.get_transforms"><code class="docutils literal notranslate"><span class="pre">get_transforms()</span></code></a></li>
+<li><a class="reference internal" href="#synthetic_image_generator.transforms.logger"><code class="docutils literal notranslate"><span class="pre">logger</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-synthetic_image_generator.visualize">synthetic_image_generator.visualize module</a><ul>
+<li><a class="reference internal" href="#synthetic_image_generator.visualize.logger"><code class="docutils literal notranslate"><span class="pre">logger</span></code></a></li>
+<li><a class="reference internal" href="#synthetic_image_generator.visualize.plot_generated_pixel_distribution_comparison"><code class="docutils literal notranslate"><span class="pre">plot_generated_pixel_distribution_comparison()</span></code></a></li>
+<li><a class="reference internal" href="#synthetic_image_generator.visualize.plot_pixel_distributions"><code class="docutils literal notranslate"><span class="pre">plot_pixel_distributions()</span></code></a></li>
+<li><a class="reference internal" href="#synthetic_image_generator.visualize.plot_real_vs_generated_side_by_side"><code class="docutils literal notranslate"><span class="pre">plot_real_vs_generated_side_by_side()</span></code></a></li>
+<li><a class="reference internal" href="#synthetic_image_generator.visualize.plot_sample_generated_images"><code class="docutils literal notranslate"><span class="pre">plot_sample_generated_images()</span></code></a></li>
+<li><a class="reference internal" href="#synthetic_image_generator.visualize.plot_sample_images_and_noise"><code class="docutils literal notranslate"><span class="pre">plot_sample_images_and_noise()</span></code></a></li>
+<li><a class="reference internal" href="#synthetic_image_generator.visualize.plot_training_losses"><code class="docutils literal notranslate"><span class="pre">plot_training_losses()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Synthetic Image Generator</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">synthetic_image_generator package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/synthetic_image_generator.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-synthetic_image_generator">
+<span id="synthetic-image-generator-package"></span><h1>synthetic_image_generator package<a class="headerlink" href="#module-synthetic_image_generator" title="Link to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="module-synthetic_image_generator.config">
+<span id="synthetic-image-generator-config-module"></span><h2>synthetic_image_generator.config module<a class="headerlink" href="#module-synthetic_image_generator.config" title="Link to this heading"></a></h2>
+</section>
+<section id="module-synthetic_image_generator.dataset">
+<span id="synthetic-image-generator-dataset-module"></span><h2>synthetic_image_generator.dataset module<a class="headerlink" href="#module-synthetic_image_generator.dataset" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="synthetic_image_generator.dataset.LungCTWithGaussianDataset">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">synthetic_image_generator.dataset.</span></span><span class="sig-name descname"><span class="pre">LungCTWithGaussianDataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">base_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_images_per_folder</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">image_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">(64,</span> <span class="pre">64)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transform</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Compose</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#synthetic_image_generator.dataset.LungCTWithGaussianDataset" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Dataset</span></code></p>
+<p>A PyTorch Dataset for loading Lung CT images and generating corresponding
+Gaussian noise samples.</p>
+<p>This dataset iterates through a directory structure where each patient has
+a subfolder containing DICOM images. It selects a specified number of
+“middle” images from each patient’s scan to form the dataset, pairs them
+with random Gaussian noise, and applies image transformations. This setup
+is designed for training generative models like Conditional Normalizing Flows
+that learn to transform noise into realistic images.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="synthetic_image_generator.dataset.load_dicom_image">
+<span class="sig-prename descclassname"><span class="pre">synthetic_image_generator.dataset.</span></span><span class="sig-name descname"><span class="pre">load_dicom_image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="headerlink" href="#synthetic_image_generator.dataset.load_dicom_image" title="Link to this definition"></a></dt>
+<dd><p>Loads a single DICOM image from the given file path, extracts pixel data,
+and normalizes it to a [0, 1] range based on typical CT Hounsfield Units.</p>
+<p>This function is designed to handle common DICOM pixel data types and applies
+a fixed Hounsfield Unit (HU) window for intensity normalization, which is
+crucial for consistent input to machine learning models. It also handles
+potential errors during file reading or processing, returning None in case of failure.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><dl class="simple">
+<dt>file_path (Path): The path to the DICOM file. Expected to be a valid</dt><dd><p>path to a .dcm file.</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>np.ndarray or None: The normalized pixel array (float32, [0, 1]) if successful,</dt><dd><p>or None if loading or processing fails. The image will be 2D.</p>
+</dd>
+</dl>
+</dd>
+<dt>Potential Exceptions Raised:</dt><dd><ul class="simple">
+<li><p>pydicom.errors.InvalidDicomError: If the file is not a valid DICOM file.</p></li>
+<li><p>KeyError: If expected DICOM tags like ‘PixelData’ are missing.</p></li>
+<li><p>AttributeError: If <code class="docutils literal notranslate"><span class="pre">ds.pixel_array</span></code> is not available.</p></li>
+<li><dl class="simple">
+<dt>ValueError: If <code class="docutils literal notranslate"><span class="pre">img_max</span></code> and <code class="docutils literal notranslate"><span class="pre">img_min</span></code> are identical, preventing division by zero.</dt><dd><p>(Handled internally to return a black image).</p>
+</dd>
+</dl>
+</li>
+<li><p>OSError: If the file_path is inaccessible.</p></li>
+</ul>
+</dd>
+</dl>
+<p>Example of Usage:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>```python
+from pathlib import Path
+# Assuming &#39;sample.dcm&#39; is a valid DICOM file in the current directory
+dicom_file = Path(&quot;path/to/your/sample.dcm&quot;)
+image_data = load_dicom_image(dicom_file)
+if image_data is not None:
+    print(f&quot;Loaded DICOM image with shape: {image_data.shape} and pixel range: [{image_data.min()}, {image_data.max()}]&quot;)
+else:
+    print(f&quot;Failed to load DICOM image from {dicom_file}&quot;)
+```
+</pre></div>
+</div>
+<p>Relationships with other functions:
+- Called by <code class="docutils literal notranslate"><span class="pre">LungCTWithGaussianDataset.__getitem__</span></code> to load individual images.</p>
+<p>Explanation of the theory:
+- <strong>DICOM (Digital Imaging and Communications in Medicine):</strong> A standard for</p>
+<blockquote>
+<div><p>handling, storing, printing, and transmitting information in medical imaging.
+DICOM files contain both image data and metadata (patient info, scan parameters).</p>
+</div></blockquote>
+<ul class="simple">
+<li><p><strong>Hounsfield Unit (HU):</strong> A quantitative scale used in CT scans to describe
+radiodensity. Normalization to a fixed HU window maps the relevant intensity
+range (e.g., lung tissue) to a standard [0, 1] range, making the data consistent
+across different scans and suitable for neural network input.
+The chosen window (-1000 HU to 400 HU) typically covers air to soft tissue,
+which is common for lung CT analysis.</p></li>
+</ul>
+<p>References for the theory:
+- Bushberg, J. T., Seibert, J. A., Leidholdt Jr, E. M., &amp; Boone, J. M. (2011).</p>
+<blockquote>
+<div><p>The essential physics of medical imaging. Lippincott Williams &amp; Wilkins.</p>
+</div></blockquote>
+<ul class="simple">
+<li><p>DICOM Standard documentation (dicom.nema.org).</p></li>
+</ul>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="synthetic_image_generator.dataset.logger">
+<span class="sig-prename descclassname"><span class="pre">synthetic_image_generator.dataset.</span></span><span class="sig-name descname"><span class="pre">logger</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;Logger</span> <span class="pre">synthetic_image_generator.dataset</span> <span class="pre">(WARNING)&gt;</span></em><a class="headerlink" href="#synthetic_image_generator.dataset.logger" title="Link to this definition"></a></dt>
+<dd><p>This module provides functionalities for loading and preprocessing medical imaging data,
+specifically DICOM files from Lung CT scans, and integrating them with Gaussian noise
+for training a Conditional Normalizing Flow (CNF) model. It defines a custom PyTorch
+Dataset for efficient data handling during the training process.</p>
+<p>The module focuses on robust DICOM image loading, Hounsfield Unit (HU) normalization,
+and structured data retrieval from a directory hierarchy.</p>
+</dd></dl>
+
+</section>
+<section id="module-synthetic_image_generator.evaluate">
+<span id="synthetic-image-generator-evaluate-module"></span><h2>synthetic_image_generator.evaluate module<a class="headerlink" href="#module-synthetic_image_generator.evaluate" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="synthetic_image_generator.evaluate.calculate_image_metrics">
+<span class="sig-prename descclassname"><span class="pre">synthetic_image_generator.evaluate.</span></span><span class="sig-name descname"><span class="pre">calculate_image_metrics</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">real_image</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">generated_image</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#synthetic_image_generator.evaluate.calculate_image_metrics" title="Link to this definition"></a></dt>
+<dd><p>Calculates Mean Squared Error (MSE), Peak Signal-to-Noise Ratio (PSNR),
+and Structural Similarity Index (SSIM) between a real and a generated image.</p>
+<p>This function quantifies the per-pixel and structural similarity between
+two images. MSE measures the average squared difference between pixels.
+PSNR measures the ratio between the maximum possible pixel value and
+the power of distorting noise that affects the quality of its representation.
+SSIM is a perceptual metric that quantifies image quality degradation
+(e.g., distortion, noise) based on structural information.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><dl class="simple">
+<dt>real_image (np.ndarray): The ground truth real image as a NumPy array.</dt><dd><p>Expected to be 2D (H, W) or 3D (H, W, C).
+Pixel values are typically in [0, 1].</p>
+</dd>
+<dt>generated_image (np.ndarray): The generated image as a NumPy array.</dt><dd><p>Expected to be 2D (H, W) or 3D (H, W, C).
+Pixel values are typically in [0, 1].</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><p>Dict[str, float]: A dictionary containing the calculated ‘mse’, ‘psnr’, and ‘ssim’ values.</p>
+</dd>
+<dt>Potential Exceptions Raised:</dt><dd><ul class="simple">
+<li><dl class="simple">
+<dt>ValueError: If image dimensions or data types are incompatible for metric calculation.</dt><dd><p><cite>skimage.metrics</cite> functions may raise this internally.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+<dt>Example of Usage::</dt><dd><p><code class="docutils literal notranslate"><span class="pre">`python</span>
+<span class="pre">import</span> <span class="pre">numpy</span> <span class="pre">as</span> <span class="pre">np</span>
+<span class="pre">#</span> <span class="pre">Assume</span> <span class="pre">real_img_np</span> <span class="pre">and</span> <span class="pre">gen_img_np</span> <span class="pre">are</span> <span class="pre">preprocessed</span> <span class="pre">NumPy</span> <span class="pre">arrays</span> <span class="pre">in</span> <span class="pre">[0,</span> <span class="pre">1]</span> <span class="pre">range</span>
+<span class="pre">real_img_np</span> <span class="pre">=</span> <span class="pre">np.random.rand(64,</span> <span class="pre">64)</span>
+<span class="pre">gen_img_np</span> <span class="pre">=</span> <span class="pre">np.random.rand(64,</span> <span class="pre">64)</span>
+<span class="pre">metrics</span> <span class="pre">=</span> <span class="pre">calculate_image_metrics(real_img_np,</span> <span class="pre">gen_img_np)</span>
+<span class="pre">print(f&quot;MSE:</span> <span class="pre">{metrics['mse']:.4f},</span> <span class="pre">PSNR:</span> <span class="pre">{metrics['psnr']:.4f},</span> <span class="pre">SSIM:</span> <span class="pre">{metrics['ssim']:.4f}&quot;)</span>
+<span class="pre">`</span></code></p>
+</dd>
+</dl>
+<p>Relationships with other functions:
+- This function is called by <cite>evaluate_model</cite> to compute per-image quality metrics.</p>
+<p>Explanation of the theory:
+- <strong>Mean Squared Error (MSE):</strong> Measures the average of the squares of the errors</p>
+<blockquote>
+<div><p>(the difference between estimated and true values). Lower MSE indicates better similarity.
+Formula: $MSE = (1/N) * Sigma(real_i - gen_i)^2$</p>
+</div></blockquote>
+<ul class="simple">
+<li><p><strong>Peak Signal-to-Noise Ratio (PSNR):</strong> Expresses the ratio between the maximum
+possible power of a signal and the power of corrupting noise that affects the
+fidelity of its representation. Higher PSNR indicates better quality.
+Formula: $PSNR = 10 * log10(MAX_I^2 / MSE)$, where $MAX_I$ is the maximum pixel value.</p></li>
+<li><p><strong>Structural Similarity Index (SSIM):</strong> A perceptual metric that considers
+image degradation as a perceived change in structural information, also incorporating
+luminance and contrast changes. Values range from -1 to 1, where 1 means perfect similarity.</p></li>
+</ul>
+<p>References for the theory:
+- Wang, Z., Bovik, A. C., Sheikh, H. R., &amp; Simoncelli, E. P. (2004). Image quality</p>
+<blockquote>
+<div><p>assessment: from error visibility to structural similarity. IEEE transactions on
+image processing, 13(4), 600-612.</p>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="synthetic_image_generator.evaluate.evaluate_model">
+<span class="sig-prename descclassname"><span class="pre">synthetic_image_generator.evaluate.</span></span><span class="sig-name descname"><span class="pre">evaluate_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">real_images_batch_tensor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">generated_images</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fid_transform</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Compose</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_compare</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#synthetic_image_generator.evaluate.evaluate_model" title="Link to this definition"></a></dt>
+<dd><p>Calculates and logs various image quality metrics (MSE, PSNR, SSIM, and FID)
+to assess the fidelity and diversity of generated images compared to real ones.</p>
+<p>This function orchestrates the evaluation process. It takes batches of real
+and generated images, computes pixel-based metrics (MSE, PSNR, SSIM) on a
+subset, and then calculates the Fréchet Inception Distance (FID) for a larger
+set of images. FID is a more robust metric that captures both image quality
+and diversity by comparing feature representations from a pre-trained Inception model.
+Temporary directories are created to store images for FID calculation and are
+cleaned up afterwards.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><dl class="simple">
+<dt>real_images_batch_tensor (torch.Tensor): A batch of real images (CPU tensor)</dt><dd><p>to be used as ground truth.
+Expected pixel range: [-1, 1].</p>
+</dd>
+<dt>generated_images (torch.Tensor): A batch of generated images (CPU tensor)</dt><dd><p>from the model. Expected pixel range: [-1, 1].</p>
+</dd>
+<dt>fid_transform (T.Compose): A torchvision.transforms.Compose object used to</dt><dd><p>prepare images for FID calculation (e.g., denormalize
+to [0, 255] and convert to PIL Image).</p>
+</dd>
+<dt>num_compare (int): The number of image pairs (real vs. generated) to use</dt><dd><p>for calculating per-pixel metrics (MSE, PSNR, SSIM).
+FID uses all available generated images.</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><p>None: This function primarily performs side effects (logging metrics).</p>
+</dd>
+<dt>Potential Exceptions Raised:</dt><dd><ul class="simple">
+<li><p>FileNotFoundError, OSError: During temporary directory creation or cleanup.</p></li>
+<li><p>Exception from <cite>torch_fidelity.calculate_metrics</cite>: If FID calculation fails due
+to issues with the library, image formats, or Inception model download.</p></li>
+</ul>
+</dd>
+<dt>Example of Usage::</dt><dd><p><code class="docutils literal notranslate"><span class="pre">`python</span>
+<span class="pre">import</span> <span class="pre">torch</span>
+<span class="pre">import</span> <span class="pre">torchvision.transforms</span> <span class="pre">as</span> <span class="pre">T</span>
+<span class="pre">from</span> <span class="pre">.transforms</span> <span class="pre">import</span> <span class="pre">get_fid_transforms</span> <span class="pre">#</span> <span class="pre">Assuming</span> <span class="pre">this</span> <span class="pre">is</span> <span class="pre">available</span>
+<span class="pre">#</span> <span class="pre">Assuming</span> <span class="pre">real_images</span> <span class="pre">and</span> <span class="pre">generated_images</span> <span class="pre">are</span> <span class="pre">torch.Tensors</span> <span class="pre">in</span> <span class="pre">[-1,</span> <span class="pre">1]</span> <span class="pre">range</span>
+<span class="pre">#</span> <span class="pre">real_images</span> <span class="pre">=</span> <span class="pre">torch.randn(10,</span> <span class="pre">1,</span> <span class="pre">64,</span> <span class="pre">64)</span> <span class="pre">*</span> <span class="pre">0.5</span> <span class="pre">+</span> <span class="pre">0.5</span> <span class="pre">#</span> <span class="pre">Example</span> <span class="pre">real</span> <span class="pre">images</span>
+<span class="pre">#</span> <span class="pre">generated_images</span> <span class="pre">=</span> <span class="pre">torch.randn(10,</span> <span class="pre">1,</span> <span class="pre">64,</span> <span class="pre">64)</span> <span class="pre">*</span> <span class="pre">0.5</span> <span class="pre">+</span> <span class="pre">0.5</span> <span class="pre">#</span> <span class="pre">Example</span> <span class="pre">generated</span> <span class="pre">images</span>
+<span class="pre">#</span> <span class="pre">fid_trans</span> <span class="pre">=</span> <span class="pre">get_fid_transforms()</span>
+<span class="pre">#</span> <span class="pre">evaluate_model(real_images,</span> <span class="pre">generated_images,</span> <span class="pre">fid_trans,</span> <span class="pre">num_compare=5)</span>
+<span class="pre">`</span></code></p>
+</dd>
+</dl>
+<p>Relationships with other functions:
+- Calls <cite>calculate_image_metrics</cite> for MSE, PSNR, SSIM.
+- Utilizes <cite>torch_fidelity.calculate_metrics</cite> for FID.
+- Relies on <cite>torchvision.transforms</cite> for image preparation for FID.
+- Called from <cite>main.py</cite> to perform overall model evaluation.</p>
+<p>Explanation of the theory:
+- <strong>Fréchet Inception Distance (FID):</strong> A metric used to assess the quality of</p>
+<blockquote>
+<div><p>images generated by generative models. It measures the distance between the
+feature vectors of real and generated images, extracted from a pre-trained
+Inception v3 network. A lower FID score indicates better quality and diversity
+of generated images, as it implies that the generated image distribution
+is closer to the real image distribution. FID is generally preferred over
+pixel-wise metrics (like MSE/PSNR) because it correlates better with human
+perceptual judgment of image quality.</p>
+</div></blockquote>
+<p>References for the theory:
+- Heusel, M., Ramsauer, H., Unterthiner, T., Nessler, B., &amp; Hochreiter, S. (2017).</p>
+<blockquote>
+<div><p>Gans trained by a two time-scale update rule converge to a nash equilibrium.
+In Advances in neural information processing systems (pp. 6626-6637).</p>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="synthetic_image_generator.evaluate.logger">
+<span class="sig-prename descclassname"><span class="pre">synthetic_image_generator.evaluate.</span></span><span class="sig-name descname"><span class="pre">logger</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;Logger</span> <span class="pre">synthetic_image_generator.evaluate</span> <span class="pre">(WARNING)&gt;</span></em><a class="headerlink" href="#synthetic_image_generator.evaluate.logger" title="Link to this definition"></a></dt>
+<dd><p>This module provides comprehensive functionalities for evaluating the performance
+and quality of synthetic images generated by the Conditional Normalizing Flow (CNF)
+model. It includes implementations for common image quality metrics such as
+Mean Squared Error (MSE), Peak Signal-to-Noise Ratio (PSNR), Structural Similarity
+Index (SSIM), and Fréchet Inception Distance (FID).</p>
+<p>The evaluation process involves comparing generated images against real images from
+the dataset to quantify aspects like fidelity (how realistic the images are)
+and diversity (how varied the generated images are). Temporary directories are
+managed to facilitate FID calculation, which requires saving images to disk.</p>
+</dd></dl>
+
+</section>
+<section id="module-synthetic_image_generator.generate">
+<span id="synthetic-image-generator-generate-module"></span><h2>synthetic_image_generator.generate module<a class="headerlink" href="#module-synthetic_image_generator.generate" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="synthetic_image_generator.generate.generate_images">
+<span class="sig-prename descclassname"><span class="pre">synthetic_image_generator.generate.</span></span><span class="sig-name descname"><span class="pre">generate_images</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Module</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial_noise</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">steps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">200</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">device</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'cpu'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="headerlink" href="#synthetic_image_generator.generate.generate_images" title="Link to this definition"></a></dt>
+<dd><p>Generates synthetic images by integrating the predicted velocity field
+from an initial Gaussian noise distribution to the target data distribution.
+This process simulates the reverse flow learned by the CNF model.</p>
+<p>The generation process starts with random Gaussian noise and iteratively
+updates it by moving along the velocity field predicted by the CNF model
+at each time step. The Euler integration method is used for this process,
+approximating the continuous flow. Disabling gradient calculation (<cite>torch.no_grad()</cite>)
+is essential for efficient inference.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><dl class="simple">
+<dt>model (nn.Module): The trained generator model (CNF_UNet instance)</dt><dd><p>that predicts the velocity field. It must be in evaluation mode.</p>
+</dd>
+<dt>initial_noise (torch.Tensor): A batch of initial Gaussian noise tensors.</dt><dd><p>This serves as the starting point for the generation process.
+Shape: (batch_size, C, H, W). Expected values: standard normal.</p>
+</dd>
+<dt>steps (int): The number of discrete steps to use for the Euler integration.</dt><dd><p>More steps generally lead to higher quality generated images
+but also increase generation time. Defaults to 200.</p>
+</dd>
+<dt>device (Union[str, torch.device]): The device (‘cpu’ or ‘cuda’) on which</dt><dd><p>to perform image generation. Defaults to ‘cpu’.</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>torch.Tensor: A batch of generated synthetic image tensors.</dt><dd><p>Shape: (batch_size, C, H, W). Pixel values are in the
+same range as the training data (e.g., [-1, 1] if normalized).</p>
+</dd>
+</dl>
+</dd>
+<dt>Potential Exceptions Raised:</dt><dd><ul class="simple">
+<li><dl class="simple">
+<dt>RuntimeError: If tensors are not on the specified <cite>device</cite> or if</dt><dd><p>CUDA operations fail.</p>
+</dd>
+</dl>
+</li>
+<li><p>ValueError: If <cite>steps</cite> is less than 1.</p></li>
+</ul>
+</dd>
+</dl>
+<p>Example of Usage:
+<a href="#id1"><span class="problematic" id="id2">``</span></a><a href="#id3"><span class="problematic" id="id4">`</span></a>python
+import torch
+from .model import CNF_UNet # Assuming CNF_UNet is defined in model.py
+# from . import config # If using config for image_size, num_generated_samples, generation_steps</p>
+<p># Initialize a dummy model (replace with your trained model loading)
+# generator_model = CNF_UNet(img_channels=1, time_embed_dim=256, base_channels=64)
+# generator_model.load_state_dict(torch.load(“path/to/your/generator_final.pth”))
+# generator_model.eval()</p>
+<p># Create initial noise
+# noise_shape = (config.NUM_GENERATED_SAMPLES, 1, config.IMAGE_SIZE[0], config.IMAGE_SIZE[1])
+# noise = torch.randn(noise_shape)</p>
+<p># generated_imgs = generate_images(generator_model, noise, steps=config.GENERATION_STEPS, device=’cpu’)
+# print(f”Generated images shape: {generated_imgs.shape}”)
+<a href="#id5"><span class="problematic" id="id6">``</span></a><a href="#id7"><span class="problematic" id="id8">`</span></a></p>
+<p>Relationships with other functions/modules:
+- Calls <cite>model</cite> (the CNF_UNet instance) in evaluation mode to predict velocities.
+- Used by <cite>main.py</cite> to produce synthetic images after training.
+- <cite>config.py</cite> provides <cite>steps</cite> (GENERATION_STEPS) and <cite>initial_noise</cite> dimensions.</p>
+<p>Explanation of the theory:
+- <strong>Euler Integration:</strong> A simple numerical method for approximating the solution</p>
+<blockquote>
+<div><p>to a first-order ordinary differential equation (ODE). In CNFs, the model learns
+a velocity field <cite>v(x, t)</cite> that describes how data points <cite>x</cite> evolve over time <cite>t</cite>.
+Image generation is the reverse process: starting from <cite>z0</cite> (noise) at <cite>t=0</cite>,
+we integrate <cite>dz/dt = v(z, t)</cite> to find <cite>z1</cite> (image) at <cite>t=1</cite>.
+The update rule is approximately: <cite>z(t + dt) = z(t) + v(z(t), t) * dt</cite>,
+where <cite>dt = 1 / steps</cite>.</p>
+</div></blockquote>
+<ul class="simple">
+<li><p><strong>Conditional Normalizing Flows (CNFs):</strong> A class of generative models that
+learn a continuous, invertible transformation from a simple base distribution
+(e.g., Gaussian noise) to a complex data distribution. This is achieved by
+learning a time-dependent vector field (velocity field) that governs the flow
+of samples in the data space. Image generation involves integrating this
+velocity field.</p></li>
+</ul>
+<p>References for the theory:
+- Grathwohl, J., Chen, R. T. Q., Bettencourt, J., Hälvä, I., &amp; Duvenaud, D. K. (2018).</p>
+<blockquote>
+<div><p>Fjord: <a class="reference external" href="https://arxiv.org/abs/1806.02373">https://arxiv.org/abs/1806.02373</a> (Continuous Normalizing Flows)</p>
+</div></blockquote>
+<ul class="simple">
+<li><p>Lipman, Y., Chen, R. T. Q., &amp; Duvenaud, D. K. (2022). Flow Matching for Generative Modeling.
+In International Conference on Learning Representations. <a class="reference external" href="https://arxiv.org/abs/2210.02747">https://arxiv.org/abs/2210.02747</a></p></li>
+</ul>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="synthetic_image_generator.generate.logger">
+<span class="sig-prename descclassname"><span class="pre">synthetic_image_generator.generate.</span></span><span class="sig-name descname"><span class="pre">logger</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;Logger</span> <span class="pre">synthetic_image_generator.generate</span> <span class="pre">(WARNING)&gt;</span></em><a class="headerlink" href="#synthetic_image_generator.generate.logger" title="Link to this definition"></a></dt>
+<dd><p>This module provides the core functionality for generating synthetic images
+using a trained Conditional Normalizing Flow (CNF) model. It implements
+the reverse process of the flow, transforming initial Gaussian noise
+into realistic images through a series of integration steps.</p>
+</dd></dl>
+
+</section>
+<section id="module-synthetic_image_generator.load_model">
+<span id="synthetic-image-generator-load-model-module"></span><h2>synthetic_image_generator.load_model module<a class="headerlink" href="#module-synthetic_image_generator.load_model" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="synthetic_image_generator.load_model.load_model_from_drive">
+<span class="sig-prename descclassname"><span class="pre">synthetic_image_generator.load_model.</span></span><span class="sig-name descname"><span class="pre">load_model_from_drive</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">drive_url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Path</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'model_weights.pth'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">image_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">(64,</span> <span class="pre">64)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">device</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'cpu'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#synthetic_image_generator.model.CNF_UNet" title="synthetic_image_generator.model.CNF_UNet"><span class="pre">CNF_UNet</span></a></span></span><a class="headerlink" href="#synthetic_image_generator.load_model.load_model_from_drive" title="Link to this definition"></a></dt>
+<dd><p>Downloads model weights from a Google Drive URL and loads them into a CNF_UNet model.</p>
+<p>This function streamlines the process of acquiring and initializing a PyTorch model
+from a remote Google Drive location. It first uses <cite>gdown</cite> to download the specified
+file, then verifies its existence, and finally loads the PyTorch state dictionary
+into an instantiated <cite>CNF_UNet</cite> model. The model is then moved to the specified
+device (CPU or CUDA) and set to evaluation mode (<cite>.eval()</cite>) for inference.
+This is particularly useful for deploying pre-trained models without needing
+to include large weight files directly in a repository.</p>
+<dl>
+<dt>Args:</dt><dd><dl class="simple">
+<dt>drive_url (str): The Google Drive shareable link for the model weights file.</dt><dd><p>This should be a direct link, typically obtained by sharing
+the file and copying the link.</p>
+</dd>
+<dt>output_path (Union[str, Path]): The local path where the downloaded weights file</dt><dd><p>will be saved. Can be a string or a <cite>pathlib.Path</cite> object.
+Defaults to “model_weights.pth” in the current directory.</p>
+</dd>
+<dt>image_size (Tuple[int, int]): A tuple <cite>(height, width)</cite> representing the input</dt><dd><p>image dimensions that the <cite>CNF_UNet</cite> model expects.
+This is crucial for correctly initializing the model
+architecture. Defaults to <cite>config.IMAGE_SIZE</cite> from
+the project’s configuration.</p>
+</dd>
+<dt>device (Union[str, torch.device]): The computing device on which to load the model.</dt><dd><p>Accepts “cpu”, “cuda”, or a <cite>torch.device</cite> object.
+If “cuda” is specified but not available, it
+will fall back to “cpu” and log a warning.
+Defaults to “cpu”.</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>CNF_UNet: The instantiated <cite>CNF_UNet</cite> model with the downloaded weights loaded.</dt><dd><p>The model will be on the specified <cite>device</cite> and in evaluation mode.</p>
+</dd>
+</dl>
+</dd>
+<dt>Raises:</dt><dd><dl class="simple">
+<dt>FileNotFoundError: If the downloaded file does not exist at <cite>output_path</cite></dt><dd><p>after the download attempt, indicating a potential download failure.</p>
+</dd>
+<dt>RuntimeError: If there is an issue loading the state dictionary into the model,</dt><dd><p>which could be due to a corrupted file, an incompatible model
+architecture, or mismatched keys.</p>
+</dd>
+<dt>Exception: Catches any other unexpected errors that might occur during the</dt><dd><p>download process (e.g., network issues, invalid URL) or model
+instantiation.</p>
+</dd>
+</dl>
+</dd>
+<dt>Example:</dt><dd><p><a href="#id9"><span class="problematic" id="id10">``</span></a><a href="#id11"><span class="problematic" id="id12">`</span></a>python
+# Assuming you have a Google Drive link to your model weights
+my_drive_link = “[<a class="reference external" href="https://drive.google.com/file/d/1BWrRqSEY2KSE-u3TI8c2JYucm69g6oo7/view?usp=sharing](https://drive.google.com/file/d/1BWrRqSEY2KSE-u3TI8c2JYucm69g6oo7/view">https://drive.google.com/file/d/1BWrRqSEY2KSE-u3TI8c2JYucm69g6oo7/view?usp=sharing](https://drive.google.com/file/d/1BWrRqSEY2KSE-u3TI8c2JYucm69g6oo7/view</a>?usp=sharing)”</p>
+<p># Specify the output filename and desired device
+weights_file = “my_model_weights.pth”
+target_device = “cuda” if torch.cuda.is_available() else “cpu”</p>
+<dl>
+<dt>try:</dt><dd><p># Load the model
+loaded_model = load_model_from_drive(</p>
+<blockquote>
+<div><p>drive_url=my_drive_link,
+output_path=weights_file,
+image_size=(64, 64), # Ensure this matches your model’s expected input
+device=target_device</p>
+</div></blockquote>
+<p>)
+print(f”Model successfully loaded on {target_device}.”)</p>
+<p># You can now use the loaded_model for inference
+# Example: Generate a dummy noise tensor and pass it through the model
+# dummy_noise = torch.randn(1, 1, 64, 64).to(target_device)
+# with torch.no_grad():
+#     generated_image = loaded_model(dummy_noise, torch.zeros(1).to(target_device))
+# print(f”Generated image shape: {generated_image.shape}”)</p>
+</dd>
+<dt>except (FileNotFoundError, RuntimeError, Exception) as e:</dt><dd><p>print(f”An error occurred during model loading: {e}”)</p>
+</dd>
+<dt>finally:</dt><dd><p># Optional: Clean up the downloaded file
+if os.path.exists(weights_file):</p>
+<blockquote>
+<div><p># os.remove(weights_file)
+# print(f”Cleaned up downloaded weights file: {weights_file}”)
+pass # Keeping the file for demonstration; uncomment os.remove to delete</p>
+</div></blockquote>
+</dd>
+</dl>
+<p><a href="#id13"><span class="problematic" id="id14">``</span></a><a href="#id15"><span class="problematic" id="id16">`</span></a></p>
+</dd>
+<dt>Relationships with other functions:</dt><dd><ul class="simple">
+<li><p>This function relies on <cite>gdown.download</cite> for downloading files from Google Drive.</p></li>
+<li><p>It instantiates <cite>CNF_UNet</cite>, expecting it to be a <cite>torch.nn.Module</cite> subclass
+with an <cite>__init__</cite> method that accepts <cite>image_size</cite> and a <cite>load_state_dict</cite> method.</p></li>
+<li><p>It uses <cite>torch.load</cite> to deserialize the weight file and <cite>torch.device</cite> for device management.</p></li>
+</ul>
+</dd>
+<dt>Explanation of the theory:</dt><dd><p>Generative models, such as Conditional Normalizing Flows (CNFs) implemented with a U-Net
+architecture, are often trained to learn a complex data distribution (e.g., images).
+The training process results in a set of optimized parameters (weights) that capture
+this distribution. These weights are saved into a ‘state dictionary’ (typically a <cite>.pth</cite> file
+in PyTorch) which is a Python dictionary mapping parameter names to their tensor values.
+To use the trained model for inference (e.g., generating new images), these weights must
+be loaded back into an identical model architecture. The process involves:
+1.  <strong>Download:</strong> Retrieving the binary weights file from a storage location (e.g., Google Drive).
+2.  <strong>Instantiation:</strong> Creating an empty instance of the model’s neural network architecture.
+3.  <strong>Loading State Dictionary:</strong> Populating the instantiated model’s parameters with the</p>
+<blockquote>
+<div><p>values from the downloaded state dictionary. <cite>torch.load</cite> handles deserialization,
+and <cite>model.load_state_dict</cite> maps the weights to the correct layers.</p>
+</div></blockquote>
+<ol class="arabic simple" start="4">
+<li><p><strong>Device Placement:</strong> Moving the model and its parameters to the appropriate computing
+device (CPU for general use, CUDA for GPU acceleration) for efficient computation.</p></li>
+<li><p><strong>Evaluation Mode:</strong> Setting the model to <cite>.eval()</cite> mode, which disables specific
+layers like Dropout and BatchNorm that behave differently during training vs. inference.</p></li>
+</ol>
+</dd>
+<dt>References for the theory:</dt><dd><ul class="simple">
+<li><p>PyTorch Documentation on Saving and Loading Models: <a class="reference external" href="https://pytorch.org/docs/stable/notes/serialization.html">https://pytorch.org/docs/stable/notes/serialization.html</a></p></li>
+<li><p>Original CNF paper (referenced conceptually for CNF models): “Neural Ordinary Differential Equations” by Chen et al. (NeurIPS 2018)</p></li>
+<li><p>U-Net Architecture: “U-Net: Convolutional Networks for Biomedical Image Segmentation” by Ronneberger et al. (MICCAI 2015)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-synthetic_image_generator.main">
+<span id="synthetic-image-generator-main-module"></span><h2>synthetic_image_generator.main module<a class="headerlink" href="#module-synthetic_image_generator.main" title="Link to this heading"></a></h2>
+<dl class="py data">
+<dt class="sig sig-object py" id="synthetic_image_generator.main.logger">
+<span class="sig-prename descclassname"><span class="pre">synthetic_image_generator.main.</span></span><span class="sig-name descname"><span class="pre">logger</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;Logger</span> <span class="pre">synthetic_image_generator.main</span> <span class="pre">(INFO)&gt;</span></em><a class="headerlink" href="#synthetic_image_generator.main.logger" title="Link to this definition"></a></dt>
+<dd><p>Module for orchestrating the synthetic image generation workflow using a pre-trained CNF-UNet model.</p>
+<p>This <cite>main</cite> module serves as the primary entry point for the Synthetic Image Generator project. It
+integrates various components including data loading, preprocessing, model initialization,
+pre-trained model loading, synthetic image generation, and comprehensive evaluation
+of the generated images. Its design facilitates a streamlined execution flow for
+demonstrating the capabilities of the generative model without requiring on-the-fly training.</p>
+<dl class="simple">
+<dt>Inputs:</dt><dd><p>None (The module’s behavior is configured via <cite>config.py</cite> and command-line execution).</p>
+</dd>
+<dt>Outputs:</dt><dd><p>Side effects include console logs, saved images to disk (via evaluation module),
+and displayed plots (via visualization module).</p>
+</dd>
+<dt>Potential Exceptions Raised:</dt><dd><ul class="simple">
+<li><p><cite>FileNotFoundError</cite>: If required data directories or model checkpoint files are not found.</p></li>
+<li><p><cite>RuntimeError</cite>: For general PyTorch execution errors, e.g., device-related issues,
+or numerical instability during generation.</p></li>
+<li><p><cite>ImportError</cite>: If dependent modules within the project structure (e.g., <cite>.config</cite>,
+<cite>.model</cite>) cannot be imported.</p></li>
+</ul>
+</dd>
+</dl>
+<p>Theory:
+The core theoretical basis of this project relies on Conditional Normalizing Flows (CNF),
+specifically implementing a U-Net architecture for the flow’s transformation function.
+CNFs learn a continuous transformation from a simple base distribution (e.g., Gaussian noise)
+to a complex target data distribution (e.g., medical images). Unlike discrete generative models,
+CNFs allow for exact likelihood evaluation and efficient sampling by solving an ordinary
+differential equation (ODE). The pre-trained model handles the reverse process of this flow,
+transforming noise back into realistic images.</p>
+<p>References for the theory:
+-   Grathwohl, J., Chen, R. T. Q., Bettencourt, J., Sutskever, I., &amp; Duvenaud, D. K. (2018).</p>
+<blockquote>
+<div><p><em>Continuous Normalizing Flows</em>. arXiv preprint arXiv:1806.02373.</p>
+</div></blockquote>
+<ul class="simple">
+<li><p>Lipman, Y., Chen, R. T. Q., &amp; Duvenaud, D. K. (2022).
+<em>Flow Matching for Generative Modeling</em>. International Conference on Learning Representations.</p></li>
+<li><p>Ronneberger, O., Fischer, P., &amp; Brox, T. (2015).
+<em>U-Net: Convolutional Networks for Biomedical Image Segmentation</em>. International Conference on Medical Image Computing and Computer-Assisted Intervention.</p></li>
+<li><p>Heusel, M., Ramsauer, H., Unterthiner, T., Nessler, B., &amp; Hochreiter, S. (2017).
+<em>FID: Fréchet Inception Distance for evaluating generative models</em>. arXiv preprint arXiv:1706.08500.</p></li>
+</ul>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="synthetic_image_generator.main.main">
+<span class="sig-prename descclassname"><span class="pre">synthetic_image_generator.main.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#synthetic_image_generator.main.main" title="Link to this definition"></a></dt>
+<dd><p>Executes the end-to-end workflow for synthetic image generation and evaluation.</p>
+<p>This function coordinates the setup of the computing environment, data handling,
+model loading, image synthesis, and result analysis. It ensures a complete
+demonstration of the generative model’s capabilities from loading a
+pre-trained model to visualizing the final generated output and evaluating its quality.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>None</p>
+</dd>
+<dt>Returns:</dt><dd><p>None (The function performs actions such as saving images and displaying plots).</p>
+</dd>
+<dt>Raises:</dt><dd><dl class="simple">
+<dt>RuntimeError: May occur if a specified PyTorch operation fails,</dt><dd><p>e.g., due to CUDA memory issues or if the <cite>device</cite> setup fails.</p>
+</dd>
+<dt>FileNotFoundError: If paths specified in <cite>config.py</cite> (e.g., <cite>BASE_DIR</cite>,</dt><dd><p><cite>GENERATOR_CHECKPOINT_PATH</cite>) do not exist.</p>
+</dd>
+<dt>Exception: Broader exceptions might be raised by external libraries</dt><dd><p>(e.g., <cite>gdown</cite> for downloading, <cite>torch_fidelity</cite> for evaluation)
+due to network issues, corrupted files, or internal library errors.</p>
+</dd>
+</dl>
+</dd>
+<dt>Example:</dt><dd><p>To run this main pipeline, ensure all dependencies are installed and
+execute the script from your terminal within the project’s root directory:
+<code class="docutils literal notranslate"><span class="pre">`bash</span>
+<span class="pre">python</span> <span class="pre">-m</span> <span class="pre">your_package_name.main</span>
+<span class="pre">`</span></code>
+(Replace <cite>your_package_name</cite> with the actual name of your Python package,
+e.g., <cite>Synthetic_Image_Generator</cite>).</p>
+</dd>
+<dt>Relationships with other functions:</dt><dd><ul class="simple">
+<li><p>Calls <cite>config</cite> for all global parameters (<cite>IMAGE_SIZE</cite>, <cite>BASE_DIR</cite>, etc.).</p></li>
+<li><p>Initializes <cite>dataset.LungCTWithGaussianDataset</cite> for data loading.</p></li>
+<li><p>Utilizes <cite>transforms.get_transforms</cite> and <cite>transforms.get_fid_transforms</cite>
+for image preprocessing.</p></li>
+<li><p>Instantiates <cite>model.CNF_UNet</cite> to define the generator’s architecture.</p></li>
+<li><p>Invokes <cite>load_model.load_model_from_drive</cite> to load the pre-trained model weights.</p></li>
+<li><p>Employs <cite>generate.generate_images</cite> to perform the synthetic image generation.</p></li>
+<li><p>Uses <cite>evaluate.evaluate_model</cite> to compute quantitative metrics like FID, MSE, PSNR, SSIM.</p></li>
+<li><p>Relies on <cite>visualize.plot_*</cite> functions (<cite>plot_pixel_distributions</cite>, <cite>plot_sample_images_and_noise</cite>,
+<cite>plot_generated_pixel_distribution_comparison</cite>, <cite>plot_sample_generated_images</cite>,
+<cite>plot_real_vs_generated_side_by_side</cite>) for qualitative assessment and debugging.</p></li>
+</ul>
+</dd>
+<dt>Theory:</dt><dd><p>The workflow encompasses key aspects of generative modeling inference.
+It begins by configuring the <cite>torch.device</cite> (GPU for speed or CPU).
+Dataset loading involves reading DICOM files and applying <cite>transforms</cite> to
+normalize and resize images for the model. The core step is loading a
+pre-trained <cite>CNF_UNet</cite> which has already learned the velocity field
+mapping from noise to data. Image generation is then performed by
+numerically integrating this velocity field using random Gaussian noise
+as the starting point. Finally, <cite>evaluate_model</cite> quantifies the quality
+and realism of the generated samples against real data using metrics
+like FID, while <cite>visualize</cite> functions provide intuitive visual insights
+into the model’s performance.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-synthetic_image_generator.model">
+<span id="synthetic-image-generator-model-module"></span><h2>synthetic_image_generator.model module<a class="headerlink" href="#module-synthetic_image_generator.model" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="synthetic_image_generator.model.Block">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">synthetic_image_generator.model.</span></span><span class="sig-name descname"><span class="pre">Block</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">in_channels</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_channels</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">groups</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">8</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#synthetic_image_generator.model.Block" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></p>
+<p>A basic convolutional block consisting of a Conv2d layer, Group Normalization,
+and a Swish (SiLU) activation function.</p>
+<p>This block is a fundamental building block for the U-Net architecture,
+ensuring standard operations for feature extraction and non-linearity.
+Group Normalization is preferred over Batch Normalization in some generative
+models due to its independence from batch size.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="synthetic_image_generator.model.Block.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="headerlink" href="#synthetic_image_generator.model.Block.forward" title="Link to this definition"></a></dt>
+<dd><p>Forward pass for the Block.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>x (torch.Tensor): Input feature map tensor of shape (batch_size, in_channels, H, W).</p>
+</dd>
+<dt>Returns:</dt><dd><p>torch.Tensor: Output feature map tensor of shape (batch_size, out_channels, H, W).</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="synthetic_image_generator.model.CNF_UNet">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">synthetic_image_generator.model.</span></span><span class="sig-name descname"><span class="pre">CNF_UNet</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">img_channels</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_embed_dim</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">256</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">base_channels</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">64</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#synthetic_image_generator.model.CNF_UNet" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></p>
+<p>The main Conditional Normalizing Flow U-Net model architecture.</p>
+<p>This model is a U-Net variant specifically designed for Conditional
+Normalizing Flows. It takes an image tensor and a time embedding as
+input and predicts a velocity field of the same spatial dimensions as
+the input image. The U-Net structure with skip connections, residual
+blocks, time conditioning, and self-attention enables it to learn
+complex, multi-scale transformations required for generative modeling.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="synthetic_image_generator.model.CNF_UNet.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="headerlink" href="#synthetic_image_generator.model.CNF_UNet.forward" title="Link to this definition"></a></dt>
+<dd><p>Forward pass for the CNF_UNet model.</p>
+<dl>
+<dt>Args:</dt><dd><dl class="simple">
+<dt>x (torch.Tensor): Input image tensor of shape (batch_size, img_channels, H, W).</dt><dd><p>Expected pixel range: [-1, 1].</p>
+</dd>
+</dl>
+<p>t (torch.Tensor): Time tensor of shape (batch_size,). Values typically in [0, 1].</p>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>torch.Tensor: Predicted velocity field tensor of shape (batch_size, img_channels, H, W).</dt><dd><p>This has the same shape and roughly same value range as the input image.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="synthetic_image_generator.model.ResBlock">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">synthetic_image_generator.model.</span></span><span class="sig-name descname"><span class="pre">ResBlock</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">in_channels</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_channels</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_embed_dim</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">groups</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">8</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#synthetic_image_generator.model.ResBlock" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></p>
+<p>A Residual Block that incorporates time embeddings and residual connections.</p>
+<p>This block is a core component of the U-Net, designed to facilitate training
+of deep networks by allowing gradients to flow directly through skip connections.
+It processes feature maps and time embeddings, summing the output with the
+original input (residual connection) to learn incremental changes.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="synthetic_image_generator.model.ResBlock.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t_emb</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="headerlink" href="#synthetic_image_generator.model.ResBlock.forward" title="Link to this definition"></a></dt>
+<dd><p>Forward pass for the ResBlock.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>x (torch.Tensor): Input feature map tensor.
+t_emb (torch.Tensor): Time embedding tensor of shape (batch_size, time_embed_dim).</p>
+</dd>
+<dt>Returns:</dt><dd><p>torch.Tensor: Output feature map tensor after residual connection and time conditioning.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="synthetic_image_generator.model.SelfAttention">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">synthetic_image_generator.model.</span></span><span class="sig-name descname"><span class="pre">SelfAttention</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">channels</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#synthetic_image_generator.model.SelfAttention" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></p>
+<p>Implements a simple self-attention mechanism.</p>
+<p>This module allows the network to weigh the importance of different spatial
+locations within a feature map when processing a specific location. It helps
+capture long-range dependencies and global contextual information, which is
+beneficial for image generation tasks.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="synthetic_image_generator.model.SelfAttention.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="headerlink" href="#synthetic_image_generator.model.SelfAttention.forward" title="Link to this definition"></a></dt>
+<dd><p>Forward pass for the SelfAttention module.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>x (torch.Tensor): Input feature map tensor of shape (batch_size, channels, H, W).</p>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>torch.Tensor: Output feature map tensor after applying self-attention,</dt><dd><p>with the same shape as input.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="synthetic_image_generator.model.TimestepEmbedder">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">synthetic_image_generator.model.</span></span><span class="sig-name descname"><span class="pre">TimestepEmbedder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">embed_dim</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hidden_dim</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#synthetic_image_generator.model.TimestepEmbedder" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></p>
+<p>Applies a sinusoidal embedding to a timestep (t), followed by a multi-layer
+perceptron (MLP) to project it into a desired embedding dimension.</p>
+<p>This class takes a scalar time value, transforms it into a sinusoidal
+positional embedding, and then processes it through a small neural network
+to create a dense, learned time-dependent feature vector. This embedding
+is then added to the feature maps in the U-Net, allowing the model to be
+conditioned on the current time step of the generative process.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="synthetic_image_generator.model.TimestepEmbedder.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="headerlink" href="#synthetic_image_generator.model.TimestepEmbedder.forward" title="Link to this definition"></a></dt>
+<dd><p>Forward pass for the TimestepEmbedder.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>t (torch.Tensor): A 1D tensor of shape (batch_size,) representing time steps.</p>
+</dd>
+<dt>Returns:</dt><dd><p>torch.Tensor: The processed time embedding tensor of shape (batch_size, hidden_dim).</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="synthetic_image_generator.model.UNetBlock">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">synthetic_image_generator.model.</span></span><span class="sig-name descname"><span class="pre">UNetBlock</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">in_channels</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_channels</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_embed_dim</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">groups</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">8</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#synthetic_image_generator.model.UNetBlock" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></p>
+<p>A single block in the U-Net architecture, composed of two Residual Blocks.</p>
+<p>This block represents a segment of either the downsampling or upsampling path
+of the U-Net. It applies a sequence of convolutional operations with residual
+connections and time conditioning, allowing for effective feature transformation
+at different scales.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="synthetic_image_generator.model.UNetBlock.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t_emb</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="headerlink" href="#synthetic_image_generator.model.UNetBlock.forward" title="Link to this definition"></a></dt>
+<dd><p>Forward pass for the UNetBlock.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>x (torch.Tensor): Input feature map tensor.
+t_emb (torch.Tensor): Time embedding tensor.</p>
+</dd>
+<dt>Returns:</dt><dd><p>torch.Tensor: Output feature map tensor.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="synthetic_image_generator.model.get_sinusoidal_embedding">
+<span class="sig-prename descclassname"><span class="pre">synthetic_image_generator.model.</span></span><span class="sig-name descname"><span class="pre">get_sinusoidal_embedding</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">embed_dim</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="headerlink" href="#synthetic_image_generator.model.get_sinusoidal_embedding" title="Link to this definition"></a></dt>
+<dd><p>Generates sinusoidal positional embeddings for a given time tensor.</p>
+<p>This function creates a periodic signal that helps the network understand
+the continuous nature of the time variable ‘t’. By using sine and cosine
+functions at different frequencies, it encodes temporal information into
+a high-dimensional vector, allowing the model to condition its output on time
+in a meaningful way, without assuming discrete time steps.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><dl class="simple">
+<dt>t (torch.Tensor): A 1D tensor of shape (batch_size,) representing time steps,</dt><dd><p>typically sampled uniformly from [0, 1].</p>
+</dd>
+<dt>embed_dim (int): The desired dimension of the embedding. This determines</dt><dd><p>the number of sinusoidal features generated. Should be an even number.</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>torch.Tensor: The sinusoidal embedding tensor of shape (batch_size, embed_dim).</dt><dd><p>Each row corresponds to the embedding for a given time step.</p>
+</dd>
+</dl>
+</dd>
+<dt>Potential Exceptions Raised:</dt><dd><ul class="simple">
+<li><p>ValueError: If <cite>embed_dim</cite> is not an even number.</p></li>
+</ul>
+</dd>
+</dl>
+<p>Example of Usage:
+<code class="docutils literal notranslate"><span class="pre">`python</span>
+<span class="pre">import</span> <span class="pre">torch</span>
+<span class="pre">time_steps</span> <span class="pre">=</span> <span class="pre">torch.tensor([0.1,</span> <span class="pre">0.5,</span> <span class="pre">0.9])</span>
+<span class="pre">embedding</span> <span class="pre">=</span> <span class="pre">get_sinusoidal_embedding(time_steps,</span> <span class="pre">256)</span>
+<span class="pre">print(f&quot;Time</span> <span class="pre">embedding</span> <span class="pre">shape:</span> <span class="pre">{embedding.shape}&quot;)</span> <span class="pre">#</span> <span class="pre">Expected:</span> <span class="pre">torch.Size([3,</span> <span class="pre">256])</span>
+<span class="pre">`</span></code></p>
+<p>Relationships with other functions/modules:
+- Used by <cite>TimestepEmbedder</cite> to generate time embeddings for the U-Net.</p>
+<p>Explanation of the theory:
+- <strong>Positional Encoding (Sinusoidal):</strong> Originally introduced in Transformer networks</p>
+<blockquote>
+<div><p>for sequences, it’s adapted here for continuous time. It allows models to use
+the relative or absolute position (time in this case) of inputs. For continuous
+values, <cite>sin(t/10000^(2i/d_model))</cite> and <cite>cos(t/10000^(2i/d_model))</cite> are used,
+where <cite>i</cite> is the dimension index and <cite>d_model</cite> is the embedding dimension.
+This enables the network to learn a wide range of transformations dependent on time.</p>
+</div></blockquote>
+<p>References for the theory:
+- Vaswani, A., Shazeer, N., Parmar, N., Uszkoreit, J., Jones, L., Gomez, A. N.,</p>
+<blockquote>
+<div><p>Kaiser, Ł., &amp; Polosukhin, I. (2017). Attention Is All You Need.
+In Advances in neural information processing systems (pp. 5998-6008).
+(Original paper introducing sinusoidal positional encoding for sequences)</p>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="synthetic_image_generator.model.logger">
+<span class="sig-prename descclassname"><span class="pre">synthetic_image_generator.model.</span></span><span class="sig-name descname"><span class="pre">logger</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;Logger</span> <span class="pre">synthetic_image_generator.model</span> <span class="pre">(INFO)&gt;</span></em><a class="headerlink" href="#synthetic_image_generator.model.logger" title="Link to this definition"></a></dt>
+<dd><p>This module defines the neural network architecture for the Conditional Normalizing Flow (CNF)
+model, specifically a U-Net based generator. It includes components for time embedding,
+residual connections, and self-attention, all crucial for learning complex image distributions.
+The U-Net structure allows for efficient capture of multi-scale features, while time conditioning
+enables the model to learn the continuous transformation from noise to data.</p>
+</dd></dl>
+
+</section>
+<section id="module-synthetic_image_generator.train">
+<span id="synthetic-image-generator-train-module"></span><h2>synthetic_image_generator.train module<a class="headerlink" href="#module-synthetic_image_generator.train" title="Link to this heading"></a></h2>
+<dl class="py data">
+<dt class="sig sig-object py" id="synthetic_image_generator.train.logger">
+<span class="sig-prename descclassname"><span class="pre">synthetic_image_generator.train.</span></span><span class="sig-name descname"><span class="pre">logger</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;Logger</span> <span class="pre">synthetic_image_generator.train</span> <span class="pre">(INFO)&gt;</span></em><a class="headerlink" href="#synthetic_image_generator.train.logger" title="Link to this definition"></a></dt>
+<dd><p>This module contains the training loop for the Conditional Normalizing Flow (CNF)
+model. It implements the Flow Matching objective to train the generator to predict
+the velocity field that transforms Gaussian noise into target images.</p>
+<p>The training process involves iteratively updating the generator’s parameters
+by minimizing the L2 distance between its predicted velocity field and a
+target velocity field derived from linearly interpolating between noise and real data.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="synthetic_image_generator.train.train_model">
+<span class="sig-prename descclassname"><span class="pre">synthetic_image_generator.train.</span></span><span class="sig-name descname"><span class="pre">train_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">generator_model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Module</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataloader</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataLoader</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optimizer_gen</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optimizer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epochs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">device</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'cpu'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#synthetic_image_generator.train.train_model" title="Link to this definition"></a></dt>
+<dd><p>Trains the generator model (CNF_UNet) using the Flow Matching objective.</p>
+<p>The Flow Matching objective trains the model to predict the velocity field
+that transports samples from a simple base distribution (Gaussian noise)
+to the target data distribution. This is achieved by interpolating between
+noise and real data at random time steps and training the model to predict
+the difference vector (the “true” velocity for linear interpolation).
+The training loop iterates over a specified number of epochs, processes
+data in batches, and updates model weights using an optimizer.</p>
+<dl>
+<dt>Args:</dt><dd><dl class="simple">
+<dt>generator_model (torch.nn.Module): The generator model (an instance of CNF_UNet)</dt><dd><p>to be trained. This model is expected to
+predict a velocity field.</p>
+</dd>
+<dt>dataloader (torch.utils.data.DataLoader): DataLoader providing batches of</dt><dd><p>(noise, real_image) pairs.</p>
+</dd>
+<dt>optimizer_gen (torch.optim.Optimizer): The optimizer responsible for updating</dt><dd><p>the <cite>generator_model</cite>’s parameters.
+(e.g., <cite>torch.optim.Adam</cite>).</p>
+</dd>
+</dl>
+<p>epochs (int): The total number of training epochs. Defaults to 100.
+device (Union[str, torch.device]): The device (‘cpu’ or ‘cuda’) on which</p>
+<blockquote>
+<div><p>to perform training. Defaults to ‘cpu’.</p>
+</div></blockquote>
+</dd>
+<dt>Returns:</dt><dd><dl>
+<dt>Dict[str, Any]: A dictionary containing training statistics,</dt><dd><p>specifically:
+- ‘gen_flow_losses’ (List[float]): A list of average Flow Matching</p>
+<blockquote>
+<div><p>losses for each epoch.</p>
+</div></blockquote>
+</dd>
+</dl>
+</dd>
+<dt>Potential Exceptions Raised:</dt><dd><ul class="simple">
+<li><p>RuntimeError: If PyTorch operations fail (e.g., out of GPU memory).</p></li>
+<li><p>ValueError: If <cite>epochs</cite> is non-positive or <cite>dataloader</cite> is empty.</p></li>
+<li><p>Any exceptions during data loading from <cite>dataloader</cite>.</p></li>
+</ul>
+</dd>
+</dl>
+<p>Example of Usage:
+<a href="#id17"><span class="problematic" id="id18">``</span></a><a href="#id19"><span class="problematic" id="id20">`</span></a>python
+import torch
+import torch.optim as optim
+from .model import CNF_UNet # Assuming CNF_UNet is defined
+from .dataset import LungCTWithGaussianDataset # Assuming dataset is defined
+from .transforms import get_transforms
+# from . import config # If using config for epochs, lr, etc.</p>
+<p># Dummy setup (replace with actual data and model initialization)
+# img_size = (64, 64)
+# data_transform = get_transforms(img_size)
+# dataset = LungCTWithGaussianDataset(
+#     base_dir=Path(“path/to/dummy_data”), # Replace
+#     num_images_per_folder=1,
+#     image_size=img_size,
+#     transform=data_transform
+# )
+# dataloader = torch.utils.data.DataLoader(dataset, batch_size=4)
+# generator = CNF_UNet(img_channels=1, time_embed_dim=256, base_channels=64)
+# optimizer = optim.Adam(generator.parameters(), lr=1e-4)</p>
+<p># training_stats = train_model(
+#     generator_model=generator,
+#     dataloader=dataloader,
+#     optimizer_gen=optimizer,
+#     epochs=10,
+#     device=’cpu’
+# )
+# print(“Training completed. Losses:”, training_stats[‘gen_flow_losses’])
+<a href="#id21"><span class="problematic" id="id22">``</span></a><a href="#id23"><span class="problematic" id="id24">`</span></a></p>
+<p>Relationships with other functions/modules:
+- Calls <cite>generator_model.forward</cite> (an instance of <cite>CNF_UNet</cite>).
+- Uses <cite>torch.nn.functional.mse_loss</cite> for the loss calculation.
+- Interacts with <cite>torch.optim.Optimizer</cite> for parameter updates.
+- Consumes data from <cite>torch.utils.data.DataLoader</cite>.
+- Called by <cite>main.py</cite> to perform the training phase.</p>
+<p>Explanation of the theory:
+- <strong>Flow Matching:</strong> A recent and powerful technique for training continuous</p>
+<blockquote>
+<div><p>normalizing flows and diffusion models. Instead of directly learning the
+data likelihood (which can be complex), it learns a conditional vector field
+(velocity field) that transports samples from a simple distribution (noise)
+to the data distribution. The key idea is to define a “target” velocity
+field for simple paths (like straight lines between noise and data) and
+then train the model to predict this target velocity. This simplifies
+the optimization problem and improves training stability.</p>
+</div></blockquote>
+<ul class="simple">
+<li><p><strong>Linear Interpolation:</strong> In this implementation, the path between noise <cite>z0</cite>
+and real data <cite>x1_real</cite> is assumed to be a straight line. For a point <cite>xt</cite>
+on this line at time <cite>t</cite>, the “true” velocity <cite>v_target</cite> is simply <cite>x1_real - z0</cite>.</p></li>
+<li><p><strong>Mean Squared Error (MSE) Loss:</strong> Used as the objective function to minimize
+the difference between the model’s predicted velocity <cite>v_pred</cite> and the
+target velocity <cite>v_target</cite>.</p></li>
+</ul>
+<p>References for the theory:
+- Lipman, Y., Chen, R. T. Q., &amp; Duvenaud, D. K. (2022). Flow Matching for Generative Modeling.</p>
+<blockquote>
+<div><p>In International Conference on Learning Representations. <a class="reference external" href="https://arxiv.org/abs/2210.02747">https://arxiv.org/abs/2210.02747</a></p>
+</div></blockquote>
+</dd></dl>
+
+</section>
+<section id="module-synthetic_image_generator.transforms">
+<span id="synthetic-image-generator-transforms-module"></span><h2>synthetic_image_generator.transforms module<a class="headerlink" href="#module-synthetic_image_generator.transforms" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="synthetic_image_generator.transforms.get_fid_transforms">
+<span class="sig-prename descclassname"><span class="pre">synthetic_image_generator.transforms.</span></span><span class="sig-name descname"><span class="pre">get_fid_transforms</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Compose</span></span></span><a class="headerlink" href="#synthetic_image_generator.transforms.get_fid_transforms" title="Link to this definition"></a></dt>
+<dd><p>Returns the image transformations specifically for Fréchet Inception Distance (FID) calculation.</p>
+<p>The <cite>torch_fidelity</cite> library, which is used for FID calculation, expects input images
+to be in the [0, 255] range and typically in PIL Image format (which it then converts
+internally). This pipeline denormalizes the model’s output (which is in [-1, 1])
+back to [0, 1] and then converts it to a PIL Image, which implicitly scales to [0, 255]
+for image saving operations (e.g., as PNG). This ensures compatibility with the
+FID calculation library’s input requirements.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>torchvision.transforms.Compose: A composed transformation pipeline suitable for FID.</p>
+</dd>
+<dt>Potential Exceptions Raised:</dt><dd><ul class="simple">
+<li><p>RuntimeError: If PyTorch or Pillow operations fail internally.</p></li>
+</ul>
+</dd>
+</dl>
+<p>Example of Usage:
+<a href="#id25"><span class="problematic" id="id26">``</span></a><a href="#id27"><span class="problematic" id="id28">`</span></a>python
+import torch
+# Example generated image tensor (from model output, in [-1, 1] range)
+generated_image_tensor = torch.randn(1, 64, 64) * 0.5 + 0.5 # Example to get it into [-1, 1] roughly</p>
+<p># Get the FID transformation pipeline
+fid_transform_pipeline = get_fid_transforms()</p>
+<p># Apply transformation to prepare for FID saving (e.g., to PIL Image)
+pil_image_for_fid = fid_transform_pipeline(generated_image_tensor)
+print(f”Type after FID transform: {type(pil_image_for_fid)}”) # Expected: &lt;class ‘PIL.Image.Image’&gt;
+<a href="#id29"><span class="problematic" id="id30">``</span></a><a href="#id31"><span class="problematic" id="id32">`</span></a></p>
+<p>Relationships with other functions/modules:
+- Used by <cite>evaluate.py</cite> to prepare generated and real images for saving to</p>
+<blockquote>
+<div><p>temporary directories, which are then consumed by <cite>torch_fidelity</cite> for FID computation.</p>
+</div></blockquote>
+<ul class="simple">
+<li><p>Used by <cite>main.py</cite> to provide the correct transform to the evaluation module.</p></li>
+</ul>
+<p>Explanation of the theory:
+- <strong>Denormalization:</strong> The reverse process of normalization, converting pixel values</p>
+<blockquote>
+<div><p>from a normalized range (e.g., [-1, 1]) back to their original or desired
+range (e.g., [0, 1] or [0, 255]). This is necessary because FID calculation
+libraries or image saving utilities often expect pixel values in the standard
+[0, 255] range.</p>
+</div></blockquote>
+<ul class="simple">
+<li><p><strong>PIL Image Conversion (`T.ToPILImage`):</strong> Converts a PyTorch Tensor back into
+a Pillow (PIL) Image object. This is often required for image saving operations
+and for external libraries that expect PIL Image inputs.</p></li>
+</ul>
+<p>References for the theory:
+- <cite>torch_fidelity</cite> library documentation on input requirements.
+- PyTorch documentation for <cite>torchvision.transforms</cite>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="synthetic_image_generator.transforms.get_transforms">
+<span class="sig-prename descclassname"><span class="pre">synthetic_image_generator.transforms.</span></span><span class="sig-name descname"><span class="pre">get_transforms</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">(64,</span> <span class="pre">64)</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Compose</span></span></span><a class="headerlink" href="#synthetic_image_generator.transforms.get_transforms" title="Link to this definition"></a></dt>
+<dd><p>Returns the image preprocessing transformations for model input.</p>
+<p>This pipeline prepares raw image data (e.g., NumPy arrays from DICOM)
+for consumption by the PyTorch model. It converts the image to a PIL Image,
+resizes it to the desired dimensions, converts it to a PyTorch tensor,
+and normalizes its pixel values to the range [-1, 1]. This normalization
+is standard for many deep learning models, especially generative ones.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><dl class="simple">
+<dt>image_size (Tuple[int, int]): The desired output image size (height, width)</dt><dd><p>after transformation. Defaults to (64, 64).</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><p>torchvision.transforms.Compose: A composed transformation pipeline.</p>
+</dd>
+<dt>Potential Exceptions Raised:</dt><dd><ul class="simple">
+<li><p>ValueError: If <cite>image_size</cite> contains non-positive dimensions.</p></li>
+<li><p>RuntimeError: If PyTorch or Pillow operations fail internally.</p></li>
+</ul>
+</dd>
+</dl>
+<p>Example of Usage:
+<a href="#id33"><span class="problematic" id="id34">``</span></a><a href="#id35"><span class="problematic" id="id36">`</span></a>python
+import numpy as np
+from PIL import Image
+# Example raw image (NumPy array, e.g., from DICOM loader)
+raw_image_np = np.random.rand(128, 128).astype(np.float32) * 255 # Assume [0, 255] or [0, 1] range</p>
+<p># Get the transformation pipeline
+transform_pipeline = get_transforms(image_size=(64, 64))</p>
+<p># Apply transformation
+transformed_tensor = transform_pipeline(raw_image_np)
+print(f”Transformed image tensor shape: {transformed_tensor.shape}”) # Expected: torch.Size([1, 64, 64])
+print(f”Transformed image pixel range: [{transformed_tensor.min():.2f}, {transformed_tensor.max():.2f}]”) # Expected: approx [-1, 1]
+<a href="#id37"><span class="problematic" id="id38">``</span></a><a href="#id39"><span class="problematic" id="id40">`</span></a></p>
+<p>Relationships with other functions/modules:
+- Used by <cite>dataset.LungCTWithGaussianDataset</cite> to preprocess images before they are batched.
+- Used by <cite>main.py</cite> to set up the data loading pipeline.</p>
+<p>Explanation of the theory:
+- <strong>Image Resizing (`T.Resize`):</strong> Adjusts the spatial dimensions of an image.</p>
+<blockquote>
+<div><p>This is crucial for ensuring all input images have a consistent size required
+by the neural network architecture.</p>
+</div></blockquote>
+<ul class="simple">
+<li><p><strong>To Tensor Conversion (`T.ToTensor`):</strong> Converts a PIL Image or NumPy array
+to a PyTorch <cite>Tensor</cite>. It also implicitly scales pixel values from [0, 255]
+(if uint8) or keeps [0, 1] (if float) to [0, 1] for the tensor.</p></li>
+<li><p><strong>Normalization (`T.Normalize`):</strong> Standardizes pixel values to a specific range
+(e.g., [-1, 1]) by applying the formula <cite>(x - mean) / std</cite>. This helps stabilize
+training and is a common practice for inputs to deep learning models.</p></li>
+</ul>
+<p>References for the theory:
+- Standard image preprocessing techniques in deep learning.
+- PyTorch documentation for <cite>torchvision.transforms</cite>.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="synthetic_image_generator.transforms.logger">
+<span class="sig-prename descclassname"><span class="pre">synthetic_image_generator.transforms.</span></span><span class="sig-name descname"><span class="pre">logger</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;Logger</span> <span class="pre">synthetic_image_generator.transforms</span> <span class="pre">(INFO)&gt;</span></em><a class="headerlink" href="#synthetic_image_generator.transforms.logger" title="Link to this definition"></a></dt>
+<dd><p>This module defines the image preprocessing and post-processing transformation pipelines
+used in the Synthetic Image Generator project. It provides functions to create
+transformations for model input (resizing, normalization) and for FID calculation
+(denormalization and conversion to a format suitable for saving).</p>
+<p>These transformations are crucial for ensuring that image data is in the correct
+format, size, and pixel value range for neural network processing and evaluation metrics.</p>
+</dd></dl>
+
+</section>
+<section id="module-synthetic_image_generator.visualize">
+<span id="synthetic-image-generator-visualize-module"></span><h2>synthetic_image_generator.visualize module<a class="headerlink" href="#module-synthetic_image_generator.visualize" title="Link to this heading"></a></h2>
+<dl class="py data">
+<dt class="sig sig-object py" id="synthetic_image_generator.visualize.logger">
+<span class="sig-prename descclassname"><span class="pre">synthetic_image_generator.visualize.</span></span><span class="sig-name descname"><span class="pre">logger</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;Logger</span> <span class="pre">synthetic_image_generator.visualize</span> <span class="pre">(INFO)&gt;</span></em><a class="headerlink" href="#synthetic_image_generator.visualize.logger" title="Link to this definition"></a></dt>
+<dd><p>This module provides various visualization utilities for the Synthetic Image Generator project.
+It includes functions to plot pixel distributions, display sample images (real, noise, generated),
+visualize training loss curves, and compare real vs. generated images side-by-side.</p>
+<p>These functions are designed to help understand the data, monitor training progress,
+and qualitatively assess the quality of generated images. As per the project guidelines,
+visualization functions do not perform data preprocessing and are generally not unit-tested,
+focusing solely on graphical representation.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="synthetic_image_generator.visualize.plot_generated_pixel_distribution_comparison">
+<span class="sig-prename descclassname"><span class="pre">synthetic_image_generator.visualize.</span></span><span class="sig-name descname"><span class="pre">plot_generated_pixel_distribution_comparison</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">real_pixels</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">generated_pixels</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#synthetic_image_generator.visualize.plot_generated_pixel_distribution_comparison" title="Link to this definition"></a></dt>
+<dd><p>Plots the pixel distribution histograms comparing real images and generated synthetic images.</p>
+<p>This visualization helps to quantitatively assess how well the generative model
+is capturing the statistical properties of the real data. A good generative
+model should produce images whose pixel distributions closely match those
+of the real images.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><dl class="simple">
+<dt>real_pixels (np.ndarray): A 1D NumPy array containing all pixel values</dt><dd><p>from a sample of real images (flattened).
+Expected pixel range: [-1, 1].</p>
+</dd>
+<dt>generated_pixels (np.ndarray): A 1D NumPy array containing all pixel values</dt><dd><p>from a sample of generated images (flattened).
+Expected pixel range: [-1, 1].</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><p>None: Displays a matplotlib plot.</p>
+</dd>
+<dt>Potential Exceptions Raised:</dt><dd><ul class="simple">
+<li><p>ValueError: If input arrays are empty.</p></li>
+</ul>
+</dd>
+</dl>
+<p>Example of Usage:
+<code class="docutils literal notranslate"><span class="pre">`python</span>
+<span class="pre">import</span> <span class="pre">numpy</span> <span class="pre">as</span> <span class="pre">np</span>
+<span class="pre">#</span> <span class="pre">Assume</span> <span class="pre">real_data_pixels</span> <span class="pre">and</span> <span class="pre">gen_data_pixels</span> <span class="pre">are</span> <span class="pre">flattened</span> <span class="pre">NumPy</span> <span class="pre">arrays</span>
+<span class="pre">#</span> <span class="pre">plot_generated_pixel_distribution_comparison(real_data_pixels,</span> <span class="pre">gen_data_pixels)</span>
+<span class="pre">`</span></code></p>
+<p>Relationships with other functions:
+- Called by <cite>main.py</cite> after image generation and evaluation.
+- Data prepared in <cite>main.py</cite> by flattening tensors.</p>
+<p>Explanation of the theory:
+- <strong>Distribution Matching:</strong> A core goal of generative modeling is to learn</p>
+<blockquote>
+<div><p>the underlying data distribution such that generated samples resemble
+real samples not just visually, but also statistically. Comparing pixel
+histograms is a simple way to check for this.</p>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="synthetic_image_generator.visualize.plot_pixel_distributions">
+<span class="sig-prename descclassname"><span class="pre">synthetic_image_generator.visualize.</span></span><span class="sig-name descname"><span class="pre">plot_pixel_distributions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sample_image_batch</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_noise_batch</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#synthetic_image_generator.visualize.plot_pixel_distributions" title="Link to this definition"></a></dt>
+<dd><p>Plots the pixel distribution histograms for a batch of real CT images and
+a batch of initial Gaussian noise samples. This helps to visualize the
+input distributions to the generative model.</p>
+<p>Visualizing these distributions is important to understand the range and
+spread of pixel values in the real data that the model is trying to learn,
+and to confirm that the generated noise has a Gaussian distribution.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><dl class="simple">
+<dt>sample_image_batch (torch.Tensor): A batch of real CT image tensors (CPU).</dt><dd><p>Expected pixel range: [-1, 1].
+Shape: (batch_size, C, H, W).</p>
+</dd>
+<dt>sample_noise_batch (torch.Tensor): A batch of initial Gaussian noise tensors (CPU).</dt><dd><p>Expected pixel range: typically centered around 0
+with std dev 1 (standard normal).
+Shape: (batch_size, C, H, W).</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><p>None: Displays a matplotlib plot.</p>
+</dd>
+<dt>Potential Exceptions Raised:</dt><dd><ul class="simple">
+<li><p>ValueError: If input tensors are empty.</p></li>
+<li><p>RuntimeError: If <cite>torch.Tensor.view(-1).numpy()</cite> operations fail.</p></li>
+</ul>
+</dd>
+</dl>
+<p>Example of Usage:
+<code class="docutils literal notranslate"><span class="pre">`python</span>
+<span class="pre">import</span> <span class="pre">torch</span>
+<span class="pre">#</span> <span class="pre">Assuming</span> <span class="pre">sample_real_images</span> <span class="pre">and</span> <span class="pre">sample_noise</span> <span class="pre">are</span> <span class="pre">torch.Tensors</span> <span class="pre">in</span> <span class="pre">their</span> <span class="pre">respective</span> <span class="pre">ranges</span>
+<span class="pre">#</span> <span class="pre">sample_real_images</span> <span class="pre">=</span> <span class="pre">torch.randn(10,</span> <span class="pre">1,</span> <span class="pre">64,</span> <span class="pre">64)</span> <span class="pre">*</span> <span class="pre">0.5</span> <span class="pre">+</span> <span class="pre">0.5</span> <span class="pre">#</span> <span class="pre">Example</span> <span class="pre">real</span> <span class="pre">images</span>
+<span class="pre">#</span> <span class="pre">sample_noise</span> <span class="pre">=</span> <span class="pre">torch.randn(10,</span> <span class="pre">1,</span> <span class="pre">64,</span> <span class="pre">64)</span> <span class="pre">#</span> <span class="pre">Example</span> <span class="pre">noise</span>
+<span class="pre">#</span> <span class="pre">plot_pixel_distributions(sample_real_images,</span> <span class="pre">sample_noise)</span>
+<span class="pre">`</span></code></p>
+<p>Relationships with other functions:
+- Called by <cite>main.py</cite> during initial setup.</p>
+<p>Explanation of the theory:
+- <strong>Histogram:</strong> A graphical representation of the distribution of numerical data.</p>
+<blockquote>
+<div><p>It is an estimate of the probability distribution of a continuous variable.</p>
+</div></blockquote>
+<ul class="simple">
+<li><p><strong>Pixel Distribution:</strong> Shows the frequency of different pixel intensity values
+in an image or a collection of images. For CT images, this typically reflects
+the Hounsfield Unit (HU) values after normalization. For Gaussian noise, it
+should approximate a bell curve.</p></li>
+</ul>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="synthetic_image_generator.visualize.plot_real_vs_generated_side_by_side">
+<span class="sig-prename descclassname"><span class="pre">synthetic_image_generator.visualize.</span></span><span class="sig-name descname"><span class="pre">plot_real_vs_generated_side_by_side</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">real_images_batch_tensor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">generated_images</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_side_by_side</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">5</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#synthetic_image_generator.visualize.plot_real_vs_generated_side_by_side" title="Link to this definition"></a></dt>
+<dd><p>Displays pairs of real and generated images side-by-side for direct visual comparison.</p>
+<p>This function facilitates a direct qualitative comparison between the actual
+training data and the synthetic data produced by the model. It allows for
+a quick assessment of visual realism, texture, and structural details learned
+by the generative model.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><dl class="simple">
+<dt>real_images_batch_tensor (torch.Tensor): A batch of real image tensors (CPU).</dt><dd><p>Expected pixel range: [-1, 1].
+Shape: (batch_size, C, H, W).</p>
+</dd>
+<dt>generated_images (torch.Tensor): A batch of generated image tensors (CPU).</dt><dd><p>Expected pixel range: [-1, 1].
+Shape: (batch_size, C, H, W).</p>
+</dd>
+<dt>num_side_by_side (int): The number of real-vs-generated pairs to display.</dt><dd><p>Defaults to 5.</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><p>None: Displays a matplotlib plot.</p>
+</dd>
+<dt>Potential Exceptions Raised:</dt><dd><ul class="simple">
+<li><dl class="simple">
+<dt>ValueError: If either input tensor is empty, or <cite>num_side_by_side</cite></dt><dd><p>exceeds the available samples in either batch.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+<p>Example of Usage:
+<code class="docutils literal notranslate"><span class="pre">`python</span>
+<span class="pre">import</span> <span class="pre">torch</span>
+<span class="pre">#</span> <span class="pre">Assuming</span> <span class="pre">real_imgs_batch</span> <span class="pre">and</span> <span class="pre">gen_imgs_batch</span> <span class="pre">are</span> <span class="pre">batches</span> <span class="pre">of</span> <span class="pre">torch.Tensors</span>
+<span class="pre">#</span> <span class="pre">plot_real_vs_generated_side_by_side(real_imgs_batch,</span> <span class="pre">gen_imgs_batch,</span> <span class="pre">num_side_by_side=3)</span>
+<span class="pre">`</span></code></p>
+<p>Relationships with other functions:
+- Called by <cite>main.py</cite> as a final visualization step.</p>
+<p>Explanation of the theory:
+- <strong>Visual Comparison:</strong> Directly juxtaposing real and synthetic samples is</p>
+<blockquote>
+<div><p>one of the most intuitive ways to evaluate a generative model. It highlights
+whether the model can replicate the characteristics of the real data,
+including textures, edges, and overall composition.</p>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="synthetic_image_generator.visualize.plot_sample_generated_images">
+<span class="sig-prename descclassname"><span class="pre">synthetic_image_generator.visualize.</span></span><span class="sig-name descname"><span class="pre">plot_sample_generated_images</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">generated_images</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_samples</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">25</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#synthetic_image_generator.visualize.plot_sample_generated_images" title="Link to this definition"></a></dt>
+<dd><p>Displays a grid of sample synthetic images generated by the model.</p>
+<p>This function provides a qualitative assessment of the model’s generative
+capabilities. It allows for visual inspection of the realism, diversity,
+and overall quality of the images produced by the Conditional Normalizing Flow.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><dl class="simple">
+<dt>generated_images (torch.Tensor): A batch of generated image tensors (CPU).</dt><dd><p>Expected pixel range: [-1, 1].
+Shape: (batch_size, C, H, W).</p>
+</dd>
+<dt>num_samples (int): The number of generated images to display in the grid.</dt><dd><p>Defaults to 25 (5x5 grid).</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><p>None: Displays a matplotlib plot.</p>
+</dd>
+<dt>Potential Exceptions Raised:</dt><dd><ul class="simple">
+<li><p>ValueError: If <cite>generated_images</cite> is empty or <cite>num_samples</cite> is larger than batch size.</p></li>
+</ul>
+</dd>
+</dl>
+<p>Example of Usage:
+<code class="docutils literal notranslate"><span class="pre">`python</span>
+<span class="pre">import</span> <span class="pre">torch</span>
+<span class="pre">#</span> <span class="pre">Assuming</span> <span class="pre">`generated_imgs`</span> <span class="pre">is</span> <span class="pre">a</span> <span class="pre">batch</span> <span class="pre">of</span> <span class="pre">generated</span> <span class="pre">tensors</span> <span class="pre">from</span> <span class="pre">your</span> <span class="pre">model</span>
+<span class="pre">#</span> <span class="pre">plot_sample_generated_images(generated_imgs,</span> <span class="pre">num_samples=16)</span>
+<span class="pre">`</span></code></p>
+<p>Relationships with other functions:
+- Called by <cite>main.py</cite> after the image generation phase.
+- Uses images generated by <cite>generate.py</cite>.</p>
+<p>Explanation of the theory:
+- <strong>Qualitative Assessment:</strong> Visual inspection remains a critical component</p>
+<blockquote>
+<div><p>of evaluating generative models. While quantitative metrics (like FID) are important,
+human perception of image quality, realism, and diversity is often the ultimate
+measure of success.</p>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="synthetic_image_generator.visualize.plot_sample_images_and_noise">
+<span class="sig-prename descclassname"><span class="pre">synthetic_image_generator.visualize.</span></span><span class="sig-name descname"><span class="pre">plot_sample_images_and_noise</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sample_image_batch</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_noise_batch</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_samples</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">5</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#synthetic_image_generator.visualize.plot_sample_images_and_noise" title="Link to this definition"></a></dt>
+<dd><p>Displays a few sample real images and their corresponding initial Gaussian noise samples.</p>
+<p>This function provides a visual sanity check, allowing users to see typical
+inputs to the generative model and understand the raw material (noise) from
+which synthetic images will be generated. It helps confirm data loading
+and basic transformations.</p>
+<dl>
+<dt>Args:</dt><dd><dl class="simple">
+<dt>sample_image_batch (torch.Tensor): A batch of real CT image tensors (CPU).</dt><dd><p>Expected pixel range: [-1, 1].
+Shape: (batch_size, C, H, W).</p>
+</dd>
+<dt>sample_noise_batch (torch.Tensor): A batch of initial Gaussian noise tensors (CPU).</dt><dd><p>Shape: (batch_size, C, H, W).</p>
+</dd>
+</dl>
+<p>num_samples (int): The number of sample pairs (image, noise) to display. Defaults to 5.</p>
+</dd>
+<dt>Returns:</dt><dd><p>None: Displays a matplotlib plot.</p>
+</dd>
+<dt>Potential Exceptions Raised:</dt><dd><ul class="simple">
+<li><p>ValueError: If input tensors are empty or <cite>num_samples</cite> is larger than batch size.</p></li>
+</ul>
+</dd>
+</dl>
+<p>Example of Usage:
+<code class="docutils literal notranslate"><span class="pre">`python</span>
+<span class="pre">import</span> <span class="pre">torch</span>
+<span class="pre">#</span> <span class="pre">Assuming</span> <span class="pre">sample_real_images</span> <span class="pre">and</span> <span class="pre">sample_noise</span> <span class="pre">are</span> <span class="pre">torch.Tensors</span>
+<span class="pre">#</span> <span class="pre">plot_sample_images_and_noise(sample_real_images,</span> <span class="pre">sample_noise,</span> <span class="pre">num_samples=3)</span>
+<span class="pre">`</span></code></p>
+<p>Relationships with other functions:
+- Called by <cite>main.py</cite> during initial setup.</p>
+<p>Explanation of the theory:
+- <strong>Visual Inspection:</strong> A fundamental step in any machine learning project</p>
+<blockquote>
+<div><p>to quickly identify issues with data loading, preprocessing, or model outputs.
+For generative models, visually comparing inputs (noise) to desired outputs (real images)
+helps set expectations for the model’s task.</p>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="synthetic_image_generator.visualize.plot_training_losses">
+<span class="sig-prename descclassname"><span class="pre">synthetic_image_generator.visualize.</span></span><span class="sig-name descname"><span class="pre">plot_training_losses</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gen_flow_losses</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#synthetic_image_generator.visualize.plot_training_losses" title="Link to this definition"></a></dt>
+<dd><p>Plots the training loss curve (Generator Flow Matching Loss) over epochs.</p>
+<p>Monitoring the loss curve is essential to assess training stability and
+convergence. A decreasing loss generally indicates that the model is learning,
+while oscillations or divergence might signal issues with hyperparameters
+or the model architecture.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><dl class="simple">
+<dt>gen_flow_losses (List[float]): A list of average Flow Matching losses,</dt><dd><p>one value per epoch.</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><p>None: Displays a matplotlib plot.</p>
+</dd>
+<dt>Potential Exceptions Raised:</dt><dd><ul class="simple">
+<li><p>ValueError: If <cite>gen_flow_losses</cite> is empty.</p></li>
+</ul>
+</dd>
+</dl>
+<p>Example of Usage:
+<code class="docutils literal notranslate"><span class="pre">`python</span>
+<span class="pre">#</span> <span class="pre">Assuming</span> <span class="pre">`losses`</span> <span class="pre">is</span> <span class="pre">a</span> <span class="pre">list</span> <span class="pre">of</span> <span class="pre">floats</span> <span class="pre">from</span> <span class="pre">training</span>
+<span class="pre">#</span> <span class="pre">plot_training_losses([0.8,</span> <span class="pre">0.6,</span> <span class="pre">0.4,</span> <span class="pre">0.3,</span> <span class="pre">0.25])</span>
+<span class="pre">`</span></code></p>
+<p>Relationships with other functions:
+- Called by <cite>main.py</cite> after the training loop completes.
+- Data typically comes from the return value of <cite>train.train_model</cite>.</p>
+<p>Explanation of the theory:
+- <strong>Loss Function:</strong> A mathematical function that quantifies the difference</p>
+<blockquote>
+<div><p>between the predicted output of a model and the true target values. The goal
+of training is to minimize this loss.</p>
+</div></blockquote>
+<ul class="simple">
+<li><p><strong>Training Curve:</strong> A plot of the loss function (or other metrics) against
+the number of training epochs or iterations. It provides insights into
+whether the model is overfitting, underfitting, or converging.</p></li>
+</ul>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Kasun Achintha Perera.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,141 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Project Dependencies &mdash; Synthetic Image Generator 2025 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=cb975c41"></script>
+      <script src="_static/doctools.js?v=9a2dae69"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Synthetic Image Generator
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="project_overview.html">Project Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="evaluation.html">Evaluation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="development.html">Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">synthetic_image_generator</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Synthetic Image Generator</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Project Dependencies</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/requirements.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="project-dependencies">
+<h1>Project Dependencies<a class="headerlink" href="#project-dependencies" title="Link to this heading"></a></h1>
+<p>This project relies on several Python packages for its core functionality and for building its comprehensive documentation. It has been tested with Python 3.9 and newer versions.</p>
+<section id="core-project-dependencies">
+<h2>Core Project Dependencies<a class="headerlink" href="#core-project-dependencies" title="Link to this heading"></a></h2>
+<p>The main application dependencies are listed in the <cite>requirements.txt</cite> file located in the root directory of the repository. These packages are essential for running the image generation, training, and evaluation workflows.</p>
+<p>To install them, ensure your Python virtual environment is activated and run:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>requirements.txt
+</pre></div>
+</div>
+<p>Key dependencies include:
+* <strong>PyTorch:</strong> The primary deep learning framework for model definition, training, and inference.
+* <strong>NumPy:</strong> For numerical operations, especially with image data.
+* <strong>Pydicom:</strong> For handling DICOM medical image files.
+* <strong>Scikit-image:</strong> For image processing tasks.
+* <strong>tqdm:</strong> For displaying progress bars during long operations.
+* <strong>gdown:</strong> For downloading pre-trained model weights from Google Drive.
+* <strong>torch_fidelity:</strong> For calculating the Fréchet Inception Distance (FID) metric.</p>
+<p><em>(You might want to expand this list with brief descriptions of other critical packages from your `requirements.txt`.)</em></p>
+</section>
+<section id="documentation-dependencies">
+<h2>Documentation Dependencies<a class="headerlink" href="#documentation-dependencies" title="Link to this heading"></a></h2>
+<p>The packages required to build this documentation (using Sphinx) are listed in the <cite>requirements-docs.txt</cite> file, also located in the root directory of the repository.</p>
+<p>To install these, with your Python virtual environment activated, run:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>requirements-docs.txt
+</pre></div>
+</div>
+<p>Key documentation dependencies include:
+* <strong>Sphinx:</strong> The documentation generator itself.
+* <strong>sphinx-rtd-theme:</strong> The Read the Docs theme used for the documentation’s visual style.
+* <strong>myst-parser:</strong> Allows for writing documentation in Markdown (<cite>.md</cite>) in addition to reStructuredText (<cite>.rst</cite>).</p>
+<p><em>(You might want to expand this list with brief descriptions of other documentation packages if you use more.)</em></p>
+<p>—</p>
+<p><strong>Note on PyTorch Installation:</strong></p>
+<p>The <cite>requirements.txt</cite> file typically specifies the CPU version of PyTorch by default. If you have a CUDA-enabled GPU and wish to leverage it for faster training and inference, please consult the <a class="reference external" href="https://pytorch.org/get-started/locally/">official PyTorch installation guide</a> to find the exact installation command that matches your CUDA version and operating system.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Kasun Achintha Perera.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
