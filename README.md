@@ -1,8 +1,9 @@
 # Lung CT Image Generation using Conditional Normalizing Flows (CNF-UNet)
 
-[](https://github.com/Achintha9533/Pattern-Recognition/blob/main/LICENSE)
-[](https://www.python.org/downloads/)
-[](https://pytorch.org/)
+
+* [MIT License](https://github.com/Achintha9533/Pattern-Recognition/blob/main/LICENSE)
+* [Python 3.9+](https://www.python.org/downloads/)
+* [PyTorch 2.0+](https://pytorch.org/)
 
 **Lung CT Image Generation using CNF-UNet** is a deep learning-based tool designed to synthesize realistic Lung CT images from Gaussian noise. It leverages a Conditional Normalizing Flow (CNF) architecture with a U-Net backbone, focusing on learning a continuous transformation from a simple prior distribution to complex medical image data. This repository was created for the final examination of the Software and Computing course in the Applied Physics curriculum at the University of Bologna, emphasizing reproducible and modular deep learning workflows.
 
@@ -290,27 +291,7 @@ These limitations highlight areas for future work and underscore that while synt
 
 This project, Synthetic Image Generator, is made available under the terms of the MIT License. This permissive license allows for wide use, modification, and distribution, while requiring attribution.
 
-## MIT License
-
-Copyright (c) 2025 Kasun Achintha Perera
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the “Software”), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+* [MIT License](https://github.com/Achintha9533/Pattern-Recognition/blob/main/LICENSE)
 
 
 # Contact
@@ -333,57 +314,6 @@ For technical issues, bug reports, feature requests, or contributions, please re
 We welcome your feedback and appreciate any contributions to improve this project.
 
 
-# synthetic_image_generator
-
-* [synthetic_image_generator package](synthetic_image_generator.html)
-    * [Submodules](synthetic_image_generator.html#submodules)
-    * [synthetic_image_generator.config module](synthetic_image_generator.html#module-synthetic_image_generator.config)
-    * [synthetic_image_generator.dataset module](synthetic_image_generator.html#module-synthetic_image_generator.dataset)
-        * [`LungCTWithGaussianDataset`](synthetic_image_generator.html#synthetic_image_generator.dataset.LungCTWithGaussianDataset)
-        * [`load_dicom_image()`](synthetic_image_generator.html#synthetic_image_generator.dataset.load_dicom_image)
-        * [`logger`](synthetic_image_generator.html#synthetic_image_generator.dataset.logger)
-    * [synthetic_image_generator.evaluate module](synthetic_image_generator.html#module-synthetic_image_generator.evaluate)
-        * [`calculate_image_metrics()`](synthetic_image_generator.html#synthetic_image_generator.evaluate.calculate_image_metrics)
-        * [`evaluate_model()`](synthetic_image_generator.html#synthetic_image_generator.evaluate.evaluate_model)
-        * [`logger`](synthetic_image_generator.html#synthetic_image_generator.evaluate.logger)
-    * [synthetic_image_generator.generate module](synthetic_image_generator.html#module-synthetic_image_generator.generate)
-        * [`generate_images()`](synthetic_image_generator.html#synthetic_image_generator.generate.generate_images)
-        * [`logger`](synthetic_image_generator.html#synthetic_image_generator.generate.logger)
-    * [synthetic_image_generator.load_model module](synthetic_image_generator.html#module-synthetic_image_generator.load_model)
-        * [`load_model_from_drive()`](synthetic_image_generator.html#synthetic_image_generator.load_model.load_model_from_drive)
-    * [synthetic_image_generator.main module](synthetic_image_generator.html#module-synthetic_image_generator.main)
-        * [`logger`](synthetic_image_generator.html#synthetic_image_generator.main.logger)
-        * [`main()`](synthetic_image_generator.html#synthetic_image_generator.main.main)
-    * [synthetic_image_generator.model module](synthetic_image_generator.html#module-synthetic_image_generator.model)
-        * [`Block`](synthetic_image_generator.html#synthetic_image_generator.model.Block)
-            * [`Block.forward()`](synthetic_image_generator.html#synthetic_image_generator.model.Block.forward)
-        * [`CNF_UNet`](synthetic_image_generator.html#synthetic_image_generator.model.CNF_UNet)
-            * [`CNF_UNet.forward()`](synthetic_image_generator.html#synthetic_image_generator.model.CNF_UNet.forward)
-        * [`ResBlock`](synthetic_image_generator.html#synthetic_image_generator.model.ResBlock)
-            * [`ResBlock.forward()`](synthetic_image_generator.html#synthetic_image_generator.model.ResBlock.forward)
-        * [`SelfAttention`](synthetic_image_generator.html#synthetic_image_generator.model.SelfAttention)
-            * [`SelfAttention.forward()`](synthetic_image_generator.html#synthetic_image_generator.model.SelfAttention.forward)
-        * [`TimestepEmbedder`](synthetic_image_generator.html#synthetic_image_generator.model.TimestepEmbedder)
-            * [`TimestepEmbedder.forward()`](synthetic_image_generator.html#synthetic_image_generator.model.TimestepEmbedder.forward)
-        * [`UNetBlock`](synthetic_image_generator.html#synthetic_image_generator.model.UNetBlock)
-            * [`UNetBlock.forward()`](synthetic_image_generator.html#synthetic_image_generator.model.UNetBlock.forward)
-        * [`get_sinusoidal_embedding()`](synthetic_image_generator.html#synthetic_image_generator.model.get_sinusoidal_embedding)
-        * [`logger`](synthetic_image_generator.html#synthetic_image_generator.model.logger)
-    * [synthetic_image_generator.train module](synthetic_image_generator.html#module-synthetic_image_generator.train)
-        * [`logger`](synthetic_image_generator.html#synthetic_image_generator.train.logger)
-        * [`train_model()`](synthetic_image_generator.html#synthetic_image_generator.train.train_model)
-    * [synthetic_image_generator.transforms module](synthetic_image_generator.html#module-synthetic_image_generator.transforms)
-        * [`get_fid_transforms()`](synthetic_image_generator.html#synthetic_image_generator.transforms.get_fid_transforms)
-        * [`get_transforms()`](synthetic_image_generator.html#synthetic_image_generator.transforms.get_transforms)
-        * [`logger`](synthetic_image_generator.html#synthetic_image_generator.transforms.logger)
-    * [synthetic_image_generator.visualize module](synthetic_image_generator.html#module-synthetic_image_generator.visualize)
-        * [`logger`](synthetic_image_generator.html#synthetic_image_generator.visualize.logger)
-        * [`plot_generated_pixel_distribution_comparison()`](synthetic_image_generator.html#synthetic_image_generator.visualize.plot_generated_pixel_distribution_comparison)
-        * [`plot_pixel_distributions()`](synthetic_image_generator.html#synthetic_image_generator.visualize.plot_pixel_distributions)
-        * [`plot_real_vs_generated_side_by_side()`](synthetic_image_generator.html#synthetic_image_generator.visualize.plot_real_vs_generated_side_by_side)
-        * [`plot_sample_generated_images()`](synthetic_image_generator.html#synthetic_image_generator.visualize.plot_sample_generated_images)
-        * [`plot_sample_images_and_noise()`](synthetic_image_generator.html#synthetic_image_generator.visualize.plot_sample_images_and_noise)
-        * [`plot_training_losses()`](synthetic_image_generator.html#synthetic_image_generator.visualize.plot_training_losses)
 
 -----
 
