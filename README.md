@@ -22,15 +22,17 @@ It includes:
 
 ## Table of Contents
 
-* [Features](#features)
-* [Installation & Setup](docs/build/html/installation.html)
-* [Usage](docs/build/html/usage.html)
+* [Project Overview](docs/build/html/project_overview.html)
+* [Installation Guide](docs/build/html/installation.html)
+* [Usage Guide](docs/build/html/usage.html)
 * [Example Output](docs/build/html/example_outputs.html)
 * [Model Architecture and Training](docs/build/html/architecture.html)
-* [Evaluation Metrics](docs/build/html/evaluation_metrics.html)
-* [Limitations and Notes](docs/build/html/limitation.html)
+* [Evaluation Metrics](docs/build/html/evaluation.html)
+* [Testing Strategy](docs/build/html/testing.html)
+* [Limitations](docs/build/html/limitation.html)
 * [License](docs/build/html/license.html)
 * [Contact](docs/build/html/contact.html)
+* [API Reference](docs/build/html/modules.html)
 
 ---
 ## Documentation
@@ -44,4 +46,3 @@ If you prefer to build the docs locally:
 ```bash
 cd docs
 make html
-
