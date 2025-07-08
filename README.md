@@ -24,7 +24,7 @@ It includes:
 
 ## Table of Contents
 
-  * [Project Overview](hhttps://achintha9533.github.io/Pattern-Recognition/project_overview.html)
+  * [Project Overview](https://achintha9533.github.io/Pattern-Recognition/project_overview.html)
       * Provides a high-level summary of the project's purpose, scope, and key features.
       * Aims to give users a foundational understanding of "Lung CT Image Generation using Conditional Normalizing Flows (CNF-UNet)".
       * Likely covers the problem it solves and its overall approach.
