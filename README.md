@@ -291,7 +291,7 @@ These limitations highlight areas for future work and underscore that while synt
 
 This project, Synthetic Image Generator, is made available under the terms of the MIT License. This permissive license allows for wide use, modification, and distribution, while requiring attribution.
 
-* [MIT License](https://github.com/Achintha9533/Pattern-Recognition/license.html)
+* [MIT License](https://achintha9533.github.io/Pattern-Recognition/license.html)
 
 
 # Contact
