@@ -91,11 +91,18 @@ To install the application, you can just clone this repository and use pip.
 
     <!-- end list -->
 
-    ```python
-    # synthetic_image_generator/config.py
-    from pathlib import Path
-    BASE_DIR = Path("/Users/kasunachinthaperera/Documents/VS Code/Pattern Recognition/Data/QIN LUNG CT") # <-- Location
-    ```
+    ## 🔧 Pretrained Weights Setup
+
+To use the pretrained model weights:
+
+1. **Download the weights** from Google Drive:
+   - [Click here to download](https://drive.google.com/uc?export=download&id=1BWrRqSEY2KSE-u3TI8c2JYucm69g6oo7)
+   - Or run in terminal:
+     ```bash
+     wget --no-check-certificate "https://drive.google.com/uc?export=download&id=1BWrRqSEY2KSE-u3TI8c2JYucm69g6oo7" -O pretrained_weights.pth
+     ```
+
+
     
     
 ## Usage
