@@ -40,13 +40,11 @@ This section provides an introduction to the Synthetic Image Generator, its purp
     * **Model Architecture Diagram**: Likely includes a visual representation to aid understanding of the model's structure.
 
 
-  # Your Project Name
-
 ## Installation & Setup
 
-This project has been tested with Python 3.9+ on macOS and Windows, and should work with compatible PyTorch versions.
+This project has been tested with **Python 3.9+** on macOS and Windows, and should work with compatible PyTorch versions.
 
-See `requirements.txt` for the full list of dependencies.
+Refer to `requirements.txt` for the full list of dependencies.
 
 To install the application, follow these steps:
 
@@ -64,7 +62,7 @@ To install the application, follow these steps:
     On macOS/Linux:
 
     ```bash
-    python3.9 -m venv venv # Explicitly use python3.9 if that's your target
+    python3.9 -m venv venv # Explicitly use python3.9 if that's your target Python version
     source venv/bin/activate
     ```
 
@@ -88,7 +86,7 @@ To install the application, follow these steps:
 
     **Important Note on PyTorch Installation Troubleshooting (macOS):**
 
-    If, during or after running `pip install -r requirements.txt`, you encounter an error like `OSError: dlopen(...libtorch_global_deps.dylib... no such file)` when trying to `import torch`, it indicates that the PyTorch installation in your virtual environment is corrupted or incomplete. This is a common issue, particularly on macOS.
+    If, during or after running `pip install -r requirements.txt`, you encounter an `OSError: dlopen(...libtorch_global_deps.dylib... no such file)` when trying to `import torch`, it means the PyTorch installation in your virtual environment is corrupted or incomplete. This is a common issue, particularly on macOS.
 
     **To resolve this `OSError: dlopen` problem:**
 
@@ -96,7 +94,7 @@ To install the application, follow these steps:
         ```bash
         deactivate
         ```
-    2.  **Completely delete** your existing `venv` folder. **Be extremely careful** to ensure you are deleting only the `venv` folder within your project directory:
+    2.  **Completely delete** your existing `venv` folder. **Be extremely careful** to only delete the `venv` folder within your project directory:
         ```bash
         rm -rf venv
         ```
@@ -104,10 +102,10 @@ To install the application, follow these steps:
 
     **Optional: Utilizing GPU (CUDA/MPS) for PyTorch:**
 
-    By default, the `requirements.txt` file (generated via `pip freeze`) typically installs the CPU version of PyTorch. If you have a compatible NVIDIA GPU (with CUDA) or an Apple Silicon Mac (M1/M2/M3 with MPS), you can install the GPU-enabled version of PyTorch for faster performance.
+    By default, `requirements.txt` (if generated via `pip freeze`) typically installs the CPU version of PyTorch. If you have a compatible NVIDIA GPU (with CUDA) or an Apple Silicon Mac (M1/M2/M3 with MPS), you can install the GPU-enabled version of PyTorch for faster performance.
 
     * **For CUDA-enabled GPUs (NVIDIA):**
-        Consult the [official PyTorch installation guide](https://pytorch.org/get-started/locally/) and select your specific CUDA version to get the exact `pip install` command. You would run this *instead* of or *after* removing the `torch` line from your `requirements.txt` before running `pip install -r`.
+        Consult the [official PyTorch installation guide](https://pytorch.org/get-started/locally/) and select your specific CUDA version to get the exact `pip install` command. You would run this *instead* of, or *after* removing the `torch` line from your `requirements.txt` before running `pip install -r`.
 
     * **For Apple Silicon (M1/M2/M3) Macs (MPS):**
         PyTorch's MPS (Metal Performance Shaders) backend utilizes the integrated GPU. The correct version is usually installed with the standard `pip install torch` on modern PyTorch versions on macOS. However, if you face issues or want to ensure MPS support, check the [official PyTorch installation guide](https://pytorch.org/get-started/locally/) by selecting `macOS` and `MPS`.
@@ -119,6 +117,8 @@ To install the application, follow these steps:
     * Download your dataset (e.g., the QIN LUNG CT dataset if you have access to it).
     * Place the root directory of your dataset (e.g., the folder containing `QIN LUNG CT 1`, etc.) in a convenient location on your system.
     * **IMPORTANT:** Update the `BASE_DIR` variable in `synthetic_image_generator/config.py` to the **absolute path** of your dataset’s root directory.
+
+---
 
 ## 🔧 Pretrained Weights Setup
 
@@ -153,6 +153,8 @@ To use the pretrained model weights:
         **Important Note on `wget` downloads from Google Drive:**
         Be aware that for some Google Drive links, `wget` might download an HTML page (like a virus scan warning or a redirect page) instead of the actual binary file, especially if the file size is small (e.g., a few KB). If the downloaded `pretrained_weights.pth` file is very small and contains HTML content when opened with a text editor, the download failed to get the actual model weights. In such cases, please try **manually downloading the file** directly from the provided Google Drive link in your web browser.
 
+---
+
 ## Usage
 
 The primary way to use the application is through `main.py`.
@@ -163,8 +165,8 @@ On macOS/Linux:
 
 ```bash
 python synthetic_image_generator/main.py
+```
 
---
 
 ## Example Outputs
 
