@@ -180,7 +180,7 @@ if __name__ == '__main__':
     
     # Define dummy parameters for demonstration.
     # Replace with actual config values if running in a full project environment.
-    dummy_drive_url = "https://drive.google.com/uc?id=1BWrRqSEY2KSE-u3TI8c2JYucm69g6oo7" # Example dummy ID
+    dummy_drive_url = "https://drive.google.com/uc?id=19jpLx3qfCGripD85D3W7PWgcxhoMYP0k" # Example dummy ID
     dummy_output_path = config.GENERATOR_CHECKPOINT_PATH
     dummy_device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
