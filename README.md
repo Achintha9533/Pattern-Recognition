@@ -147,14 +147,16 @@ To use the pretrained model weights:
     * **Then, run this command from within your project's root directory, ensuring you are in the `checkpoints` folder:**
         ```bash
         cd checkpoints
-        wget --no-check-certificate "[https://drive.google.com/uc?export=download&id=19jpLx3qfCGripD85D3W7PWgcxhoMYP0k]" -O pretrained_weights.pth
+        wget --no-check-certificate "[https://drive.google.com/uc?export=download&id=19jpLx3qfCGripD85D3W7PWgcxhoMYP0k](https://drive.google.com/uc?export=download&id=19jpLx3qfCGripD85D3W7PWgcxhoMYP0k)" -O pretrained_weights.pth
         cd .. # Go back to root directory
         ```
+    * **Alternatively, you can manually download the file:**
+        [Click here to download the pretrained weights (pretrained_weights.pth)](https://drive.google.com/uc?export=download&id=19jpLx3qfCGripD85D3W7PWgcxhoMYP0k)
+
         **Important Note on `wget` downloads from Google Drive:**
         Be aware that for some Google Drive links, `wget` might download an HTML page (like a virus scan warning or a redirect page) instead of the actual binary file, especially if the file size is small (e.g., a few KB). If the downloaded `pretrained_weights.pth` file is very small and contains HTML content when opened with a text editor, the download failed to get the actual model weights. In such cases, please try **manually downloading the file** directly from the provided Google Drive link in your web browser.
 
 ---
-
 ## Usage
 
 The primary way to use the application is through `main.py`.
