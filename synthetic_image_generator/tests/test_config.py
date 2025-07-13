@@ -11,7 +11,11 @@ from config import (
 )
 
 def test_config_types():
-    """Verify the types of all configuration variables."""
+    """
+    GIVEN: that configuration variables are imported from the 'config' module
+    WHEN: their types are checked
+    THEN: all configuration variables should be of their expected Python types
+    """
     assert isinstance(base_dir, Path)
     assert isinstance(image_size, tuple)
     assert all(isinstance(dim, int) for dim in image_size)
@@ -25,7 +29,11 @@ def test_config_types():
     assert isinstance(time_embed_dim, int)
 
 def test_config_values():
-    """Verify specific values of key configuration variables."""
+    """
+    GIVEN: that configuration variables are imported from the 'config' module
+    WHEN: their specific values are checked
+    THEN: key configuration variables should hold their expected default values
+    """
     assert image_size == (96, 96)
     assert G_LR == 1e-4
     assert time_embed_dim == 256
@@ -33,6 +41,10 @@ def test_config_values():
     assert generator_checkpoint_path.name == "generator_final.pth"
 
 def test_device_selection():
-    """Check if the device is correctly set."""
+    """
+    GIVEN: that the 'device' variable is imported from the 'config' module
+    WHEN: the type of the device is checked
+    THEN: the device should be set to "cuda" if a GPU is available, otherwise "cpu"
+    """
     expected_device = "cuda" if torch.cuda.is_available() else "cpu"
     assert device.type == expected_device

@@ -13,7 +13,13 @@ class MockGenerator(torch.nn.Module):
         return torch.randn_like(x)
 
 def test_generate_output_shape_and_type():
-    """Test if the generate function produces output of the correct shape and type."""
+    """
+    GIVEN: a mock generator model, desired number of samples, and generation steps,
+           along with mocked 'config.image_size' and 'config.device'
+    WHEN: the `generate` function is called to produce images
+    THEN: the output should be a PyTorch tensor with the correct shape (num_samples, 1, image_size[0], image_size[1]),
+          and it should be on the 'cpu' device
+    """
     mock_model = MockGenerator()
     num_samples = 8
     steps = 10
@@ -31,7 +37,13 @@ def test_generate_output_shape_and_type():
     assert str(generated_images.device) == 'cpu' # Ensure it's moved back to CPU
 
 def test_generate_with_different_batch_sizes(mocker):
-    """Test that generation works with different batch sizes for generation."""
+    """
+    GIVEN: a mock generator model, a non-standard number of samples (e.g., not divisible by default batch size),
+           generation steps, and mocked 'config' values, with tqdm progress bar mocked
+    WHEN: the `generate` function is called
+    THEN: the function should successfully generate the specified number of samples,
+          and the first dimension of the output tensor should match 'num_samples'
+    """
     mock_model = MockGenerator()
     num_samples = 7 # A number not divisible by the default batch_size_gen
     steps = 5

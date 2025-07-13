@@ -11,8 +11,10 @@ from pydicom.uid import CTImageStorage # Import CTImageStorage
 @pytest.fixture(scope="session")
 def mock_dicom_dir(tmp_path_factory):
     """
-    Creates a temporary directory structure mimicking the QIN LUNG CT dataset
-    with dummy DICOM files for testing the dataset loader.
+    GIVEN: access to pytest's temporary path factory
+    WHEN: a temporary directory structure mimicking the QIN LUNG CT dataset is created,
+          populated with dummy DICOM files for two patients, each with 10 images
+    THEN: a Path object to the base of this mock DICOM directory is returned
     """
     base_dir = tmp_path_factory.mktemp("mock_data")
     
@@ -81,7 +83,11 @@ def mock_dicom_dir(tmp_path_factory):
 
 @pytest.fixture
 def mock_generator():
-    """Provides a mock CNF_UNet generator for testing."""
+    """
+    GIVEN: a request for a mock generator
+    WHEN: a simple PyTorch module is defined that mimics the CNF_UNet's forward pass behavior
+    THEN: an instance of this mock generator, capable of returning a tensor of the same shape as its input, is provided
+    """
     class MockCNF_UNet(torch.nn.Module):
         def __init__(self):
             super().__init__()

@@ -7,7 +7,12 @@ from unittest.mock import patch
 from evaluate import calculate_mse_psnr_ssim, evaluate_metrics
 
 def test_calculate_mse_psnr_ssim():
-    """Test metric calculations with known tensor values."""
+    """
+    GIVEN: two batches of image tensors (real and generated) with known values in the [0, 1] range
+    WHEN: the `calculate_mse_psnr_ssim` function is called, with SSIM mocked to return a fixed value
+    THEN: the calculated MSE, PSNR, and SSIM values should be of type float and
+          match the expected values based on the input tensors and mocked SSIM result
+    """
     # Images are in [0, 1] range for this calculation
     real_images = torch.ones(2, 1, 32, 32) * 0.5
     gen_images = torch.ones(2, 1, 32, 32) * 0.75
@@ -27,7 +32,14 @@ def test_calculate_mse_psnr_ssim():
     assert pytest.approx(ssim, 0.01) == 0.9 # Using pytest.approx for ssim as well
 
 def test_evaluate_metrics_pipeline(mocker, mock_generator):
-    """Test the main evaluate_metrics function by mocking its dependencies."""
+    """
+    GIVEN: a mock generator, a mock dataloader providing dummy real images,
+           and mock implementations for 'generate', 'calculate_metrics' (for FID),
+           temporary directory functions, and SSIM calculation
+    WHEN: the `evaluate_metrics` function is called with these mocked dependencies
+    THEN: the function should execute without errors and return float values for MSE, PSNR, and SSIM,
+          and the correct mocked FID value, confirming the metric evaluation pipeline works end-to-end
+    """
     num_samples = 8
     
     # Mock dataloader to return dummy batches of real images [-1, 1]

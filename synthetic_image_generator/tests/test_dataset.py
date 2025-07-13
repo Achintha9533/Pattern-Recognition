@@ -12,7 +12,12 @@ from config import transform
 
 
 def test_load_dicom_image(tmp_path):
-    """Test the DICOM image loading and normalization function."""
+    """
+    GIVEN: a temporary path and a dummy DICOM file created with known pixel data (HU value 400)
+    WHEN: the `load_dicom_image` function is called with the path to the dummy DICOM file
+    THEN: the function should return a NumPy array of float32,
+          and the pixel values in the array should be correctly normalized to 1.0 (within a small tolerance)
+    """
     file_path = tmp_path / "test.dcm"
     
     # Create a dummy DICOM file with a known pixel array
@@ -87,7 +92,14 @@ def test_load_dicom_image(tmp_path):
     assert np.isclose(img.min(), 1.0) # Min should also be 1.0 if all pixels are 400
 
 def test_lung_ct_dataset(mock_dicom_dir):
-    """Test the custom LungCTWithGaussianDataset using a mock directory."""
+    """
+    GIVEN: a mock DICOM directory containing dummy patient scan data
+    WHEN: a LungCTWithGaussianDataset is initialized with this directory, a transform, and an image size,
+          and an item is retrieved from the dataset
+    THEN: the dataset should report the correct number of samples (10),
+          and the retrieved noise and image tensors should have the expected shape (1, 96, 96)
+          and the image values should be normalized within the [-1, 1] range
+    """
     
     dataset = LungCTWithGaussianDataset(
         base_dir=mock_dicom_dir, 

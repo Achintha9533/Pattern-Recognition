@@ -10,7 +10,18 @@ import main as main_script
 
 @pytest.fixture
 def mock_main_dependencies(mocker):
-    """Mock all major dependencies of the main() function."""
+    """
+    GIVEN: a test environment needing to mock various modules and functions used by `main.py`
+    WHEN: a fixture is set up to provide pre-configured mock objects for:
+          - Path operations (mkdir, exists)
+          - Dataset and DataLoader instantiation
+          - The CNF_UNet model and its methods (including `load_state_dict`)
+          - External utilities like `gdown.download`
+          - Internal functions such as `generate`, `evaluate_metrics`, and all plotting functions
+          - `torch.load`
+          - Key attributes from the `config` module
+    THEN: a dictionary of these mock objects is returned, allowing individual tests to assert their calls and behavior
+    """
     # Define dummy image size for mocks
     mock_image_size = (96, 96) 
     
@@ -84,8 +95,11 @@ def mock_main_dependencies(mocker):
 
 def test_main_pipeline_execution(mock_main_dependencies):
     """
-    Test the main function's execution flow to ensure all components are called.
-    This is an integration test.
+    GIVEN: that all external and internal dependencies of the `main` function are mocked
+    WHEN: the `main` function is called
+    THEN: the core components of the pipeline (dataset loading, dataloader creation,
+          model instantiation, checkpoint loading, plotting, generation, and evaluation)
+          should be called as expected, indicating a successful execution flow
     """
     # Run the main function
     main_script.main()
@@ -106,7 +120,12 @@ def test_main_pipeline_execution(mock_main_dependencies):
     assert mock_main_dependencies['plot_real_vs_generated'].called
 
 def test_main_downloads_if_weights_not_exist(mock_main_dependencies):
-    """Test that download is triggered if weights file does not exist."""
+    """
+    GIVEN: that the generator checkpoint file is mocked to not exist
+    WHEN: the `main` function is called
+    THEN: the `download_file_from_google_drive` function should be called exactly once
+          to attempt to download the model weights
+    """
     # Override the 'exists' mock for this specific test
     mock_main_dependencies['exists'].return_value = False
 

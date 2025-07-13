@@ -15,7 +15,13 @@ from load_model import load_model_from_drive
 
 @pytest.fixture
 def mock_dependencies(mocker):
-    """Mock external dependencies for load_model."""
+    """
+    GIVEN: a request for mocked external dependencies
+    WHEN: `gdown.download` and `torch.load` are mocked,
+          and `load_model.CNF_UNet` is mocked to return a simple CNF_UNet instance
+    THEN: a MagicMock object representing the mocked CNF_UNet class is provided,
+          allowing tracking of its instantiation
+    """
     # Mock gdown download function
     mocker.patch('gdown.download')
     
@@ -32,7 +38,12 @@ def mock_dependencies(mocker):
     return mock_model_class
 
 def test_load_model_from_drive_downloads_if_not_exists(mocker, tmp_path):
-    """Test that the model is downloaded if the weights file doesn't exist."""
+    """
+    GIVEN: that the model weights file does not exist at the specified output path
+    WHEN: `load_model_from_drive` is called with a dummy URL and path
+    THEN: `gdown.download` should be called exactly once to attempt the download,
+          and a RuntimeError should be raised due to the empty mocked state dictionary not matching the model
+    """
     mock_gdown = mocker.patch('gdown.download')
     mocker.patch('torch.load', return_value={})
     
@@ -51,7 +62,12 @@ def test_load_model_from_drive_downloads_if_not_exists(mocker, tmp_path):
     mock_gdown.assert_called_once()
 
 def test_load_model_from_drive_skips_download_if_exists(mocker, tmp_path):
-    """Test that download is skipped if the weights file already exists."""
+    """
+    GIVEN: that the model weights file already exists at the specified output path
+    WHEN: `load_model_from_drive` is called with a dummy URL and path
+    THEN: `gdown.download` should NOT be called,
+          and a RuntimeError should be raised due to the empty mocked state dictionary not matching the model
+    """
     mock_gdown = mocker.patch('gdown.download')
     mocker.patch('torch.load', return_value={})
     
