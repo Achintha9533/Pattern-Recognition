@@ -1,10 +1,9 @@
-Sure, here is your professional README:
-
 # Lung CT Image Generation using Conditional Normalizing Flows (CNF-UNet)
 
-[](https://achintha9533.github.io/Pattern-Recognition/license.html)
-[](https://www.python.org/downloads/)
-[](https://pytorch.org/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://achintha9533.github.io/Pattern-Recognition/license.html)
+[![Python 3.9+](https://img.shields.io/badge/Python-3.9%2B-blue.svg)](https://www.python.org/downloads/)
+[![PyTorch](https://img.shields.io/badge/PyTorch-2.0%2B-orange.svg)](https://pytorch.org/)
+
 
 **Lung CT Image Generation using CNF-UNet** is a deep learning tool designed to synthesize realistic Lung CT images from Gaussian noise. It leverages a **Conditional Normalizing Flow (CNF) architecture with a U-Net backbone**, focusing on learning a continuous transformation from a simple prior distribution to complex medical image data. This project, developed for the final examination of the Software and Computing course at the University of Bologna, emphasizes **reproducible and modular deep learning workflows**.
 
