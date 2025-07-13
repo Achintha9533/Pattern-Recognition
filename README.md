@@ -147,7 +147,7 @@ To use the pretrained model weights:
     * **Then, run this command from within your project's root directory, ensuring you are in the `checkpoints` folder:**
         ```bash
         cd checkpoints
-        wget --no-check-certificate "[https://drive.google.com/uc?export=download&id=19jpLx3qfCGripD85D3W7PWgcxhoMYP0k](https://drive.google.com/uc?export=download&id=19jpLx3qfCGripD85D3W7PWgcxhoMYP0k)" -O pretrained_weights.pth
+        wget --no-check-certificate "[https://drive.google.com/uc?export=download&id=19jpLx3qfCGripD85D3W7PWgcxhoMYP0k]" -O pretrained_weights.pth
         cd .. # Go back to root directory
         ```
         **Important Note on `wget` downloads from Google Drive:**
