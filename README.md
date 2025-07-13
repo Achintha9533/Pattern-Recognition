@@ -95,11 +95,11 @@ To install the application, you can just clone this repository and use pip.
 
 To use the pretrained model weights:
 
-1. **Download the weights** from Google Drive:
-   - [Click here to download](https://drive.google.com/uc?export=download&id=1BWrRqSEY2KSE-u3TI8c2JYucm69g6oo7)
+1. **Download the weights** from Google Drive and create a folder in the root folder and rename it as "checkpoints":
+   - [Click here to download](https://drive.google.com/file/d/19jpLx3qfCGripD85D3W7PWgcxhoMYP0k/view?usp=sharing)
    - Or run in terminal:
      ```bash
-     wget --no-check-certificate "https://drive.google.com/uc?export=download&id=1BWrRqSEY2KSE-u3TI8c2JYucm69g6oo7" -O pretrained_weights.pth
+     wget --no-check-certificate "https://drive.google.com/file/d/19jpLx3qfCGripD85D3W7PWgcxhoMYP0k/view?usp=sharing" -O pretrained_weights.pth
      ```
 
 
