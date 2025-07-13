@@ -103,7 +103,7 @@ To use the pretrained model weights:
     **Option A: Manual Download (Recommended for most users)**
     The most reliable way to download is often directly via your web browser.
 
-      * [**Click here to download `pretrained_weights.pth`**](https://www.google.com/search?q=%5Bhttps://drive.google.com/uc%3Fexport%3Ddownload%26id%3D19jpLx3qfCGripD85D3W7PWgcxhoMYP0k%5D\(https://drive.google.com/uc%3Fexport%3Ddownload%26id%3D19jpLx3qfCGripD85D3W7PWgcxhoMYP0k\))
+      * [**Click here to download `pretrained_weights.pth`**](https://drive.google.com/uc?export=download&id=19jpLx3qfCGripD85D3W7PWgcxhoMYP0k)
       * After downloading, **move** the `pretrained_weights.pth` file into the `checkpoints` folder you created.
 
     **Option B: Using `wget` from the terminal (Advanced)**
