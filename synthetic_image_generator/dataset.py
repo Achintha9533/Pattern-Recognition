@@ -10,19 +10,30 @@ import warnings
 # === Load and normalize a single DICOM image ===
 def load_dicom_image(file_path):
     try:
-        # Read DICOM file using pydicom
-        ds = pydicom.dcmread(file_path)
-        img = ds.pixel_array.astype(np.float32)  # Convert pixel data to float32 numpy array
+        # Read DICOM file using pydicom, force=True to handle non-standard headers
+        ds = pydicom.dcmread(file_path, force=True)
 
-        img_min = -1000
-        img_max = 400 # Example range for lung CT images, adjust based on your dataset
-        if img_max == img_min: # Handle cases of uniform images to prevent division by zero
-            img = np.zeros_like(img)
+        # Convert pixel data to float32 numpy array
+        pixel_array = ds.pixel_array.astype(np.float32)
+
+        # Apply Rescale Slope and Intercept if they exist in the DICOM header
+        if hasattr(ds, 'RescaleSlope') and hasattr(ds, 'RescaleIntercept'):
+            pixel_array = pixel_array * ds.RescaleSlope + ds.RescaleIntercept
+        
+        # Normalize Hounsfield Units (HU) to [0, 1] based on common CT window
+        # Assuming a window of [-1000, 400] HU for lung CT, adjust based on your dataset
+        hu_min = -1000.0
+        hu_max = 400.0
+        
+        if hu_max == hu_min: # Handle cases of uniform images to prevent division by zero
+            normalized_image = np.zeros_like(pixel_array)
         else:
-            # Normalize to [0, 1] directly as float32
-            img = (img - img_min) / (img_max - img_min)
-
-        return img
+            normalized_image = (pixel_array - hu_min) / (hu_max - hu_min)
+        
+        # Clip values to ensure they are within [0, 1] after normalization
+        normalized_image = np.clip(normalized_image, 0.0, 1.0)
+        
+        return normalized_image
 
     except Exception as e:
         warnings.warn(f"Failed to load {file_path}: {e}")
@@ -45,7 +56,8 @@ class LungCTWithGaussianDataset(Dataset):
                 ])
                 for f_path in dicom_files:
                     try:
-                        pydicom.dcmread(f_path)
+                        # Also use force=True when scanning for readable files
+                        pydicom.dcmread(f_path, force=True)
                         current_folder_dicom_files.append(f_path)
                     except Exception as e:
                         warnings.warn(f"Skipping unreadable DICOM file: {f_path} - {e}")
@@ -79,12 +91,21 @@ class LungCTWithGaussianDataset(Dataset):
             image = torch.zeros(1, *self.image_size)
         else:
             if img.ndim == 2:
-                pass # Already 2D
+                # Add a channel dimension if it's just HxW
+                image = torch.from_numpy(img).unsqueeze(0) 
             else:
-                img = img.squeeze() # Remove singleton dimensions
+                image = torch.from_numpy(img).squeeze() # Ensure it's 1-channel if it has other dimensions
+                if image.ndim == 2: # After squeeze, ensure it's HxW, then add channel
+                    image = image.unsqueeze(0)
 
             # Apply transform. load_dicom_image now returns float32 [0,1]
-            image = self.transform(img)
+            # The transform expects a PIL Image or Tensor, and converts to [-1, 1]
+            image = self.transform(image) # Already a tensor, transform expects it
+            
+            # Ensure the output image has a channel dimension (C, H, W)
+            if image.ndim == 2:
+                image = image.unsqueeze(0)
+
 
         # Generate noise batch_size, 1, H, W
         noise = torch.randn_like(image)
