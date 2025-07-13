@@ -103,8 +103,8 @@ To use the pretrained model weights:
     **Option A: Manual Download (Recommended for most users)**
     The most reliable way to download is often directly via your web browser.
 
-      * [**Click here to download `pretrained_weights.pth`**](https://drive.google.com/uc?export=download&id=19jpLx3qfCGripD85D3W7PWgcxhoMYP0k)
-      * After downloading, **move** the `pretrained_weights.pth` file into the `checkpoints` folder you created.
+      * [**Click here to download `generator_final.pth`**](https://drive.google.com/uc?export=download&id=19jpLx3qfCGripD85D3W7PWgcxhoMYP0k)
+      * After downloading, **move** the `generator_final.pth` file into the `checkpoints` folder you created.
 
     **Option B: Using `wget` from the terminal (Advanced)**
     If you prefer to download directly via the terminal:
@@ -132,7 +132,7 @@ To use the pretrained model weights:
         ```
 
     **Important Troubleshooting for `wget` (Google Drive Links):**
-    `wget` might download an HTML page (like a virus scan warning) instead of the binary file from Google Drive. If `pretrained_weights.pth` is very small and contains HTML, the download failed. In such cases, please use **Option A (Manual Download)** directly from the provided Google Drive link in your web browser.
+    `wget` might download an HTML page (like a virus scan warning) instead of the binary file from Google Drive. If `generator_final.pth` is very small and contains HTML, the download failed. In such cases, please use **Option A (Manual Download)** directly from the provided Google Drive link in your web browser.
 
 -----
 
