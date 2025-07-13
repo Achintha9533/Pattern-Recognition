@@ -40,27 +40,31 @@ This section provides an introduction to the Synthetic Image Generator, its purp
     * **Model Architecture Diagram**: Likely includes a visual representation to aid understanding of the model's structure.
 
 
-  * # Installation & Setup
+  # Your Project Name
+
+## Installation & Setup
 
 This project has been tested with Python 3.9+ on macOS and Windows, and should work with compatible PyTorch versions.
 
 See `requirements.txt` for the full list of dependencies.
 
-To install the application, you can just clone this repository and use pip.
+To install the application, follow these steps:
 
 1.  **Clone the repository:**
 
     ```bash
-    git clone https://github.com/Achintha9533/Pattern-Recognition.git
+    git clone [https://github.com/Achintha9533/Pattern-Recognition.git](https://github.com/Achintha9533/Pattern-Recognition.git)
     cd Pattern-Recognition
     ```
 
 2.  **Create and activate a virtual environment (recommended):**
 
+    It's highly recommended to use a virtual environment to manage project dependencies and avoid conflicts.
+
     On macOS/Linux:
 
     ```bash
-    python -m venv venv
+    python3.9 -m venv venv # Explicitly use python3.9 if that's your target
     source venv/bin/activate
     ```
 
@@ -71,40 +75,84 @@ To install the application, you can just clone this repository and use pip.
     .\venv\Scripts\activate
     ```
 
+    **Verify Virtual Environment:** Your terminal prompt should now show `(venv)` or `(3.9)` at the beginning, indicating the virtual environment is active.
+
 3.  **Install dependencies:**
 
-    All required Python packages are listed in `requirements.txt`. With your virtual environment activated, install them using pip:
+    With your virtual environment activated, install all required Python packages:
 
     ```bash
+    pip install --upgrade pip  # Always a good practice to update pip first
     pip install -r requirements.txt
     ```
 
-    **Note on PyTorch:** The `requirements.txt` will install the CPU version of PyTorch by default (or the specific version frozen). If you have a CUDA-enabled GPU and wish to utilize it, please refer to the [official PyTorch installation guide](https://pytorch.org/get-started/locally/) for the exact command that matches your CUDA version.
+    **Important Note on PyTorch Installation Troubleshooting (macOS):**
+
+    If, during or after running `pip install -r requirements.txt`, you encounter an error like `OSError: dlopen(...libtorch_global_deps.dylib... no such file)` when trying to `import torch`, it indicates that the PyTorch installation in your virtual environment is corrupted or incomplete. This is a common issue, particularly on macOS.
+
+    **To resolve this `OSError: dlopen` problem:**
+
+    1.  **Deactivate** your virtual environment:
+        ```bash
+        deactivate
+        ```
+    2.  **Completely delete** your existing `venv` folder. **Be extremely careful** to ensure you are deleting only the `venv` folder within your project directory:
+        ```bash
+        rm -rf venv
+        ```
+    3.  **Return to Step 2** ("Create and activate a virtual environment") and follow the instructions to recreate and reactivate your virtual environment, then proceed with "Install dependencies" (Step 3) again. This process provides a clean environment for PyTorch to install correctly.
+
+    **Optional: Utilizing GPU (CUDA/MPS) for PyTorch:**
+
+    By default, the `requirements.txt` file (generated via `pip freeze`) typically installs the CPU version of PyTorch. If you have a compatible NVIDIA GPU (with CUDA) or an Apple Silicon Mac (M1/M2/M3 with MPS), you can install the GPU-enabled version of PyTorch for faster performance.
+
+    * **For CUDA-enabled GPUs (NVIDIA):**
+        Consult the [official PyTorch installation guide](https://pytorch.org/get-started/locally/) and select your specific CUDA version to get the exact `pip install` command. You would run this *instead* of or *after* removing the `torch` line from your `requirements.txt` before running `pip install -r`.
+
+    * **For Apple Silicon (M1/M2/M3) Macs (MPS):**
+        PyTorch's MPS (Metal Performance Shaders) backend utilizes the integrated GPU. The correct version is usually installed with the standard `pip install torch` on modern PyTorch versions on macOS. However, if you face issues or want to ensure MPS support, check the [official PyTorch installation guide](https://pytorch.org/get-started/locally/) by selecting `macOS` and `MPS`.
 
 4.  **Data Setup:**
 
     This project requires a Lung CT DICOM dataset. The code is configured to expect patient subfolders named `QIN LUNG CT 1` through `QIN LUNG CT 47`.
 
-      * Download your dataset (e.g., the QIN LUNG CT dataset if you have access to it).
-      * Place the root directory of your dataset (e.g., the folder containing `QIN LUNG CT 1`, etc.) in a convenient location on your system.
-      * **IMPORTANT:** Update the `BASE_DIR` variable in `synthetic_image_generator/config.py` to the **absolute path** of your dataset’s root directory.
+    * Download your dataset (e.g., the QIN LUNG CT dataset if you have access to it).
+    * Place the root directory of your dataset (e.g., the folder containing `QIN LUNG CT 1`, etc.) in a convenient location on your system.
+    * **IMPORTANT:** Update the `BASE_DIR` variable in `synthetic_image_generator/config.py` to the **absolute path** of your dataset’s root directory.
 
-    <!-- end list -->
-
-    ## 🔧 Pretrained Weights Setup
+## 🔧 Pretrained Weights Setup
 
 To use the pretrained model weights:
 
-1. **Download the weights** from Google Drive and create a folder in the root folder and rename it as "checkpoints":
-   - [Click here to download](https://drive.google.com/file/d/19jpLx3qfCGripD85D3W7PWgcxhoMYP0k/view?usp=sharing)
-   - Or run in terminal:
-     ```bash
-     wget --no-check-certificate "https://drive.google.com/file/d/19jpLx3qfCGripD85D3W7PWgcxhoMYP0k/view?usp=sharing" -O pretrained_weights.pth
-     ```
+1.  **Create the `checkpoints` folder:**
+    In the root directory of your cloned repository, create a new folder and name it `checkpoints`.
+    ```bash
+    mkdir checkpoints
+    ```
 
+2.  **Download the weights into the `checkpoints` folder:**
 
-    
-    
+    **Option A: Using `gdown` (Recommended Pythonic Way)**
+    If your project has a script or function that uses `gdown` to download weights (which is the most reliable method for Google Drive), ensure `gdown` is in your `requirements.txt` and follow that script's instructions.
+
+    **Option B: Manual Download using `wget` (If `gdown` is not used in your project's code)**
+
+    If you prefer to download via the terminal using `wget`:
+
+    * **Install `wget` on your system if you don't have it:**
+        * **macOS:** Install via Homebrew: `brew install wget`
+        * **Linux (Debian/Ubuntu):** `sudo apt-get update && sudo apt-get install wget`
+        * **Windows (via Git Bash or WSL):** `wget` is often included or can be installed via package managers.
+
+    * **Then, run this command from within your project's root directory, ensuring you are in the `checkpoints` folder:**
+        ```bash
+        cd checkpoints
+        wget --no-check-certificate "[https://drive.google.com/uc?export=download&id=19jpLx3qfCGripD85D3W7PWgcxhoMYP0k](https://drive.google.com/uc?export=download&id=19jpLx3qfCGripD85D3W7PWgcxhoMYP0k)" -O pretrained_weights.pth
+        cd .. # Go back to root directory
+        ```
+        **Important Note on `wget` downloads from Google Drive:**
+        Be aware that for some Google Drive links, `wget` might download an HTML page (like a virus scan warning or a redirect page) instead of the actual binary file, especially if the file size is small (e.g., a few KB). If the downloaded `pretrained_weights.pth` file is very small and contains HTML content when opened with a text editor, the download failed to get the actual model weights. In such cases, please try **manually downloading the file** directly from the provided Google Drive link in your web browser.
+
 ## Usage
 
 The primary way to use the application is through `main.py`.
@@ -115,8 +163,8 @@ On macOS/Linux:
 
 ```bash
 python synthetic_image_generator/main.py
-```
 
+--
 
 # Example Outputs
 
