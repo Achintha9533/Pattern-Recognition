@@ -1,58 +1,44 @@
-# Synthetic Image Generator/config.py
-
+# config.py
 from pathlib import Path
-from typing import Tuple
+import torch
+import torchvision.transforms as T
 
-"""
-Configuration module for the Synthetic Image Generator project.
+# Base directory containing patient subfolders with DICOM files
+# IMPORTANT: Adjust this path to your actual data directory
+base_dir = Path("/Users/kasunachinthaperera/Documents/VS Code/Pattern Recognition/Data/QIN LUNG CT")
 
-This module centralizes all global parameters and settings used across the application,
-including image dimensions, learning rates, dataset paths, and training/generation
-parameters. This approach enhances maintainability, allows for easy modification of
-experiment settings, and minimizes reliance on hardcoded values within the logic.
-"""
-
-# === General Configuration ===
 # Desired output image size (height, width)
-IMAGE_SIZE: Tuple[int, int] = (64, 64)
+image_size = (96, 96)
 
-# Optimizer learning rates for the generator
-G_LR: float = 1e-4
+# Optimizer learning rates
+G_LR = 1e-4
 
-# === Dataset Configuration ===
-# Base directory containing patient subfolders with DICOM files.
-# IMPORTANT: Adjust this path to your actual data directory on your system.
-# Example: BASE_DIR = Path("/path/to/your/QIN LUNG CT")
-BASE_DIR: Path = Path("/Users/kasunachinthaperera/Documents/VS Code/Pattern Recognition/Data/QIN LUNG CT")
+# === Checkpoint settings ===
+# Directory to save model weights (and load from for pre-trained)
+checkpoint_dir = Path("./checkpoints")
+generator_checkpoint_path = checkpoint_dir / "generator_final.pth"
 
-# Number of middle images to select from each patient folder.
-# This helps manage dataset size and focuses on central slices.
-NUM_IMAGES_PER_FOLDER: int = 5
+# Google Drive file ID for your weights
+GOOGLE_DRIVE_FILE_ID = '1TzXuOGzpt1eR4wxE6GahCX8Ig9ia0ErN'
 
-# === Checkpoint Settings ===
-# Directory to save trained model weights.
-CHECKPOINT_DIR: Path = Path("./checkpoints")
-# Ensure the directory exists. It will be created if it doesn't already.
-CHECKPOINT_DIR.mkdir(parents=True, exist_ok=True)
-GENERATOR_CHECKPOINT_PATH: Path = CHECKPOINT_DIR / "generator_final.pth"
+# === Image preprocessing transform ===
+# Resize images, convert to tensor, normalize pixel values to [-1, 1]
+transform = T.Compose([
+    T.ToPILImage(),
+    T.Resize(image_size),
+    T.ToTensor(),
+    T.Normalize(mean=[0.5], std=[0.5])
+])
 
-# === Training Settings ===
-# Number of training epochs.
-EPOCHS: int = 150
-# Batch size for training.
-BATCH_SIZE: int = 64
-# Number of worker processes for data loading. Set to 0 for macOS compatibility
-# or if encountering multiprocessing issues.
-NUM_WORKERS: int = 0
+# Transform for FID calculation (to [0, 255] for saving as images)
+# This denormalizes from [-1, 1] to [0, 1] and then PIL converts to [0, 255]
+fid_transform = T.Compose([
+    T.Normalize(mean=[-1.0], std=[2.0]),
+    T.ToPILImage(),
+])
 
-# === Generation Settings ===
-# Number of steps for the image generation process (Euler integration steps).
-# Higher values lead to more accurate generation but are computationally more expensive.
-GENERATION_STEPS: int = 200
-# Number of synthetic samples to generate for evaluation and visualization.
-NUM_GENERATED_SAMPLES: int = 256
+# Device setup
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-# === Evaluation Settings ===
-# Number of batches to sample from the real dataset for pixel distribution plots.
-# This provides a representative sample of real image pixel values.
-NUM_BATCHES_FOR_DIST_PLOT: int = 5
+# Model hyper-parameters
+time_embed_dim = 256
