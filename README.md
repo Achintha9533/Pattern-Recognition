@@ -199,7 +199,7 @@ Beyond quantitative metrics, visual inspection by human observers is crucial for
 
 Robust testing is crucial for ensuring the reliability, correctness, and maintainability of the Synthetic Image Generator project. This section outlines the testing strategy employed and provides an overview of the unit test modules.
 
-````markdown
+
 ## Testing Framework and Approach
 
 The project utilizes **`pytest`** as its primary testing framework due to its simplicity, extensibility, and rich set of features for writing clear and concise tests. **`unittest.mock`** is extensively used to isolate the units under test from their external dependencies (e.g., file system, network operations, PyTorch operations, other modules), ensuring that tests are fast, deterministic, and truly focused on the specific logic being verified.
