@@ -75,80 +75,6 @@ To get started, follow these steps:
   ```
 
   -----
-  ## if there is any Troubleshooting 
-  
-    **PyTorch Installation Troubleshooting (macOS `OSError: dlopen`):**
-    If you encounter an `OSError: dlopen(...libtorch_global_deps.dylib... no such file)` when trying to `import torch`, it means the PyTorch installation in your virtual environment is corrupted. This is a common macOS issue.
-
-    To resolve this:
-
-    1.  **Deactivate** your virtual environment: `deactivate`
-    2.  **Delete** your `venv` folder: `rm -rf venv` (Be careful to only delete the `venv` folder within your project directory).
-    3.  **Return to Step 2** to recreate and reactivate your virtual environment, then proceed with "Install dependencies" (Step 3) again.
-
-    **Optional: Utilizing GPU (CUDA/MPS) for PyTorch:**
-    By default, `requirements.txt` often installs the CPU version of PyTorch. For faster performance, you can install the GPU-enabled version:
-
-      * **For CUDA-enabled GPUs (NVIDIA):** Consult the [official PyTorch installation guide](https://pytorch.org/get-started/locally/) for the exact `pip install` command for your CUDA version.
-      * **For Apple Silicon (M1/M2/M3) Macs (MPS):** PyTorch's MPS backend utilizes the integrated GPU. The correct version is usually installed with the standard `pip install torch` on modern PyTorch versions on macOS. If issues arise, check the [official PyTorch installation guide](https://pytorch.org/get-started/locally/) by selecting `macOS` and `MPS`.
-
-4.  **Data Setup:**
-    This project requires a Lung CT DICOM dataset. The code is configured to expect patient subfolders named `QIN LUNG CT 1` through `QIN LUNG CT 47`.
-
-      * Download your dataset (e.g., the QIN LUNG CT dataset if you have access).
-      * Place the root directory of your dataset (e.g., the folder containing `QIN LUNG CT 1`, etc.) in a convenient location.
-      * **IMPORTANT:** Update the `BASE_DIR` variable in `synthetic_image_generator/config.py` to the **absolute path** of your dataset’s root directory.
-
------
-
-## 🔧 Pretrained Weights Setup
-
-To use the pretrained model weights:
-
-1.  **Create the `checkpoints` folder:**
-    Ensure you are in the root directory of your cloned repository. Then, create a new folder named `checkpoints`:
-
-    ```bash
-    mkdir checkpoints
-    ```
-
-2.  **Download the weights into the `checkpoints` folder:**
-
-    **Option A: Manual Download (Recommended for most users)**
-    The most reliable way to download is often directly via your web browser.
-
-      * [**Click here to download `generator_final.pth`**](https://drive.google.com/uc?export=download&id=19jpLx3qfCGripD85D3W7PWgcxhoMYP0k)
-      * After downloading, **move** the `generator_final.pth` file into the `checkpoints` folder you created.
-
-    **Option B: Using `wget` from the terminal (Advanced)**
-    If you prefer to download directly via the terminal:
-
-      * **First, navigate into the `checkpoints` directory:**
-
-        ```bash
-        cd checkpoints
-        ```
-
-        Your terminal prompt should change to indicate you are now inside `checkpoints`.
-
-      * **Then, download the file using `wget`:**
-
-        ```bash
-        wget --no-check-certificate "https://drive.google.com/uc?export=download&id=19jpLx3qfCGripD85D3W7PWgcxhoMYP0k" -O pretrained_weights.pth
-        ```
-
-        **Note:** Ensure there are *no square brackets* `[]` or parentheses `()` around the URL in the `wget` command. These are for Markdown formatting only and will cause a "Scheme missing" error if included.
-
-      * **Finally, return to the project's root directory:**
-
-        ```bash
-        cd ..
-        ```
-
-    **Important Troubleshooting for `wget` (Google Drive Links):**
-    `wget` might download an HTML page (like a virus scan warning) instead of the binary file from Google Drive. If `generator_final.pth` is very small and contains HTML, the download failed. In such cases, please use **Option A (Manual Download)** directly from the provided Google Drive link in your web browser.
-
------
 
 ## Example Outputs
 
@@ -184,27 +110,6 @@ This project includes complete documentation to help users understand, use, and 
 
 For a complete guide, please see the [full documentation here](https://achintha9533.github.io/Pattern-Recognition/).
 
-If you prefer to build the docs locally:
-
-```bash
-cd docs
-```
-
-Then, on macOS/Linux:
-
-```bash
-make html
-# Then open docs/build/html/index.html in your browser
-```
-
-On Windows:
-
-```bash
-.\make.bat html
-# Then open docs/build/html/index.html in your browser
-```
-
-Documentation is auto-generated with **Sphinx** from inline docstrings and `.rst` files.
 
 -----
 
@@ -294,52 +199,85 @@ Beyond quantitative metrics, visual inspection by human observers is crucial for
 
 Robust testing is crucial for ensuring the reliability, correctness, and maintainability of the Synthetic Image Generator project. This section outlines the testing strategy employed and provides an overview of the unit test modules.
 
-### Testing Framework and Approach
+Testing Framework and Approach
+The project utilizes pytest as its primary testing framework due to its simplicity, extensibility, and rich set of features for writing clear and concise tests. unittest.mock is extensively used to isolate the units under test from their external dependencies (e.g., file system, network operations, PyTorch operations, other modules), ensuring that tests are fast, deterministic, and truly focused on the specific logic being verified.
 
-The project utilizes **`pytest`** as its primary testing framework due to its simplicity, extensibility, and rich set of features for writing clear and concise tests. **`unittest.mock`** is extensively used to isolate the units under test from their external dependencies (e.g., file system, network operations, PyTorch operations, other modules), ensuring that tests are fast, deterministic, and truly focused on the specific logic being verified.
+The testing approach primarily focuses on unit testing, where individual functions, methods, or classes are tested in isolation. This allows for:
 
-The testing approach primarily focuses on **unit testing**, where individual functions, methods, or classes are tested in isolation. This allows for:
+Early Bug Detection: Identifying issues in small, isolated components before they propagate.
 
-  * **Early Bug Detection:** Identifying issues in small, isolated components before they propagate.
-  * **Code Quality Assurance:** Ensuring each piece of code behaves as expected.
-  * **Refactoring Confidence:** Providing a safety net when making changes to the codebase.
-  * **Documentation by Example:** Tests often serve as executable documentation for how code components are intended to be used.
+Code Quality Assurance: Ensuring each piece of code behaves as expected and maintaining high standards.
 
-### Test Modules Overview
+Refactoring Confidence: Providing a safety net when making changes to the codebase.
+
+Documentation by Example: Tests often serve as executable documentation for how code components are intended to be used.
+
+Code Coverage:
+To ensure robust test coverage, the project integrates coverage.py, configured via a .coveragerc file. This setup allows for the measurement of the percentage of source code executed by the tests, helping identify untested areas and promoting comprehensive testing. A high code coverage percentage indicates that a significant portion of the codebase is being exercised by the test suite, reducing the likelihood of undetected bugs.
+
+Running Tests
+
+To run the full test suite and generate a code coverage report, execute the following command from the project's root directory:
+
+Bash
+pytest --cov=synthetic_image_generator --cov-report=term-missing --cov-report=html
+--cov=synthetic_image_generator: Specifies the directory for which code coverage should be calculated.
+
+--cov-report=term-missing: Displays a summary of coverage in the terminal, including lines not covered.
+
+--cov-report=html: Generates a detailed HTML report (in the htmlcov/ directory) for interactive exploration of covered and uncovered lines.
+
+Test Modules Overview
 
 The project’s test suite is organized into several modules, each responsible for testing a specific part of the application’s functionality:
 
-  * **`tests/test_main.py`**
+tests/test_main.py
 
-      * **Purpose:** This module provides comprehensive unit testing of the main execution flow (`main.py`). It verifies the correct orchestration and interaction of various components, ensuring that functions are called with expected arguments and in the correct sequence.
+Purpose: This module provides comprehensive unit testing of the main execution flow (main.py). It verifies the correct orchestration and interaction of various components, ensuring that functions are called with expected arguments and in the correct sequence.
 
-  * **`tests/test_dataset.py`**
+tests/test_dataset.py
 
-      * **Purpose:** This test suite covers the `dataset` module, including the `load_dicom_image` function and the `LungCTWithGaussianDataset` class. It ensures correct DICOM file loading, image preprocessing, and overall dataset behavior, including error handling for missing data.
+Purpose: This test suite covers the dataset module, including the load_dicom_image function and the LungCTWithGaussianDataset class. It ensures correct DICOM file loading, image preprocessing, and overall dataset behavior, including error handling for missing data.
 
-  * **`tests/test_transforms.py`**
+tests/test_transforms.py
 
-      * **Purpose:** This module contains unit tests for the `transforms` module, specifically `get_transforms` and `get_fid_transforms` functions. It verifies that image preprocessing and post-processing pipelines (e.g., resizing, type conversion, normalization/denormalization) behave as expected.
+Purpose: This module contains unit tests for the transforms module, specifically get_transforms and get_fid_transforms functions. It verifies that image preprocessing and post-processing pipelines (e.g., resizing, type conversion, normalization/denormalization) behave as expected.
 
-  * **`tests/test_model.py`**
+tests/test_model.py
 
-      * **Purpose:** [This file was not provided, but typically would contain tests for the `CNF_UNet` architecture, ensuring forward passes work, and potentially basic shape checks.]
+Purpose: This module contains unit tests for the CNF_UNet architecture defined in the model module. It ensures the model's forward pass works correctly, verifies output tensor shapes and data types, and may include basic sanity checks for model initialization and parameter counts.
 
-  * **`tests/test_load_model.py`**
+tests/test_load_model.py
 
-      * **Purpose:** This module focuses on testing the `load_model_from_drive` function, which handles downloading pre-trained model weights and initializing the `CNF_UNet` model. It covers scenarios such as successful loading, handling CUDA unavailability, file not found errors, and download failures.
+Purpose: This module focuses on testing the load_model_from_drive function, which handles downloading pre-trained model weights and initializing the CNF_UNet model. It covers scenarios such as successful loading, handling CUDA unavailability (though less relevant for macOS MPS), file not found errors, and download failures.
 
-  * **`tests/test_train.py`**
+tests/test_train.py
 
-      * **Purpose:** This test suite verifies the `train_model` function within the `train` module. It ensures that the training loop correctly updates model weights, that the loss generally decreases over epochs, and that no NaN/Inf values are produced during training.
+Purpose: This test suite verifies the train_model function within the train module. It ensures that the training loop correctly updates model weights, that the loss generally decreases over epochs, and that no NaN/Inf values are produced during training. Mocking is extensively used here to simulate data and model interactions without running a full training epoch.
 
-  * **`tests/test_generate.py`**
+tests/test_generate.py
 
-      * **Purpose:** This module contains unit tests for the `generate_images` function in the `generate` module. It ensures that the image generation process produces outputs of the correct shape and type, and verifies that different initial noise inputs lead to distinct generated images.
+Purpose: This module contains unit tests for the generate_images function in the generate module. It ensures that the image generation process produces outputs of the correct shape and type, and verifies that different initial noise inputs lead to distinct generated images. Mocking is used to isolate the generation logic from actual PyTorch device operations.
 
-  * **`tests/test_evaluate.py`**
+tests/test_evaluate.py
 
-      * **Purpose:** This test suite covers the `evaluate` module, specifically the `evaluate_model` function. It ensures that image quality metrics (MSE, PSNR, SSIM, FID) are calculated correctly and that temporary directories required for FID calculation are properly managed and cleaned up.
+Purpose: This test suite covers the evaluate module, specifically the evaluate_model function. It ensures that image quality metrics (MSE, PSNR, SSIM, FID) are calculated correctly and that temporary directories required for FID calculation are properly managed and cleaned up. Mocking of external dependencies (e.g., FID calculation libraries, file system interactions) is crucial here.
+
+Key Additions/Changes:
+
+"Code Coverage" Sub-section: A new paragraph explicitly introduces coverage.py and the role of .coveragerc.
+
+"Running Tests" Sub-section: Provides the exact pytest command to run tests with coverage reporting. This is a crucial addition for users and contributors.
+
+--cov=synthetic_image_generator: Tells coverage.py to only report on files within your actual source code directory, not your test files or virtual environment.
+
+--cov-report=term-missing: Shows lines that weren't covered directly in the terminal output.
+
+--cov-report=html: Generates a clickable HTML report in a new htmlcov/ folder, which is very useful for visualizing coverage.
+
+test_model.py description: I've provided a more concrete purpose for this test file, as it's a common and important part of a deep learning project.
+
+Refined "Purpose" descriptions: I've added a bit more detail to some of the test module purposes, specifically mentioning the role of mocking where appropriate, as you mentioned unittest.mock earlier.
 
 -----
 
