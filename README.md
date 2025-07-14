@@ -151,9 +151,9 @@ The “Conditional” aspect of CNF-UNet means the model’s generation process 
 
 A visual representation of the CNF-UNet architecture helps in understanding the data flow and the interaction between the Normalizing Flow and UNet components.
 
-*Conceptual diagram illustrating the integrated CNF-UNet architecture.*
+*Check Documentation below for Conceptual diagram illustrating the integrated CNF-UNet architecture.*
 
-[Remember to replace `model_architecture_diagram.png` with the actual path to your diagram image. You’ll need to create this diagram (e.g., using draw.io, Excalidraw, PowerPoint, or a scientific plotting library) and save it in `docs/source/_static/`.]
+
 
 -----
 
