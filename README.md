@@ -121,25 +121,16 @@ This section provides a detailed overview of the Conditional Normalizing Flow wi
 
 The core of this project’s image generation capability lies in the integration of Conditional Normalizing Flows (CNF) with a UNet-like structure. This combination allows for a powerful generative model that can learn complex data distributions while leveraging the hierarchical feature extraction benefits of the UNet.
 
-[Elaborate here on the high-level concept: How CNF works (invertible transformations, exact likelihood), how UNet contributes (multi-scale feature extraction, skip connections), and how conditioning is applied (e.g., through UNet features).]
 
 ### Normalizing Flows (NF)
 
 Normalizing Flows are a class of generative models that transform a simple base distribution (e.g., a Gaussian) into a complex data distribution through a sequence of invertible and differentiable transformations. This allows for exact likelihood computation and efficient sampling.
 
-[Detail the specific types of flow layers used (e.g., coupling layers, permutations, non-linearities) and why they were chosen.]
 
 ### UNet Integration
 
 The UNet architecture, originally developed for biomedical image segmentation, is well-suited for processing images due to its encoder-decoder structure with skip connections. In our CNF-UNet, the UNet part typically acts as a powerful feature extractor that provides rich, multi-scale conditional information to the normalizing flow.
 
-[Explain how the UNet is used: Does it provide features at different scales to different flow blocks? Is it an encoder for the conditioning? How are skip connections utilized in this context?]
-
-### Conditional Aspect
-
-The “Conditional” aspect of CNF-UNet means the model’s generation process is guided by certain input conditions. This allows for controlled image synthesis.
-
-[Describe what the conditioning variables are (e.g., clinical parameters, partial images, noise levels) and how they are incorporated into the CNF and/or UNet parts of the architecture. How does this conditioning influence the generated output?]
 
 ### Component Details
 
@@ -151,8 +142,7 @@ The “Conditional” aspect of CNF-UNet means the model’s generation process 
 
 A visual representation of the CNF-UNet architecture helps in understanding the data flow and the interaction between the Normalizing Flow and UNet components.
 
-*Check Documentation below for Conceptual diagram illustrating the integrated CNF-UNet architecture.*
-
+*Check Documentation above for Conceptual diagram illustrating the integrated CNF-UNet architecture.*
 
 
 -----
