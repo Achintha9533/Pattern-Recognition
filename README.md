@@ -75,6 +75,8 @@ To get started, follow these steps:
   ```
 
   -----
+  ## if there is any Troubleshooting 
+  
     **PyTorch Installation Troubleshooting (macOS `OSError: dlopen`):**
     If you encounter an `OSError: dlopen(...libtorch_global_deps.dylib... no such file)` when trying to `import torch`, it means the PyTorch installation in your virtual environment is corrupted. This is a common macOS issue.
 
