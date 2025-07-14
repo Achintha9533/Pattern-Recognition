@@ -49,7 +49,7 @@ To get started, follow these steps:
     On Windows:
 
     ```bash
-    python -m venv venv
+    python3 -m venv venv
     .\venv\Scripts\activate
     ```
 
@@ -59,10 +59,24 @@ To get started, follow these steps:
     With your virtual environment activated, install all required Python packages:
 
     ```bash
-    pip install --upgrade pip  # Always good practice to update pip
+    pip install --upgrade pip
+    ```
+    ```bash  
     pip install -r requirements.txt
     ```
+  ## Usage
 
+  The primary way to use the application is through `main.py`.
+
+  To execute the complete workflow, including data loading, model setup, training, image generation, evaluation, and visualization, run the following command from the project's root directory:
+
+  On macOS/Linux:
+
+  ```bash
+  python synthetic_image_generator/main.py
+  ```
+
+  -----
     **PyTorch Installation Troubleshooting (macOS `OSError: dlopen`):**
     If you encounter an `OSError: dlopen(...libtorch_global_deps.dylib... no such file)` when trying to `import torch`, it means the PyTorch installation in your virtual environment is corrupted. This is a common macOS issue.
 
@@ -133,20 +147,6 @@ To use the pretrained model weights:
 
     **Important Troubleshooting for `wget` (Google Drive Links):**
     `wget` might download an HTML page (like a virus scan warning) instead of the binary file from Google Drive. If `generator_final.pth` is very small and contains HTML, the download failed. In such cases, please use **Option A (Manual Download)** directly from the provided Google Drive link in your web browser.
-
------
-
-## Usage
-
-The primary way to use the application is through `main.py`.
-
-To execute the complete workflow, including data loading, model setup, training, image generation, evaluation, and visualization, run the following command from the project's root directory:
-
-On macOS/Linux:
-
-```bash
-python synthetic_image_generator/main.py
-```
 
 -----
 
