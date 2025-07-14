@@ -217,7 +217,7 @@ To ensure robust test coverage, the project integrates `coverage.py`, configured
 
 ### Running Tests
 
-To run the full test suite and generate a code coverage report, execute the following command from the project's root directory:
+To run the full test suite and generate a code coverage report, execute the following command from the **synthetic_image_generator** project directory:
 
 ```bash
 pytest --cov=synthetic_image_generator --cov-report=term-missing --cov-report=html
