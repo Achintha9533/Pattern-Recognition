@@ -199,85 +199,71 @@ Beyond quantitative metrics, visual inspection by human observers is crucial for
 
 Robust testing is crucial for ensuring the reliability, correctness, and maintainability of the Synthetic Image Generator project. This section outlines the testing strategy employed and provides an overview of the unit test modules.
 
-Testing Framework and Approach
-The project utilizes pytest as its primary testing framework due to its simplicity, extensibility, and rich set of features for writing clear and concise tests. unittest.mock is extensively used to isolate the units under test from their external dependencies (e.g., file system, network operations, PyTorch operations, other modules), ensuring that tests are fast, deterministic, and truly focused on the specific logic being verified.
+````markdown
+## Testing Framework and Approach
 
-The testing approach primarily focuses on unit testing, where individual functions, methods, or classes are tested in isolation. This allows for:
+The project utilizes **`pytest`** as its primary testing framework due to its simplicity, extensibility, and rich set of features for writing clear and concise tests. **`unittest.mock`** is extensively used to isolate the units under test from their external dependencies (e.g., file system, network operations, PyTorch operations, other modules), ensuring that tests are fast, deterministic, and truly focused on the specific logic being verified.
 
-Early Bug Detection: Identifying issues in small, isolated components before they propagate.
+The testing approach primarily focuses on **unit testing**, where individual functions, methods, or classes are tested in isolation. This allows for:
 
-Code Quality Assurance: Ensuring each piece of code behaves as expected and maintaining high standards.
+* **Early Bug Detection:** Identifying issues in small, isolated components before they propagate.
+* **Code Quality Assurance:** Ensuring each piece of code behaves as expected and maintaining high standards.
+* **Refactoring Confidence:** Providing a safety net when making changes to the codebase.
+* **Documentation by Example:** Tests often serve as executable documentation for how code components are intended to be used.
 
-Refactoring Confidence: Providing a safety net when making changes to the codebase.
+### Code Coverage
 
-Documentation by Example: Tests often serve as executable documentation for how code components are intended to be used.
+To ensure robust test coverage, the project integrates `coverage.py`, configured via a **`.coveragerc`** file. This setup allows for the measurement of the percentage of source code executed by the tests, helping identify untested areas and promoting comprehensive testing. A high code coverage percentage indicates that a significant portion of the codebase is being exercised by the test suite, reducing the likelihood of undetected bugs.
 
-Code Coverage:
-To ensure robust test coverage, the project integrates coverage.py, configured via a .coveragerc file. This setup allows for the measurement of the percentage of source code executed by the tests, helping identify untested areas and promoting comprehensive testing. A high code coverage percentage indicates that a significant portion of the codebase is being exercised by the test suite, reducing the likelihood of undetected bugs.
-
-Running Tests
+### Running Tests
 
 To run the full test suite and generate a code coverage report, execute the following command from the project's root directory:
 
-Bash
+```bash
 pytest --cov=synthetic_image_generator --cov-report=term-missing --cov-report=html
---cov=synthetic_image_generator: Specifies the directory for which code coverage should be calculated.
+````
 
---cov-report=term-missing: Displays a summary of coverage in the terminal, including lines not covered.
+  * `--cov=synthetic_image_generator`: Specifies the directory for which code coverage should be calculated.
+  * `--cov-report=term-missing`: Displays a summary of coverage in the terminal, including lines not covered.
+  * `--cov-report=html`: Generates a detailed HTML report (in the `htmlcov/` directory) for interactive exploration of covered and uncovered lines.
 
---cov-report=html: Generates a detailed HTML report (in the htmlcov/ directory) for interactive exploration of covered and uncovered lines.
-
-Test Modules Overview
+### Test Modules Overview
 
 The project’s test suite is organized into several modules, each responsible for testing a specific part of the application’s functionality:
 
-tests/test_main.py
+  * **`tests/test_main.py`**
 
-Purpose: This module provides comprehensive unit testing of the main execution flow (main.py). It verifies the correct orchestration and interaction of various components, ensuring that functions are called with expected arguments and in the correct sequence.
+      * **Purpose:** This module provides comprehensive unit testing of the main execution flow (`main.py`). It verifies the correct orchestration and interaction of various components, ensuring that functions are called with expected arguments and in the correct sequence.
 
-tests/test_dataset.py
+  * **`tests/test_dataset.py`**
 
-Purpose: This test suite covers the dataset module, including the load_dicom_image function and the LungCTWithGaussianDataset class. It ensures correct DICOM file loading, image preprocessing, and overall dataset behavior, including error handling for missing data.
+      * **Purpose:** This test suite covers the `dataset` module, including the `load_dicom_image` function and the `LungCTWithGaussianDataset` class. It ensures correct DICOM file loading, image preprocessing, and overall dataset behavior, including error handling for missing data.
 
-tests/test_transforms.py
+  * **`tests/test_transforms.py`**
 
-Purpose: This module contains unit tests for the transforms module, specifically get_transforms and get_fid_transforms functions. It verifies that image preprocessing and post-processing pipelines (e.g., resizing, type conversion, normalization/denormalization) behave as expected.
+      * **Purpose:** This module contains unit tests for the `transforms` module, specifically `get_transforms` and `get_fid_transforms` functions. It verifies that image preprocessing and post-processing pipelines (e.g., resizing, type conversion, normalization/denormalization) behave as expected.
 
-tests/test_model.py
+  * **`tests/test_model.py`**
 
-Purpose: This module contains unit tests for the CNF_UNet architecture defined in the model module. It ensures the model's forward pass works correctly, verifies output tensor shapes and data types, and may include basic sanity checks for model initialization and parameter counts.
+      * **Purpose:** This module contains unit tests for the `CNF_UNet` architecture defined in the `model` module. It ensures the model's forward pass works correctly, verifies output tensor shapes and data types, and may include basic sanity checks for model initialization and parameter counts.
 
-tests/test_load_model.py
+  * **`tests/test_load_model.py`**
 
-Purpose: This module focuses on testing the load_model_from_drive function, which handles downloading pre-trained model weights and initializing the CNF_UNet model. It covers scenarios such as successful loading, handling CUDA unavailability (though less relevant for macOS MPS), file not found errors, and download failures.
+      * **Purpose:** This module focuses on testing the `load_model_from_drive` function, which handles downloading pre-trained model weights and initializing the `CNF_UNet` model. It covers scenarios such as successful loading, handling CUDA unavailability (though less relevant for macOS MPS), file not found errors, and download failures.
 
-tests/test_train.py
+  * **`tests/test_train.py`**
 
-Purpose: This test suite verifies the train_model function within the train module. It ensures that the training loop correctly updates model weights, that the loss generally decreases over epochs, and that no NaN/Inf values are produced during training. Mocking is extensively used here to simulate data and model interactions without running a full training epoch.
+      * **Purpose:** This test suite verifies the `train_model` function within the `train` module. It ensures that the training loop correctly updates model weights, that the loss generally decreases over epochs, and that no NaN/Inf values are produced during training. Mocking is extensively used here to simulate data and model interactions without running a full training epoch.
 
-tests/test_generate.py
+  * **`tests/test_generate.py`**
 
-Purpose: This module contains unit tests for the generate_images function in the generate module. It ensures that the image generation process produces outputs of the correct shape and type, and verifies that different initial noise inputs lead to distinct generated images. Mocking is used to isolate the generation logic from actual PyTorch device operations.
+      * **Purpose:** This module contains unit tests for the `generate_images` function in the `generate` module. It ensures that the image generation process produces outputs of the correct shape and type, and verifies that different initial noise inputs leads to distinct generated images. Mocking is used to isolate the generation logic from actual PyTorch device operations.
 
-tests/test_evaluate.py
+  * **`tests/test_evaluate.py`**
 
-Purpose: This test suite covers the evaluate module, specifically the evaluate_model function. It ensures that image quality metrics (MSE, PSNR, SSIM, FID) are calculated correctly and that temporary directories required for FID calculation are properly managed and cleaned up. Mocking of external dependencies (e.g., FID calculation libraries, file system interactions) is crucial here.
+      * **Purpose:** This test suite covers the `evaluate` module, specifically the `evaluate_model` function. It ensures that image quality metrics (MSE, PSNR, SSIM, FID) are calculated correctly and that temporary directories required for FID calculation are properly managed and cleaned up. Mocking of external dependencies (e.g., FID calculation libraries, file system interactions) is crucial here.
 
-Key Additions/Changes:
 
-"Code Coverage" Sub-section: A new paragraph explicitly introduces coverage.py and the role of .coveragerc.
-
-"Running Tests" Sub-section: Provides the exact pytest command to run tests with coverage reporting. This is a crucial addition for users and contributors.
-
---cov=synthetic_image_generator: Tells coverage.py to only report on files within your actual source code directory, not your test files or virtual environment.
-
---cov-report=term-missing: Shows lines that weren't covered directly in the terminal output.
-
---cov-report=html: Generates a clickable HTML report in a new htmlcov/ folder, which is very useful for visualizing coverage.
-
-test_model.py description: I've provided a more concrete purpose for this test file, as it's a common and important part of a deep learning project.
-
-Refined "Purpose" descriptions: I've added a bit more detail to some of the test module purposes, specifically mentioning the role of mocking where appropriate, as you mentioned unittest.mock earlier.
 
 -----
 
