@@ -109,7 +109,7 @@ This figure illustrates the distribution of certain image characteristics or met
 -----
 
 ## Model Architecture
-
+![Synthetically Generated Lung CT Image](_images/Flow_chart.png)
 This section provides a detailed overview of the Conditional Normalizing Flow with UNet (CNF-UNet) architecture employed in this project for Lung CT image generation. Understanding this architecture is key to grasping how the model learns to generate high-quality synthetic images.
 
 ### Overview of CNF-UNet
